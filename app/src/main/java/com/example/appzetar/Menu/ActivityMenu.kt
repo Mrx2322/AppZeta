@@ -1,31 +1,21 @@
-package com.example.appzetar
+package com.example.appzetar.Menu
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.appzetar.Menu.ActivityMenu
-import kotlin.jvm.java
+import com.example.appzetar.R
 
-class MainActivity : AppCompatActivity() {
+class ActivityMenu : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_menu)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val btnInicio = findViewById<Button>(R.id.btnIngresar)
-        btnInicio.setOnClickListener { navigateToIngresar() }
     }
-    private fun navigateToIngresar() {
-        val intent = Intent(this, ActivityMenu::class.java)
-        startActivity(intent)
-    }
-
 }
