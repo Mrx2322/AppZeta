@@ -9,4 +9,15 @@
     android:background="@drawable/fondo_menu"
     tools:context=".Menu.ActivityMenu">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginVertical="30dp"
+        android:text="@string/todo_title"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
 </LinearLayout>
