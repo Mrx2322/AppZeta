@@ -3,9 +3,10 @@
 
     <!--TodoApp-->
     <string name="todo_title">Bienvenido a ZetaRestaurant</string>
-    <string name="todo_categories">Categorías:</string>
+    <string name="todo_categories">Popular Entradas:</string>
     <string name="todo_tasks">Tareas:</string>
     <string name="Ingresar">INGRESAR</string>
+    <string name="menu_carta_entradas">Tallarines</string>
 
 
     <string name="todo_dialog_add_task">Añade la tarea</string>
@@ -13,5 +14,6 @@
     <string name="todo_dialog_category_other">Otros</string>
     <string name="todo_dialog_category_personal">Personal</string>
     <string name="todo_dialog_add_task_button">Crear tarea</string>
+
 
 </resources>
