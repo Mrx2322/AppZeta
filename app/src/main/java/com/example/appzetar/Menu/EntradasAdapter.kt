@@ -3,8 +3,8 @@ package com.example.appzetar.Menu
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.customview.R
 import androidx.recyclerview.widget.RecyclerView
+import com.example.appzetar.R
 
 class EntradasAdapter(private val entradas: List<TaskEntradas>) :
     RecyclerView.Adapter<EntradasViewHolder>() {
@@ -21,7 +21,7 @@ class EntradasAdapter(private val entradas: List<TaskEntradas>) :
         holder: EntradasViewHolder,
         position: Int
     ) {
-        TODO("Not yet implemented")
+        holder.render(entradas[position])
     }
 
     override fun getItemCount() = entradas.size

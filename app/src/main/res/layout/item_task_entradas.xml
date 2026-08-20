@@ -1,38 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:gravity="center_horizontal"
+    android:layout_width="160dp"
+    android:layout_height="90dp"
     android:orientation="vertical"
-    android:padding="8dp">
+    app:cardBackgroundColor="@color/todo_background_card"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="16dp"
+    app:cardCornerRadius="16dp">
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        
+        <TextView
+            android:id="@+id/tvNombrePlato"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="Prueba"/>
+    </LinearLayout>
 
-    <!-- Tarjeta circular -->
-    <androidx.cardview.widget.CardView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        app:cardCornerRadius="50dp"
-        app:cardElevation="2dp"
-        app:cardPreventCornerOverlap="false">
-
-        <ImageView
-            android:id="@+id/ivPlato"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/fondo_menu" />
-
-    </androidx.cardview.widget.CardView>
-
-    <!-- Texto centrado en blanco -->
-    <TextView
-        android:id="@+id/tvNombrePlato"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/menu_carta_entradas"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        android:textStyle="normal" />
-
-</LinearLayout>
+</androidx.cardview.widget.CardView>
