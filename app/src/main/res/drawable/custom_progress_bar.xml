@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 1. Fondo de la barra (Oscuro translúcido) -->
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <corners android:radius="20dp" />
+            <solid android:color="#33000000" />
+        </shape>
+    </item>
+
+    <!-- 2. Progreso Rojo Gastronómico -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="20dp" />
+                <solid android:color="#A61218" />
+            </shape>
+        </clip>
+    </item>
+
+</layer-list>

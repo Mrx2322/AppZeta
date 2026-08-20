@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.appzetar.Menu.ActivityMenu
+import com.example.appzetar.splash.SplashActivity
 import kotlin.jvm.java
 
 class MainActivity : AppCompatActivity() {
@@ -24,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         btnInicio.setOnClickListener { navigateToIngresar() }
     }
     private fun navigateToIngresar() {
-        val intent = Intent(this, ActivityMenu::class.java)
+        val intent = Intent(this, SplashActivity::class.java)
         startActivity(intent)
     }
 

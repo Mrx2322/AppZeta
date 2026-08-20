@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppZetaR">
+        <!-- PANTALLA 1: Tu bienvenida actual (ZETA RESTAURANTE) -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -21,6 +22,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- PANTALLA 2: La pantalla de carga con la barra de progreso -->
+        <activity
+            android:name=".splash.SplashActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Menu.ActivityMenu"
             android:exported="false"
