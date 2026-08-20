@@ -28,5 +28,4 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, SplashActivity::class.java)
         startActivity(intent)
     }
-
 }
