@@ -9,7 +9,7 @@
     <color name="white">#FFFFFFFF</color>
 
     <!--AppZeta-->
-    <color name="todo_background_card">#FF081A4A</color>
+    <color name="todo_background_card">#82b5ff</color>
     <color name="todo_background_disabled">#787878</color>
     <color name="todo_background_todo_app">#FF2D4993</color>
     <color name="todo_subtitle_text">#959595</color>
