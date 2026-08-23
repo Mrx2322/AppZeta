@@ -11,26 +11,27 @@ class EntradasViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val tvEntradasName: TextView = view.findViewById(R.id.tvNombrePlato)
     private val divider: View = view.findViewById(R.id.divider)
 
-    fun render(taskEntradas: TaskEntradas){
+    // Agregamos 'onItemClick' como segundo parámetro
+    fun render(taskEntradas: TaskEntradas, onItemClick: (Int) -> Unit) {
+        // Muestra el nombre personalizado
+        tvEntradasName.text = taskEntradas.nombre
 
-        when(taskEntradas){
-            TaskEntradas.ceviche -> {
-                tvEntradasName.text = "Ceviche"
-                divider.setBackgroundColor(
-                    ContextCompat.getColor(divider.context, R.color.black)
-                )
+        when (taskEntradas) {
+            is TaskEntradas.Ceviche -> {
+                divider.setBackgroundColor(ContextCompat.getColor(divider.context, R.color.black))
             }
-            TaskEntradas.huancaina -> {
-                tvEntradasName.text = "Huancaina"
-                divider.setBackgroundColor(
-                    ContextCompat.getColor(divider.context, R.color.todo_business_category)
-                )
+            is TaskEntradas.Huancaina -> {
+                divider.setBackgroundColor(ContextCompat.getColor(divider.context, R.color.todo_business_category))
             }
-            TaskEntradas.otros -> {
-                tvEntradasName.text = "Otros"
-                divider.setBackgroundColor(
-                    ContextCompat.getColor(divider.context, R.color.todo_background_todo_app)
-                )
+            is TaskEntradas.Otros -> {
+                divider.setBackgroundColor(ContextCompat.getColor(divider.context, R.color.todo_background_todo_app))
+            }
+        }
+
+        itemView.setOnClickListener {
+            val position = adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                onItemClick(position)
             }
         }
     }

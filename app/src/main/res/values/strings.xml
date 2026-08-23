@@ -2,9 +2,9 @@
     <string name="app_name">AppZetaR</string>
 
     <!--TodoApp-->
-    <string name="todo_title">Bienvenido a ZetaRestaurant</string>
+    <string name="todo_title">Bienvenido...</string>
     <string name="todo_categories">Popular Entradas:</string>
-    <string name="todo_tasks">Tareas:</string>
+    <string name="todo_Menu">Menu</string>
     <string name="Ingresar">INGRESAR</string>
     <string name="menu_carta_entradas">Tallarines</string>
 

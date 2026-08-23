@@ -6,8 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
 
-class EntradasAdapter(private val entradas: List<TaskEntradas>) :
-    RecyclerView.Adapter<EntradasViewHolder>() {
+class EntradasAdapter(
+    var entradas: MutableList<TaskEntradas>, // Cambiado a MutableList
+    private val onItemClick: (Int) -> Unit  // Nuevo callback
+) : RecyclerView.Adapter<EntradasViewHolder>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -21,7 +23,8 @@ class EntradasAdapter(private val entradas: List<TaskEntradas>) :
         holder: EntradasViewHolder,
         position: Int
     ) {
-        holder.render(entradas[position])
+        // Le pasamos el onItemClick al ViewHolder
+        holder.render(entradas[position], onItemClick)
     }
 
     override fun getItemCount() = entradas.size
