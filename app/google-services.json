@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "195727566384",
+    "project_id": "appzeta-f919f",
+    "storage_bucket": "appzeta-f919f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:195727566384:android:b3b792a0e8679a02a52ff5",
+        "android_client_info": {
+          "package_name": "com.example.appzetar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJIO-beZMW_80leMyMj6AOLSVYOJBCTgM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
