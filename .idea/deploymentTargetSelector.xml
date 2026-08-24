@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-08-19T17:16:57.191216Z">
+        <DropdownSelection timestamp="2026-08-24T16:14:39.710683900Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\deivis.ruiz\.android\avd\Iphone.avd" />
@@ -40,12 +40,12 @@
           </targets>
         </DialogSelection>
       </SelectionState>
-      <SelectionState runConfigName="main">
+      <SelectionState runConfigName="androidTest">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-08-19T17:16:57.191216Z">
+        <DropdownSelection timestamp="2026-08-23T13:59:54.300650100Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\deivis.ruiz\.android\avd\Iphone.avd" />
+              <DeviceId pluginId="Wireless" identifier="serviceName=adb-R8YY926W58H-i91pxb" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -59,12 +59,12 @@
           </targets>
         </DialogSelection>
       </SelectionState>
-      <SelectionState runConfigName="androidTest">
+      <SelectionState runConfigName="main">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-08-23T13:59:54.300650100Z">
+        <DropdownSelection timestamp="2026-08-19T17:16:57.191216Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="Wireless" identifier="serviceName=adb-R8YY926W58H-i91pxb" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\deivis.ruiz\.android\avd\Iphone.avd" />
             </handle>
           </Target>
         </DropdownSelection>
