@@ -24,15 +24,7 @@ class ActivityMenu : AppCompatActivity() {
 
     private val db = FirebaseFirestore.getInstance()
 
-    private val prefs by lazy {
-        getSharedPreferences("menu_prefs", MODE_PRIVATE)
-    }
-
-    private val entradas = mutableListOf(
-        TaskEntradas.Ceviche(),
-        TaskEntradas.Huancaina(),
-        TaskEntradas.Otros()
-    )
+    private val entradas = mutableListOf<TaskEntradas>()
 
     // Empieza vacía. Los datos vienen de Firebase.
     private val listaMenu = mutableListOf<TaskMenu>()
@@ -72,6 +64,7 @@ class ActivityMenu : AppCompatActivity() {
         initComponent()
         initUI()
         cargarDatosDesdeFirebase()
+        cargarEntradasDesdeFirebase()
     }
 
     private fun initComponent() {
@@ -115,8 +108,37 @@ class ActivityMenu : AppCompatActivity() {
 
         // Botón agregar
         fabAgregarMenu.setOnClickListener {
-            mostrarDialogoAgregarMenu()
+            mostrarDialogoSeleccionarTipo()
         }
+    }
+
+    // ---------------------------------------------------------
+    // MMOSTRAR SELECCIÓN
+    // -------------------------------------------------------
+    private fun mostrarDialogoSeleccionarTipo() {
+
+        val opciones = arrayOf(
+            "Plato del menú",
+            "Entrada"
+        )
+
+        AlertDialog.Builder(this)
+            .setTitle("¿Qué deseas agregar?")
+            .setItems(opciones) { _, cual ->
+
+                when (cual) {
+
+                    0 -> {
+                        mostrarDialogoAgregarMenu()
+                    }
+
+                    1 -> {
+                        mostrarDialogoAgregarEntrada()
+                    }
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     // ---------------------------------------------------------
@@ -152,22 +174,149 @@ class ActivityMenu : AppCompatActivity() {
 
             val nuevoNombre = etNombre.text.toString().trim()
 
-            if (nuevoNombre.isNotEmpty()) {
-
-                val nuevoId =
-                    (listaMenu.maxOfOrNull { it.id } ?: 0) + 1
-                val nuevoPlato =
-                    TaskMenu(nuevoId, nuevoNombre)
-                listaMenu.add(nuevoPlato)
-                menuAdapter.notifyItemInserted(
-                    listaMenu.size - 1
-                )
-                guardarMenuEnFirebase()
-                dialog.dismiss()
-
-            } else {
+            if (nuevoNombre.isEmpty()) {
                 etNombre.error = "Escribe un nombre válido"
+                return@setOnClickListener
             }
+
+            // Obtener el siguiente ID
+            val nuevoId =
+                (listaMenu.maxOfOrNull { it.id } ?: 0) + 1
+
+            // Datos que se guardarán en Firebase
+            val datos = hashMapOf(
+                "id" to nuevoId,
+                "nombre" to nuevoNombre
+            )
+
+            // Guardar SOLO el nuevo plato en Firebase
+            db.collection("menu")
+                .document(nuevoId.toString())
+                .set(datos)
+                .addOnSuccessListener {
+
+                    // Crear el objeto local
+                    val nuevoPlato =
+                        TaskMenu(nuevoId, nuevoNombre)
+
+                    // Agregarlo a la lista
+                    listaMenu.add(nuevoPlato)
+
+                    // Actualizar RecyclerView
+                    menuAdapter.notifyItemInserted(
+                        listaMenu.size - 1
+                    )
+
+                    android.util.Log.d(
+                        "FIREBASE",
+                        "Plato agregado: $nuevoNombre"
+                    )
+
+                    dialog.dismiss()
+                }
+                .addOnFailureListener { error ->
+
+                    android.util.Log.e(
+                        "FIREBASE",
+                        "Error agregando plato",
+                        error
+                    )
+
+                    etNombre.error =
+                        "No se pudo guardar el plato"
+                }
+        }
+    }
+
+    private fun mostrarDialogoAgregarEntrada() {
+
+        val dialogView = LayoutInflater.from(this)
+            .inflate(R.layout.dialog_agregar_entrada, null)
+
+        val etNombre =
+            dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(
+                R.id.etNombreEntrada
+            )
+
+        val switchDisponible =
+            dialogView.findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(
+                R.id.switchDisponible
+            )
+
+        switchDisponible.isChecked = true
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setPositiveButton("Agregar", null)
+            .setNegativeButton("Cancelar", null)
+            .create()
+
+        dialog.window?.setBackgroundDrawable(
+            android.graphics.Color.TRANSPARENT.toDrawable()
+        )
+
+        dialog.show()
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+
+            val nuevoNombre = etNombre.text.toString().trim()
+            val disponible = switchDisponible.isChecked
+
+            if (nuevoNombre.isEmpty()) {
+
+                etNombre.error = "Escribe un nombre válido"
+                return@setOnClickListener
+            }
+
+            // Buscar el siguiente ID
+            val nuevoId =
+                (entradas.maxOfOrNull { it.id } ?: 0) + 1
+
+            val datos = hashMapOf(
+                "id" to nuevoId,
+                "nombre" to nuevoNombre,
+                "disponible" to disponible
+            )
+
+            // Guardar en Firebase
+            db.collection("entradas")
+                .document(nuevoId.toString())
+                .set(datos)
+                .addOnSuccessListener {
+
+                    // Crear la nueva entrada
+                    val nuevaEntrada =
+                        TaskEntradas.Otros(
+                            nuevoId,
+                            nuevoNombre,
+                            disponible
+                        )
+
+                    entradas.add(nuevaEntrada)
+
+                    // Actualizar RecyclerView
+                    entradasAdapter.notifyItemInserted(
+                        entradas.size - 1
+                    )
+
+                    android.util.Log.d(
+                        "FIREBASE",
+                        "Entrada agregada: $nuevoNombre"
+                    )
+
+                    dialog.dismiss()
+                }
+                .addOnFailureListener { error ->
+
+                    android.util.Log.e(
+                        "FIREBASE",
+                        "Error agregando entrada",
+                        error
+                    )
+
+                    etNombre.error =
+                        "No se pudo guardar la entrada"
+                }
         }
     }
 
@@ -187,7 +336,14 @@ class ActivityMenu : AppCompatActivity() {
                 R.id.etNombrePlato
             )
 
+        val switchDisponible =
+            dialogView.findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(
+                R.id.switchDisponible
+            )
+
+        // Mostrar datos actuales
         etNombre.setText(entradaActual.nombre)
+        switchDisponible.isChecked = entradaActual.disponible
 
         val dialog = AlertDialog.Builder(this)
             .setView(dialogView)
@@ -204,21 +360,50 @@ class ActivityMenu : AppCompatActivity() {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
 
             val nuevoNombre = etNombre.text.toString().trim()
+            val nuevaDisponibilidad = switchDisponible.isChecked
 
-            if (nuevoNombre.isNotEmpty()) {
+            if (nuevoNombre.isEmpty()) {
 
-                entradaActual.nombre = nuevoNombre
-
-                entradasAdapter.notifyItemChanged(posicion)
-
-                // Por ahora no guardamos entradas en Firebase
-                // porque tu colección actual es "menu".
-
-                dialog.dismiss()
-
-            } else {
                 etNombre.error = "Escribe un nombre válido"
+                return@setOnClickListener
             }
+
+            val datosActualizados = hashMapOf(
+                "id" to entradaActual.id,
+                "nombre" to nuevoNombre,
+                "disponible" to nuevaDisponibilidad
+            )
+
+            db.collection("entradas")
+                .document(entradaActual.id.toString())
+                .set(datosActualizados)
+                .addOnSuccessListener {
+
+                    // Actualizar datos locales
+                    entradaActual.nombre = nuevoNombre
+                    entradaActual.disponible = nuevaDisponibilidad
+
+                    // Actualizar RecyclerView
+                    entradasAdapter.notifyItemChanged(posicion)
+
+                    android.util.Log.d(
+                        "FIREBASE",
+                        "Entrada actualizada: $nuevoNombre"
+                    )
+
+                    dialog.dismiss()
+                }
+                .addOnFailureListener { error ->
+
+                    android.util.Log.e(
+                        "FIREBASE",
+                        "Error actualizando entrada",
+                        error
+                    )
+
+                    etNombre.error =
+                        "No se pudo actualizar la entrada"
+                }
         }
     }
 
@@ -256,19 +441,48 @@ class ActivityMenu : AppCompatActivity() {
 
             val nuevoNombre = etNombre.text.toString().trim()
 
-            if (nuevoNombre.isNotEmpty()) {
+            if (nuevoNombre.isEmpty()) {
 
-                itemActual.name = nuevoNombre
-
-                menuAdapter.notifyItemChanged(posicion)
-
-                guardarMenuEnFirebase()
-
-                dialog.dismiss()
-
-            } else {
                 etNombre.error = "Escribe un nombre válido"
+                return@setOnClickListener
             }
+
+            // Datos actualizados
+            val datosActualizados = hashMapOf(
+                "id" to itemActual.id,
+                "nombre" to nuevoNombre
+            )
+
+            // Actualizar SOLO este plato en Firebase
+            db.collection("menu")
+                .document(itemActual.id.toString())
+                .set(datosActualizados)
+                .addOnSuccessListener {
+
+                    // Actualizar el objeto local
+                    itemActual.name = nuevoNombre
+
+                    // Actualizar RecyclerView
+                    menuAdapter.notifyItemChanged(posicion)
+
+                    android.util.Log.d(
+                        "FIREBASE",
+                        "Plato actualizado: $nuevoNombre"
+                    )
+
+                    dialog.dismiss()
+                }
+                .addOnFailureListener { error ->
+
+                    android.util.Log.e(
+                        "FIREBASE",
+                        "Error actualizando plato",
+                        error
+                    )
+
+                    etNombre.error =
+                        "No se pudo actualizar el plato"
+                }
         }
     }
 
@@ -303,40 +517,6 @@ class ActivityMenu : AppCompatActivity() {
     }
 
     // ---------------------------------------------------------
-    // GUARDAR MENÚ EN FIREBASE
-    // ---------------------------------------------------------
-
-    private fun guardarMenuEnFirebase() {
-
-        for (plato in listaMenu) {
-
-            val datos = hashMapOf(
-                "id" to plato.id,
-                "nombre" to plato.name
-            )
-
-            db.collection("menu")
-                .document(plato.id.toString())
-                .set(datos)
-                .addOnSuccessListener {
-
-                    android.util.Log.d(
-                        "FIREBASE",
-                        "Plato guardado: ${plato.name}"
-                    )
-                }
-                .addOnFailureListener { error ->
-
-                    android.util.Log.e(
-                        "FIREBASE",
-                        "Error guardando plato",
-                        error
-                    )
-                }
-        }
-    }
-
-    // ---------------------------------------------------------
     // CARGAR MENÚ DESDE FIREBASE
     // ---------------------------------------------------------
 
@@ -354,35 +534,51 @@ class ActivityMenu : AppCompatActivity() {
 
                 listaMenu.clear()
 
-                if (
-                    resultado.isEmpty &&
-                    !prefs.getBoolean(
-                        "menu_inicializado",
-                        false
-                    )
-                ) {
+                if (resultado.isEmpty) {
 
-                    // Primera ejecución
+                    // Firebase está vacío.
+                    // Crear menú inicial.
                     val platosIniciales = listOf(
                         TaskMenu(1, "Lomo Saltado"),
                         TaskMenu(2, "Arroz con Mariscos"),
                         TaskMenu(3, "Ají de Gallina")
                     )
 
+                    // Agregar a la lista local
                     listaMenu.addAll(platosIniciales)
 
-                    guardarMenuEnFirebase()
+                    // Guardar cada plato directamente en Firebase
+                    for (plato in platosIniciales) {
 
-                    prefs.edit()
-                        .putBoolean(
-                            "menu_inicializado",
-                            true
+                        val datos = hashMapOf(
+                            "id" to plato.id,
+                            "nombre" to plato.name
                         )
-                        .apply()
+
+                        db.collection("menu")
+                            .document(plato.id.toString())
+                            .set(datos)
+                            .addOnSuccessListener {
+
+                                android.util.Log.d(
+                                    "FIREBASE",
+                                    "Plato inicial guardado: ${plato.name}"
+                                )
+                            }
+                            .addOnFailureListener { error ->
+
+                                android.util.Log.e(
+                                    "FIREBASE",
+                                    "Error guardando plato inicial",
+                                    error
+                                )
+                            }
+                    }
 
                 } else {
 
-                    // Cargar datos existentes
+                    // Firebase ya tiene datos.
+                    // Cargar los platos existentes.
                     for (documento in resultado) {
 
                         val id =
@@ -405,6 +601,7 @@ class ActivityMenu : AppCompatActivity() {
                     }
                 }
 
+                // Actualizar RecyclerView
                 menuAdapter.notifyDataSetChanged()
 
                 // Ocultar ProgressBar
@@ -426,6 +623,123 @@ class ActivityMenu : AppCompatActivity() {
 
                 // Mostrar RecyclerView
                 rvMenu.visibility = View.VISIBLE
+            }
+    }
+
+    // ---------------------------------------------------------
+// CARGAR ENTRADAS DESDE FIREBASE
+// ---------------------------------------------------------
+
+    private fun cargarEntradasDesdeFirebase() {
+
+        db.collection("entradas")
+            .get()
+            .addOnSuccessListener { resultado ->
+
+                entradas.clear()
+
+                if (resultado.isEmpty) {
+
+                    // Firebase está vacío.
+                    // Crear entradas iniciales.
+                    val entradasIniciales = listOf(
+                        TaskEntradas.Ceviche(),
+                        TaskEntradas.Huancaina(),
+                        TaskEntradas.Otros()
+                    )
+
+                    entradas.addAll(entradasIniciales)
+
+                    // Guardar cada entrada en Firebase
+                    for (entrada in entradasIniciales) {
+
+                        val datos = hashMapOf(
+                            "id" to entrada.id,
+                            "nombre" to entrada.nombre,
+                            "disponible" to entrada.disponible
+                        )
+
+                        db.collection("entradas")
+                            .document(entrada.id.toString())
+                            .set(datos)
+                            .addOnSuccessListener {
+
+                                android.util.Log.d(
+                                    "FIREBASE",
+                                    "Entrada inicial guardada: ${entrada.nombre}"
+                                )
+                            }
+                            .addOnFailureListener { error ->
+
+                                android.util.Log.e(
+                                    "FIREBASE",
+                                    "Error guardando entrada inicial",
+                                    error
+                                )
+                            }
+                    }
+
+                } else {
+
+                    // Firebase ya tiene entradas.
+                    // Cargar los datos existentes.
+                    for (documento in resultado) {
+
+                        val id =
+                            documento.getLong("id")?.toInt()
+                                ?: 0
+
+                        val nombre =
+                            documento.getString("nombre")
+                                ?: ""
+
+                        val disponible =
+                            documento.getBoolean("disponible")
+                                ?: true
+
+                        if (nombre.isNotEmpty()) {
+
+                            val entrada = when (id) {
+
+                                1 -> TaskEntradas.Ceviche(
+                                    id,
+                                    nombre,
+                                    disponible
+                                )
+
+                                2 -> TaskEntradas.Huancaina(
+                                    id,
+                                    nombre,
+                                    disponible
+                                )
+
+                                else -> TaskEntradas.Otros(
+                                    id,
+                                    nombre,
+                                    disponible
+                                )
+                            }
+
+                            entradas.add(entrada)
+                        }
+                    }
+                }
+
+                // Actualizar RecyclerView
+                entradasAdapter.notifyDataSetChanged()
+
+                android.util.Log.d(
+                    "FIREBASE",
+                    "Entradas cargadas: ${entradas.size}"
+                )
+            }
+            .addOnFailureListener { error ->
+
+                android.util.Log.e(
+                    "FIREBASE",
+                    "Error cargando entradas",
+                    error
+                )
             }
     }
 }

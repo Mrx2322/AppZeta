@@ -15,7 +15,6 @@
         android:orientation="vertical"
         android:padding="28dp">
 
-        <!-- Círculo con ícono -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="56dp"
             android:layout_height="56dp"
@@ -30,33 +29,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="✏️"
+                android:text="🥗"
                 android:textSize="22sp" />
+
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Título -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Editar Entrada"
+            android:text="Nueva Entrada"
             android:textAlignment="center"
             android:textColor="#1D1B20"
             android:textSize="22sp"
             android:textStyle="bold" />
 
-        <!-- Subtítulo -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:text="Modifica los datos de esta entrada"
+            android:text="Ingresa los datos de la nueva entrada"
             android:textAlignment="center"
             android:textColor="#49454F"
             android:textSize="14sp" />
 
-        <!-- Nombre -->
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilNombrePlato"
+            android:id="@+id/tilNombreEntrada"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -67,7 +64,7 @@
             app:boxCornerRadiusTopStart="16dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etNombrePlato"
+                android:id="@+id/etNombreEntrada"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Nombre de la entrada"
@@ -78,7 +75,6 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Disponibilidad -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -104,7 +100,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="Indica si esta entrada está disponible"
+                    android:text="Disponible para los clientes"
                     android:textColor="#49454F"
                     android:textSize="13sp" />
 

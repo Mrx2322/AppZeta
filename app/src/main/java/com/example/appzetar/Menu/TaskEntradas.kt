@@ -1,7 +1,26 @@
 package com.example.appzetar.Menu
 
-sealed class TaskEntradas(var nombre: String) {
-    class Ceviche(nombre: String = "Ceviche") : TaskEntradas(nombre)
-    class Huancaina(nombre: String = "Huancaína") : TaskEntradas(nombre)
-    class Otros(nombre: String = "Otros") : TaskEntradas(nombre)
+sealed class TaskEntradas(
+    var id: Int,
+    var nombre: String,
+    var disponible: Boolean
+) {
+
+    class Ceviche(
+        id: Int = 1,
+        nombre: String = "Ceviche",
+        disponible: Boolean = true
+    ) : TaskEntradas(id, nombre, disponible)
+
+    class Huancaina(
+        id: Int = 2,
+        nombre: String = "Huancaína",
+        disponible: Boolean = true
+    ) : TaskEntradas(id, nombre, disponible)
+
+    class Otros(
+        id: Int = 3,
+        nombre: String = "Otros",
+        disponible: Boolean = true
+    ) : TaskEntradas(id, nombre, disponible)
 }
