@@ -17,6 +17,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
+import android.content.Intent
+import android.widget.Button
+import com.example.appzetar.Usuario.ActivityMenuUsuario
 
 class ActivityMenu : AppCompatActivity() {
 
@@ -75,6 +78,7 @@ class ActivityMenu : AppCompatActivity() {
     }
 
     private fun initUI() {
+        val btnUsuario = findViewById<Button>(R.id.btnUsuario)
 
         // Adaptador Entradas
         entradasAdapter = EntradasAdapter(entradas) { posicion ->
@@ -109,6 +113,16 @@ class ActivityMenu : AppCompatActivity() {
         // Botón agregar
         fabAgregarMenu.setOnClickListener {
             mostrarDialogoSeleccionarTipo()
+        }
+
+        btnUsuario.setOnClickListener {
+
+            val intent = Intent(
+                this,
+                ActivityMenuUsuario::class.java
+            )
+
+            startActivity(intent)
         }
     }
 
@@ -579,106 +593,54 @@ class ActivityMenu : AppCompatActivity() {
 
     private fun cargarDatosDesdeFirebase() {
 
-        // Mostrar carga
         progressBarMenu.visibility = View.VISIBLE
-
-        // Ocultar RecyclerView mientras carga
         rvMenu.visibility = View.GONE
 
         db.collection("menu")
-            .get()
-            .addOnSuccessListener { resultado ->
+            .addSnapshotListener { resultado, error ->
+
+                if (error != null) {
+
+                    android.util.Log.e(
+                        "FIREBASE",
+                        "Error escuchando menú",
+                        error
+                    )
+
+                    progressBarMenu.visibility = View.GONE
+                    rvMenu.visibility = View.VISIBLE
+
+                    return@addSnapshotListener
+                }
+
+                if (resultado == null) {
+                    return@addSnapshotListener
+                }
 
                 listaMenu.clear()
 
-                if (resultado.isEmpty) {
+                for (documento in resultado) {
 
-                    // Firebase está vacío.
-                    // Crear menú inicial.
-                    val platosIniciales = listOf(
-                        TaskMenu(1, "Lomo Saltado"),
-                        TaskMenu(2, "Arroz con Mariscos"),
-                        TaskMenu(3, "Ají de Gallina")
-                    )
+                    val id =
+                        documento.getLong("id")?.toInt() ?: 0
 
-                    // Agregar a la lista local
-                    listaMenu.addAll(platosIniciales)
+                    val nombre =
+                        documento.getString("nombre") ?: ""
 
-                    // Guardar cada plato directamente en Firebase
-                    for (plato in platosIniciales) {
+                    if (nombre.isNotEmpty()) {
 
-                        val datos = hashMapOf(
-                            "id" to plato.id,
-                            "nombre" to plato.name
-                        )
-
-                        db.collection("menu")
-                            .document(plato.id.toString())
-                            .set(datos)
-                            .addOnSuccessListener {
-
-                                android.util.Log.d(
-                                    "FIREBASE",
-                                    "Plato inicial guardado: ${plato.name}"
-                                )
-                            }
-                            .addOnFailureListener { error ->
-
-                                android.util.Log.e(
-                                    "FIREBASE",
-                                    "Error guardando plato inicial",
-                                    error
-                                )
-                            }
-                    }
-
-                } else {
-
-                    // Firebase ya tiene datos.
-                    // Cargar los platos existentes.
-                    for (documento in resultado) {
-
-                        val id =
-                            documento.getLong("id")?.toInt()
-                                ?: 0
-
-                        val nombre =
-                            documento.getString("nombre")
-                                ?: ""
-
-                        if (nombre.isNotEmpty()) {
-
-                            listaMenu.add(
-                                TaskMenu(
-                                    id,
-                                    nombre
-                                )
+                        listaMenu.add(
+                            TaskMenu(
+                                id,
+                                nombre
                             )
-                        }
+                        )
                     }
                 }
 
-                // Actualizar RecyclerView
                 menuAdapter.notifyDataSetChanged()
 
-                // Ocultar ProgressBar
                 progressBarMenu.visibility = View.GONE
-
-                // Mostrar RecyclerView
-                rvMenu.visibility = View.VISIBLE
-            }
-            .addOnFailureListener { error ->
-
-                android.util.Log.e(
-                    "FIREBASE",
-                    "Error cargando menú",
-                    error
-                )
-
-                // Ocultar ProgressBar
-                progressBarMenu.visibility = View.GONE
-
-                // Mostrar RecyclerView
                 rvMenu.visibility = View.VISIBLE
             }
     }
@@ -687,27 +649,44 @@ class ActivityMenu : AppCompatActivity() {
 // CARGAR ENTRADAS DESDE FIREBASE
 // ---------------------------------------------------------
 
+    // ---------------------------------------------------------
+// CARGAR ENTRADAS DESDE FIREBASE EN TIEMPO REAL
+// ---------------------------------------------------------
+
     private fun cargarEntradasDesdeFirebase() {
 
         db.collection("entradas")
-            .get()
-            .addOnSuccessListener { resultado ->
+            .addSnapshotListener { resultado, error ->
+
+                if (error != null) {
+
+                    android.util.Log.e(
+                        "FIREBASE",
+                        "Error escuchando entradas",
+                        error
+                    )
+
+                    return@addSnapshotListener
+                }
+
+                if (resultado == null) {
+                    return@addSnapshotListener
+                }
 
                 entradas.clear()
 
+                // -------------------------------------------------
+                // SI FIREBASE ESTÁ VACÍO
+                // -------------------------------------------------
+
                 if (resultado.isEmpty) {
 
-                    // Firebase está vacío.
-                    // Crear entradas iniciales.
                     val entradasIniciales = listOf(
                         TaskEntradas.Ceviche(),
                         TaskEntradas.Huancaina(),
                         TaskEntradas.Otros()
                     )
 
-                    entradas.addAll(entradasIniciales)
-
-                    // Guardar cada entrada en Firebase
                     for (entrada in entradasIniciales) {
 
                         val datos = hashMapOf(
@@ -736,27 +715,31 @@ class ActivityMenu : AppCompatActivity() {
                             }
                     }
 
-                } else {
+                    return@addSnapshotListener
+                }
 
-                    // Firebase ya tiene entradas.
-                    // Cargar los datos existentes.
-                    for (documento in resultado) {
+                // -------------------------------------------------
+                // FIREBASE YA TIENE ENTRADAS
+                // -------------------------------------------------
 
-                        val id =
-                            documento.getLong("id")?.toInt()
-                                ?: 0
+                for (documento in resultado) {
 
-                        val nombre =
-                            documento.getString("nombre")
-                                ?: ""
+                    val id =
+                        documento.getLong("id")?.toInt()
+                            ?: 0
 
-                        val disponible =
-                            documento.getBoolean("disponible")
-                                ?: true
+                    val nombre =
+                        documento.getString("nombre")
+                            ?: ""
 
-                        if (nombre.isNotEmpty()) {
+                    val disponible =
+                        documento.getBoolean("disponible")
+                            ?: true
 
-                            val entrada = when (id) {
+                    if (nombre.isNotEmpty()) {
+
+                        val entrada: TaskEntradas =
+                            when (id) {
 
                                 1 -> TaskEntradas.Ceviche(
                                     id,
@@ -777,8 +760,7 @@ class ActivityMenu : AppCompatActivity() {
                                 )
                             }
 
-                            entradas.add(entrada)
-                        }
+                        entradas.add(entrada)
                     }
                 }
 
@@ -787,15 +769,7 @@ class ActivityMenu : AppCompatActivity() {
 
                 android.util.Log.d(
                     "FIREBASE",
-                    "Entradas cargadas: ${entradas.size}"
-                )
-            }
-            .addOnFailureListener { error ->
-
-                android.util.Log.e(
-                    "FIREBASE",
-                    "Error cargando entradas",
-                    error
+                    "Entradas actualizadas en tiempo real: ${entradas.size}"
                 )
             }
     }

@@ -33,7 +33,7 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".MenUsuario.ActivityMenuUsuario"
+            android:name=".Usuario.ActivityMenuUsuario"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
     </application>
