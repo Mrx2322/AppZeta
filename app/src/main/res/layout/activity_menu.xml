@@ -57,6 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="32dp"
                 android:layout_marginTop="30dp"
+                android:layout_marginBottom="15dp"
                 android:fontFamily="sans-serif-smallcaps"
                 android:text="@string/todo_Menu"
                 android:textColor="#fff"
