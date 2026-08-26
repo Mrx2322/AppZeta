@@ -348,7 +348,7 @@ class ActivityMenu : AppCompatActivity() {
         val dialog = AlertDialog.Builder(this)
             .setView(dialogView)
             .setPositiveButton("Guardar", null)
-            .setNegativeButton("Cancelar", null)
+            .setNegativeButton("Eliminar", null)
             .create()
 
         dialog.window?.setBackgroundDrawable(
@@ -357,6 +357,7 @@ class ActivityMenu : AppCompatActivity() {
 
         dialog.show()
 
+        // BOTÓN GUARDAR
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
 
             val nuevoNombre = etNombre.text.toString().trim()
@@ -379,11 +380,9 @@ class ActivityMenu : AppCompatActivity() {
                 .set(datosActualizados)
                 .addOnSuccessListener {
 
-                    // Actualizar datos locales
                     entradaActual.nombre = nuevoNombre
                     entradaActual.disponible = nuevaDisponibilidad
 
-                    // Actualizar RecyclerView
                     entradasAdapter.notifyItemChanged(posicion)
 
                     android.util.Log.d(
@@ -405,7 +404,65 @@ class ActivityMenu : AppCompatActivity() {
                         "No se pudo actualizar la entrada"
                 }
         }
+
+        // BOTÓN ELIMINAR
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
+
+            AlertDialog.Builder(this)
+                .setTitle("Eliminar entrada")
+                .setMessage(
+                    "¿Estás seguro de que deseas eliminar \"${entradaActual.nombre}\"?"
+                )
+                .setNegativeButton("Cancelar", null)
+                .setPositiveButton("Eliminar") { _, _ ->
+
+                    eliminarEntradaDeFirebase(
+                        entradaActual,
+                        posicion,
+                        dialog
+                    )
+                }
+                .show()
+        }
     }
+
+    // ---------------------------------------------------------
+    // ELIMINAR ENTRADA
+    // ---------------------------------------------------------
+    private fun eliminarEntradaDeFirebase(
+        entrada: TaskEntradas,
+        posicion: Int,
+        dialog: AlertDialog
+    ) {
+
+        db.collection("entradas")
+            .document(entrada.id.toString())
+            .delete()
+            .addOnSuccessListener {
+
+                // Eliminar de la lista local
+                entradas.removeAt(posicion)
+
+                // Actualizar RecyclerView
+                entradasAdapter.notifyItemRemoved(posicion)
+
+                android.util.Log.d(
+                    "FIREBASE",
+                    "Entrada eliminada: ${entrada.nombre}"
+                )
+
+                dialog.dismiss()
+            }
+            .addOnFailureListener { error ->
+
+                android.util.Log.e(
+                    "FIREBASE",
+                    "Error eliminando entrada",
+                    error
+                )
+            }
+    }
+
 
     // ---------------------------------------------------------
     // EDITAR MENÚ
