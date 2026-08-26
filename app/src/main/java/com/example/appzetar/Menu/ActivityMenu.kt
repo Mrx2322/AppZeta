@@ -3,6 +3,7 @@ package com.example.appzetar.Menu
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
 import android.widget.ProgressBar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
@@ -45,6 +46,10 @@ class ActivityMenu : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
         setContentView(R.layout.activity_menu)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -117,7 +122,7 @@ class ActivityMenu : AppCompatActivity() {
     private fun mostrarDialogoAgregarMenu() {
 
         val dialogView = LayoutInflater.from(this)
-            .inflate(R.layout.dialog_editar_entrada, null)
+            .inflate(R.layout.dialog_agregar_menu, null)
 
         val etNombre =
             dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(
@@ -147,18 +152,13 @@ class ActivityMenu : AppCompatActivity() {
 
                 val nuevoId =
                     (listaMenu.maxOfOrNull { it.id } ?: 0) + 1
-
                 val nuevoPlato =
                     TaskMenu(nuevoId, nuevoNombre)
-
                 listaMenu.add(nuevoPlato)
-
                 menuAdapter.notifyItemInserted(
                     listaMenu.size - 1
                 )
-
                 guardarMenuEnFirebase()
-
                 dialog.dismiss()
 
             } else {
@@ -227,7 +227,7 @@ class ActivityMenu : AppCompatActivity() {
         val itemActual = listaMenu[posicion]
 
         val dialogView = LayoutInflater.from(this)
-            .inflate(R.layout.dialog_editar_entrada, null)
+            .inflate(R.layout.dialog_editar_menu, null)
 
         val etNombre =
             dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(

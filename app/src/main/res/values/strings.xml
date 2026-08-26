@@ -3,8 +3,8 @@
 
     <!--TodoApp-->
     <string name="todo_title">Bienvenido...</string>
-    <string name="todo_categories">Popular Entradas:</string>
-    <string name="todo_Menu">Menu</string>
+    <string name="todo_categories">Popular Entradas :</string>
+    <string name="todo_Menu">Menu :</string>
     <string name="Ingresar">INGRESAR</string>
     <string name="menu_carta_entradas">Tallarines</string>
 
@@ -14,6 +14,11 @@
     <string name="todo_dialog_category_other">Otros</string>
     <string name="todo_dialog_category_personal">Personal</string>
     <string name="todo_dialog_add_task_button">Crear tarea</string>
+
+    <!--Card de Menu-->
+    <string name="texto_editar">Editar</string>
+    <string name="texto_eliminar">Eliminar</string>
+    <string name="txt_plato">PLATO</string>
 
 
 </resources>
