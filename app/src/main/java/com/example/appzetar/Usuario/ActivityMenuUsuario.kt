@@ -36,8 +36,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
     // PEDIDO
     // ---------------------------------------------------------
 
-    private val pedido = mutableListOf<PedidoItem>()
-
     // ---------------------------------------------------------
     // LISTAS
     // ---------------------------------------------------------
@@ -204,7 +202,13 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         btnCarrito.setOnClickListener {
 
-            mostrarDialogoPedido()
+            val intent =
+                android.content.Intent(
+                    this,
+                    ActivityPedido::class.java
+                )
+
+            startActivity(intent)
         }
 
 
@@ -275,37 +279,20 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
     private fun agregarAlPedido(plato: TaskMenu) {
 
-        val existente =
-            pedido.find {
-                it.id == plato.id
-            }
-
-        if (existente != null) {
-
-            existente.cantidad++
-
-        } else {
-
-            pedido.add(
-                PedidoItem(
-                    id = plato.id,
-                    nombre = plato.name,
-                    cantidad = 1
-                )
+        PedidoManager.agregarProducto(
+            PedidoItem(
+                id = plato.id,
+                nombre = plato.name,
+                cantidad = 1
             )
-        }
+        )
 
         actualizarContadorCarrito()
 
-        Log.d(
-            "PEDIDO",
-            "Plato agregado: ${plato.name}"
-        )
-
-        Toast.makeText(
+        android.widget.Toast.makeText(
             this,
             "${plato.name} agregado al pedido",
-            Toast.LENGTH_SHORT
+            android.widget.Toast.LENGTH_SHORT
         ).show()
     }
 
@@ -317,9 +304,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
     private fun actualizarContadorCarrito() {
 
         val cantidadTotal =
-            pedido.sumOf {
-                it.cantidad
-            }
+            PedidoManager.cantidadTotal()
 
         tvCantidadCarrito.text =
             cantidadTotal.toString()
@@ -331,233 +316,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 View.GONE
             }
     }
-
-
-    // =========================================================
-    // MOSTRAR PEDIDO
-    // =========================================================
-
-    private fun mostrarDialogoPedido() {
-
-        if (pedido.isEmpty()) {
-
-            AlertDialog.Builder(this)
-                .setTitle("Tu pedido está vacío")
-                .setMessage(
-                    "Agrega algunos platos del menú para comenzar tu pedido."
-                )
-                .setPositiveButton(
-                    "Ver menú",
-                    null
-                )
-                .show()
-
-            return
-        }
-
-        val dialogView =
-            layoutInflater.inflate(
-                R.layout.dialog_pedido,
-                null
-            )
-
-        val tvCantidadProductos =
-            dialogView.findViewById<TextView>(
-                R.id.tvCantidadProductos
-            )
-
-        val contenedorPedido =
-            dialogView.findViewById<LinearLayout>(
-                R.id.contenedorPedido
-            )
-
-        val tvTotalProductos =
-            dialogView.findViewById<TextView>(
-                R.id.tvTotalProductos
-            )
-
-        val btnContinuar =
-            dialogView.findViewById<Button>(
-                R.id.btnContinuarPedido
-            )
-
-        val btnSeguirComprando =
-            dialogView.findViewById<TextView>(
-                R.id.btnSeguirComprando
-            )
-
-
-        val dialog =
-            AlertDialog.Builder(this)
-                .setView(dialogView)
-                .create()
-
-        dialog.window?.setBackgroundDrawable(
-            android.graphics.Color.TRANSPARENT.toDrawable()
-        )
-
-        dialog.show()
-
-
-        // ---------------------------------------------------------
-        // ACTUALIZAR RESUMEN
-        // ---------------------------------------------------------
-
-        fun actualizarResumen() {
-
-            val cantidadTotal =
-                pedido.sumOf {
-                    it.cantidad
-                }
-
-            tvCantidadProductos.text =
-                if (cantidadTotal == 1) {
-                    "1 producto"
-                } else {
-                    "$cantidadTotal productos"
-                }
-
-            tvTotalProductos.text =
-                "$cantidadTotal productos"
-        }
-
-
-        // ---------------------------------------------------------
-        // DIBUJAR PRODUCTOS
-        // ---------------------------------------------------------
-
-        fun mostrarProductos() {
-
-            contenedorPedido.removeAllViews()
-
-            for (item in pedido) {
-
-                val itemView =
-                    layoutInflater.inflate(
-                        R.layout.item_dialog_pedido,
-                        contenedorPedido,
-                        false
-                    )
-
-                val tvNombre =
-                    itemView.findViewById<TextView>(
-                        R.id.tvNombreProducto
-                    )
-
-                val tvCantidad =
-                    itemView.findViewById<TextView>(
-                        R.id.tvCantidadProducto
-                    )
-
-                val tvCantidadNumero =
-                    itemView.findViewById<TextView>(
-                        R.id.tvCantidad
-                    )
-
-                val btnRestar =
-                    itemView.findViewById<TextView>(
-                        R.id.btnRestar
-                    )
-
-                val btnSumar =
-                    itemView.findViewById<TextView>(
-                        R.id.btnSumar
-                    )
-
-
-                tvNombre.text =
-                    item.nombre
-
-                tvCantidad.text =
-                    "Cantidad: ${item.cantidad}"
-
-                tvCantidadNumero.text =
-                    item.cantidad.toString()
-
-
-                // -------------------------------------------------
-                // RESTAR
-                // -------------------------------------------------
-
-                btnRestar.setOnClickListener {
-
-                    if (item.cantidad > 1) {
-
-                        item.cantidad--
-
-                    } else {
-
-                        pedido.remove(item)
-                    }
-
-                    actualizarContadorCarrito()
-
-                    if (pedido.isEmpty()) {
-
-                        dialog.dismiss()
-
-                    } else {
-
-                        mostrarProductos()
-                        actualizarResumen()
-                    }
-                }
-
-
-                // -------------------------------------------------
-                // SUMAR
-                // -------------------------------------------------
-
-                btnSumar.setOnClickListener {
-
-                    item.cantidad++
-
-                    actualizarContadorCarrito()
-
-                    mostrarProductos()
-                    actualizarResumen()
-                }
-
-
-                contenedorPedido.addView(itemView)
-            }
-        }
-
-
-        // ---------------------------------------------------------
-        // CARGAR PRODUCTOS
-        // ---------------------------------------------------------
-
-        mostrarProductos()
-        actualizarResumen()
-
-
-        // ---------------------------------------------------------
-        // SEGUIR COMPRANDO
-        // ---------------------------------------------------------
-
-        btnSeguirComprando.setOnClickListener {
-
-            dialog.dismiss()
-        }
-
-
-        // ---------------------------------------------------------
-        // CONTINUAR PEDIDO
-        // ---------------------------------------------------------
-
-        btnContinuar.setOnClickListener {
-
-            Toast.makeText(
-                this,
-                "Próximamente: confirmar pedido",
-                Toast.LENGTH_SHORT
-            ).show()
-
-            dialog.dismiss()
-        }
-    }
-
 
     // =========================================================
     // CARGAR DATOS

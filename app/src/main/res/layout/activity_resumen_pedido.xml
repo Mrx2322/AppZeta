@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F7F7"
+
+    tools:context=".Usuario.ActivityResumenPedido">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingTop="35dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="40dp">
+
+            <!-- TÍTULO -->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Confirmar pedido"
+                android:textColor="#202020"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="25dp"
+                android:text="Revisa tus datos antes de confirmar"
+                android:textColor="#777777"
+                android:textSize="15sp" />
+
+            <!-- DATOS DEL CLIENTE -->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Datos de entrega"
+                android:textColor="#202020"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvNombreCliente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textColor="#444444"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tvTelefonoCliente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="#444444"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tvDireccionCliente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="#444444"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tvObservacionCliente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="#777777"
+                android:textSize="15sp" />
+
+            <!-- PEDIDO -->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Tu pedido"
+                android:textColor="#202020"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvResumenPedido"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:nestedScrollingEnabled="false" />
+
+            <!-- TOTAL -->
+
+            <TextView
+                android:id="@+id/tvTotalProductos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="end"
+                android:text="0 productos"
+                android:textColor="#202020"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- CONFIRMAR -->
+
+            <Button
+                android:id="@+id/btnConfirmarPedido"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:minHeight="56dp"
+                android:text="Confirmar pedido"
+                android:textAllCaps="false"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:backgroundTint="#FF9800" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</FrameLayout>
