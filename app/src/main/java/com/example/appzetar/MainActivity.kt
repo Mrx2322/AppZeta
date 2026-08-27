@@ -7,25 +7,87 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.appzetar.Menu.ActivityMenu
 import com.example.appzetar.splash.SplashActivity
-import kotlin.jvm.java
+import com.example.appzetar.Usuario.ActivityMenuUsuario
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
+
         setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+            findViewById(R.id.main)
+        ) { v, insets ->
+
+            val systemBars =
+                insets.getInsets(
+                    WindowInsetsCompat.Type.systemBars()
+                )
+
+            v.setPadding(
+                systemBars.left,
+                systemBars.top,
+                systemBars.right,
+                systemBars.bottom
+            )
+
             insets
         }
-        val btnInicio = findViewById<Button>(R.id.btnIngresar)
-        btnInicio.setOnClickListener { navigateToIngresar() }
+
+        // -------------------------------------------------
+        // BOTÓN INGRESAR
+        // -------------------------------------------------
+
+        val btnInicio =
+            findViewById<Button>(R.id.btnIngresar)
+
+        btnInicio.setOnClickListener {
+            navigateToIngresar()
+        }
+
+        // -------------------------------------------------
+        // BOTÓN VISTA USUARIO
+        // -------------------------------------------------
+
+        val btnUsuario =
+            findViewById<Button>(R.id.btnUsuario)
+
+        btnUsuario.setOnClickListener {
+            navigateToUsuario()
+        }
     }
+
+    // ---------------------------------------------------------
+    // IR AL INGRESO / ADMIN
+    // ---------------------------------------------------------
+
     private fun navigateToIngresar() {
-        val intent = Intent(this, SplashActivity::class.java)
+
+        val intent =
+            Intent(
+                this,
+                SplashActivity::class.java
+            )
+
+        startActivity(intent)
+    }
+
+    // ---------------------------------------------------------
+    // IR A LA VISTA USUARIO
+    // ---------------------------------------------------------
+
+    private fun navigateToUsuario() {
+
+        val intent =
+            Intent(
+                this,
+                ActivityMenuUsuario::class.java
+            )
+
         startActivity(intent)
     }
 }

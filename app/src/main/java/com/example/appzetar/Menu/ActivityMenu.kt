@@ -17,9 +17,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
-import android.content.Intent
-import android.widget.Button
-import com.example.appzetar.Usuario.ActivityMenuUsuario
 
 class ActivityMenu : AppCompatActivity() {
 
@@ -78,7 +75,6 @@ class ActivityMenu : AppCompatActivity() {
     }
 
     private fun initUI() {
-        val btnUsuario = findViewById<Button>(R.id.btnUsuario)
 
         // Adaptador Entradas
         entradasAdapter = EntradasAdapter(entradas) { posicion ->
@@ -113,16 +109,6 @@ class ActivityMenu : AppCompatActivity() {
         // Botón agregar
         fabAgregarMenu.setOnClickListener {
             mostrarDialogoSeleccionarTipo()
-        }
-
-        btnUsuario.setOnClickListener {
-
-            val intent = Intent(
-                this,
-                ActivityMenuUsuario::class.java
-            )
-
-            startActivity(intent)
         }
     }
 

@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation("androidx.core:core-splashscreen:1.2.0")
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.material3)
     implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
