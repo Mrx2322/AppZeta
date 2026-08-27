@@ -6,25 +6,45 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
 
-class MenuViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class MenuViewHolder(
+    view: View
+) : RecyclerView.ViewHolder(view) {
 
-    val tvNombrePlato: TextView = view.findViewById(R.id.tvMenuPlato)
-    val btnEditar: ImageButton = view.findViewById(R.id.btnEditar)
-    val btnEliminar: ImageButton = view.findViewById(R.id.btnEliminar)
+    val tvNombrePlato: TextView =
+        view.findViewById(R.id.tvMenuPlato)
+
+    val btnEditar: ImageButton =
+        view.findViewById(R.id.btnEditar)
+
+    val btnEliminar: ImageButton =
+        view.findViewById(R.id.btnEliminar)
 
     fun render(
         taskMenu: TaskMenu,
         onEditClick: (Int) -> Unit,
         onDeleteClick: (Int) -> Unit
     ) {
+
         tvNombrePlato.text = taskMenu.name
 
+        // EDITAR
         btnEditar.setOnClickListener {
-            onEditClick(adapterPosition)
+
+            val posicion = bindingAdapterPosition
+
+            if (posicion != RecyclerView.NO_POSITION) {
+                onEditClick(posicion)
+            }
         }
 
+        // ELIMINAR
         btnEliminar.setOnClickListener {
-            onDeleteClick(adapterPosition)
+
+            val posicion = bindingAdapterPosition
+
+            if (posicion != RecyclerView.NO_POSITION) {
+                onDeleteClick(posicion)
+            }
         }
     }
 }

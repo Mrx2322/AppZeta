@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityMenuUsuario : AppCompatActivity() {
 
+    private val pedido = mutableListOf<PedidoItem>()
     private val db = FirebaseFirestore.getInstance()
 
     private val entradas = mutableListOf<TaskEntradas>()
@@ -119,14 +120,50 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         // MENÚ
 
-        menuAdapter =
-            MenuUsuarioAdapter(listaMenu)
+        menuAdapter = MenuUsuarioAdapter(listaMenu) { plato ->
+
+            agregarAlPedido(plato)
+
+        }
 
         rvMenu.layoutManager =
             LinearLayoutManager(this)
 
         rvMenu.adapter =
             menuAdapter
+    }
+
+    private fun agregarAlPedido(plato: TaskMenu) {
+
+        val existente = pedido.find {
+            it.id == plato.id
+        }
+
+        if (existente != null) {
+
+            existente.cantidad++
+
+        } else {
+
+            pedido.add(
+                PedidoItem(
+                    id = plato.id,
+                    nombre = plato.name,
+                    cantidad = 1
+                )
+            )
+        }
+
+        android.util.Log.d(
+            "PEDIDO",
+            "Plato agregado: ${plato.name}"
+        )
+
+        android.widget.Toast.makeText(
+            this,
+            "${plato.name} agregado al pedido",
+            android.widget.Toast.LENGTH_SHORT
+        ).show()
     }
 
     // ---------------------------------------------------------

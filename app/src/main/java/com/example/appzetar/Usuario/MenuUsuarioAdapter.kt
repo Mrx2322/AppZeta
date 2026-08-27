@@ -7,7 +7,8 @@ import com.example.appzetar.Menu.TaskMenu
 import com.example.appzetar.R
 
 class MenuUsuarioAdapter(
-    private val listaMenu: MutableList<TaskMenu>
+    private val listaMenu: MutableList<TaskMenu>,
+    private val onAgregarClick: (TaskMenu) -> Unit
 ) : RecyclerView.Adapter<MenuUsuarioViewHolder>() {
 
     override fun onCreateViewHolder(
@@ -17,7 +18,7 @@ class MenuUsuarioAdapter(
 
         val view = LayoutInflater.from(parent.context)
             .inflate(
-                R.layout.item_task_menu,
+                R.layout.item_task_menu_usuario,
                 parent,
                 false
             )
@@ -29,7 +30,10 @@ class MenuUsuarioAdapter(
         holder: MenuUsuarioViewHolder,
         position: Int
     ) {
-        holder.render(listaMenu[position])
+        holder.render(
+            listaMenu[position],
+            onAgregarClick
+        )
     }
 
     override fun getItemCount(): Int {

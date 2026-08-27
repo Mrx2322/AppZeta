@@ -186,10 +186,14 @@ class ActivityMenu : AppCompatActivity() {
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
 
-            val nuevoNombre = etNombre.text.toString().trim()
+            val nuevoNombre =
+                etNombre.text.toString().trim()
 
             if (nuevoNombre.isEmpty()) {
-                etNombre.error = "Escribe un nombre válido"
+
+                etNombre.error =
+                    "Escribe un nombre válido"
+
                 return@setOnClickListener
             }
 
@@ -197,37 +201,40 @@ class ActivityMenu : AppCompatActivity() {
             val nuevoId =
                 (listaMenu.maxOfOrNull { it.id } ?: 0) + 1
 
-            // Datos que se guardarán en Firebase
+            // Datos para Firebase
             val datos = hashMapOf(
                 "id" to nuevoId,
                 "nombre" to nuevoNombre
             )
 
-            // Guardar SOLO el nuevo plato en Firebase
+            // Guardar en Firebase
             db.collection("menu")
                 .document(nuevoId.toString())
                 .set(datos)
+
                 .addOnSuccessListener {
-
-                    // Crear el objeto local
-                    val nuevoPlato =
-                        TaskMenu(nuevoId, nuevoNombre)
-
-                    // Agregarlo a la lista
-                    listaMenu.add(nuevoPlato)
-
-                    // Actualizar RecyclerView
-                    menuAdapter.notifyItemInserted(
-                        listaMenu.size - 1
-                    )
 
                     android.util.Log.d(
                         "FIREBASE",
                         "Plato agregado: $nuevoNombre"
                     )
 
+                    /*
+                     * IMPORTANTE:
+                     *
+                     * NO hacemos:
+                     *
+                     * listaMenu.add(...)
+                     *
+                     * menuAdapter.notifyItemInserted(...)
+                     *
+                     * El addSnapshotListener de cargarDatosDesdeFirebase()
+                     * detectará automáticamente el nuevo documento.
+                     */
+
                     dialog.dismiss()
                 }
+
                 .addOnFailureListener { error ->
 
                     android.util.Log.e(
@@ -277,12 +284,10 @@ class ActivityMenu : AppCompatActivity() {
             val disponible = switchDisponible.isChecked
 
             if (nuevoNombre.isEmpty()) {
-
                 etNombre.error = "Escribe un nombre válido"
                 return@setOnClickListener
             }
 
-            // Buscar el siguiente ID
             val nuevoId =
                 (entradas.maxOfOrNull { it.id } ?: 0) + 1
 
@@ -292,31 +297,22 @@ class ActivityMenu : AppCompatActivity() {
                 "disponible" to disponible
             )
 
-            // Guardar en Firebase
             db.collection("entradas")
                 .document(nuevoId.toString())
                 .set(datos)
                 .addOnSuccessListener {
 
-                    // Crear la nueva entrada
-                    val nuevaEntrada =
-                        TaskEntradas.Otros(
-                            nuevoId,
-                            nuevoNombre,
-                            disponible
-                        )
-
-                    entradas.add(nuevaEntrada)
-
-                    // Actualizar RecyclerView
-                    entradasAdapter.notifyItemInserted(
-                        entradas.size - 1
-                    )
-
                     android.util.Log.d(
                         "FIREBASE",
                         "Entrada agregada: $nuevoNombre"
                     )
+
+                    // IMPORTANTE:
+                    // NO hacemos entradas.add()
+                    // NO hacemos notifyItemInserted()
+                    //
+                    // addSnapshotListener detectará automáticamente
+                    // la nueva entrada.
 
                     dialog.dismiss()
                 }
@@ -432,7 +428,6 @@ class ActivityMenu : AppCompatActivity() {
 
                     eliminarEntradaDeFirebase(
                         entradaActual,
-                        posicion,
                         dialog
                     )
                 }
@@ -445,7 +440,6 @@ class ActivityMenu : AppCompatActivity() {
     // ---------------------------------------------------------
     private fun eliminarEntradaDeFirebase(
         entrada: TaskEntradas,
-        posicion: Int,
         dialog: AlertDialog
     ) {
 
@@ -454,16 +448,13 @@ class ActivityMenu : AppCompatActivity() {
             .delete()
             .addOnSuccessListener {
 
-                // Eliminar de la lista local
-                entradas.removeAt(posicion)
-
-                // Actualizar RecyclerView
-                entradasAdapter.notifyItemRemoved(posicion)
-
                 android.util.Log.d(
                     "FIREBASE",
                     "Entrada eliminada: ${entrada.nombre}"
                 )
+
+                // Firebase actualizará automáticamente
+                // la lista mediante addSnapshotListener.
 
                 dialog.dismiss()
             }
@@ -563,28 +554,40 @@ class ActivityMenu : AppCompatActivity() {
 
     private fun eliminarElementoMenu(posicion: Int) {
 
-        if (posicion != RecyclerView.NO_POSITION) {
-
-            val plato = listaMenu[posicion]
-
-            db.collection("menu")
-                .document(plato.id.toString())
-                .delete()
-                .addOnSuccessListener {
-
-                    listaMenu.removeAt(posicion)
-
-                    menuAdapter.notifyItemRemoved(posicion)
-                }
-                .addOnFailureListener { error ->
-
-                    android.util.Log.e(
-                        "FIREBASE",
-                        "Error eliminando plato",
-                        error
-                    )
-                }
+        if (posicion == RecyclerView.NO_POSITION) {
+            return
         }
+
+        if (posicion < 0 || posicion >= listaMenu.size) {
+            return
+        }
+
+        val plato = listaMenu[posicion]
+
+        db.collection("menu")
+            .document(plato.id.toString())
+            .delete()
+            .addOnSuccessListener {
+
+                android.util.Log.d(
+                    "FIREBASE",
+                    "Plato eliminado: ${plato.name}"
+                )
+
+                // NO eliminar manualmente de listaMenu.
+                // NO usar notifyItemRemoved().
+                //
+                // addSnapshotListener() actualizará
+                // automáticamente el RecyclerView.
+            }
+            .addOnFailureListener { error ->
+
+                android.util.Log.e(
+                    "FIREBASE",
+                    "Error eliminando plato",
+                    error
+                )
+            }
     }
 
     // ---------------------------------------------------------

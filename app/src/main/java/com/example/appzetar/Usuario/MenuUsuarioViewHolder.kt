@@ -1,11 +1,12 @@
 package com.example.appzetar.Usuario
 
 import android.view.View
-import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.Menu.TaskMenu
 import com.example.appzetar.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MenuUsuarioViewHolder(
     view: View
@@ -14,20 +15,37 @@ class MenuUsuarioViewHolder(
     private val tvMenuPlato: TextView =
         view.findViewById(R.id.tvMenuPlato)
 
-    private val btnEditar: ImageButton =
-        view.findViewById(R.id.btnEditar)
+    private val imgPlato: ImageView =
+        view.findViewById(R.id.imgPlato)
 
-    private val btnEliminar: ImageButton =
-        view.findViewById(R.id.btnEliminar)
+    private val tvPrecio: TextView =
+        view.findViewById(R.id.tvPrecio)
 
-    fun render(taskMenu: TaskMenu) {
+    private val btnAgregar: FloatingActionButton =
+        view.findViewById(R.id.btnAgregar)
+
+    fun render(
+        taskMenu: TaskMenu,
+        onAgregarClick: (TaskMenu) -> Unit
+    ) {
 
         tvMenuPlato.text = taskMenu.name
 
-        // El usuario NO tiene permisos de administración
-        btnEditar.visibility = View.GONE
-        btnEliminar.visibility = View.GONE
+        // Imagen provisional
+        imgPlato.setImageResource(
+            R.drawable.fondo_menu
+        )
 
+        // Precio provisional
+        tvPrecio.text = "Precio próximamente"
+
+        // BOTÓN AGREGAR
+        btnAgregar.setOnClickListener {
+            onAgregarClick(taskMenu)
+        }
+
+        // El usuario no tiene funciones administrativas
         itemView.setOnClickListener(null)
     }
 }
+
