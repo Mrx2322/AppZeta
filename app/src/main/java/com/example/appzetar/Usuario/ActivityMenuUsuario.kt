@@ -24,6 +24,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityMenuUsuario : AppCompatActivity() {
 
+    private lateinit var rvCategorias: RecyclerView
+    private lateinit var categoriaAdapter: CategoriaAdapter
+
+    private val categorias = mutableListOf<CategoriaItem>()
+
     // ---------------------------------------------------------
     // FIREBASE
     // ---------------------------------------------------------
@@ -150,6 +155,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         btnCarrito =
             findViewById(R.id.btnCarrito)
+
+        rvCategorias =
+            findViewById(R.id.rvCategorias)
     }
 
 
@@ -330,7 +338,84 @@ class ActivityMenuUsuario : AppCompatActivity() {
         rvMenu.visibility =
             View.GONE
 
+
+        // =====================================================
+        // CATEGORÍAS / EXTRAS
+        // =====================================================
+
+        categorias.clear()
+
+        categorias.add(
+            CategoriaItem(
+                1,
+                "Gaseosas",
+                R.drawable.ic_gaseosa
+            )
+        )
+
+        categorias.add(
+            CategoriaItem(
+                2,
+                "Tortas",
+                R.drawable.ic_torta
+            )
+        )
+
+        categorias.add(
+            CategoriaItem(
+                3,
+                "Postres",
+                R.drawable.ic_postre
+            )
+        )
+
+        categorias.add(
+            CategoriaItem(
+                4,
+                "Bebidas",
+                R.drawable.ic_bebida
+            )
+        )
+
+
+        // =====================================================
+        // ADAPTER CATEGORÍAS
+        // =====================================================
+
+        categoriaAdapter =
+            CategoriaAdapter(
+                categorias
+            ) { categoria ->
+
+                android.widget.Toast.makeText(
+                    this,
+                    "Seleccionaste ${categoria.nombre}",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+            }
+
+
+        // =====================================================
+        // RECYCLERVIEW CATEGORÍAS
+        // =====================================================
+
+        rvCategorias.layoutManager =
+            LinearLayoutManager(
+                this,
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+
+        rvCategorias.adapter =
+            categoriaAdapter
+
+
+        // =====================================================
+        // FIREBASE
+        // =====================================================
+
         cargarEntradas()
+
         cargarMenu()
     }
 
