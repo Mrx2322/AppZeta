@@ -24,50 +24,80 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityMenuUsuario : AppCompatActivity() {
 
+    // =========================================================
+    // CATEGORÍAS
+    // =========================================================
+
     private lateinit var rvCategorias: RecyclerView
     private lateinit var categoriaAdapter: CategoriaAdapter
 
-    private val categorias = mutableListOf<CategoriaItem>()
+    private val categorias =
+        mutableListOf<CategoriaItem>()
 
-    // ---------------------------------------------------------
+    private var categoriaSeleccionadaId = 0
+
+
+    // =========================================================
+    // EXTRAS
+    // =========================================================
+
+    private lateinit var rvExtras: RecyclerView
+    private lateinit var extraAdapter: ExtraAdapter
+
+    private val todosLosExtras =
+        mutableListOf<ExtraItem>()
+
+    private val listaExtras =
+        mutableListOf<ExtraItem>()
+
+
+    // =========================================================
     // FIREBASE
-    // ---------------------------------------------------------
+    // =========================================================
 
-    private val db = FirebaseFirestore.getInstance()
+    private val db =
+        FirebaseFirestore.getInstance()
 
-    // ---------------------------------------------------------
-    // PEDIDO
-    // ---------------------------------------------------------
 
-    // ---------------------------------------------------------
+    // =========================================================
     // LISTAS
-    // ---------------------------------------------------------
+    // =========================================================
 
-    private val entradas = mutableListOf<TaskEntradas>()
-    private val listaMenu = mutableListOf<TaskMenu>()
+    private val entradas =
+        mutableListOf<TaskEntradas>()
 
-    // ---------------------------------------------------------
-    // RECYCLERVIEW ENTRADAS
-    // ---------------------------------------------------------
+    private val listaMenu =
+        mutableListOf<TaskMenu>()
+
+
+    // =========================================================
+    // ENTRADAS
+    // =========================================================
 
     private lateinit var rvEntradas: RecyclerView
     private lateinit var entradasAdapter: EntradasUsuarioAdapter
 
-    // ---------------------------------------------------------
-    // RECYCLERVIEW MENÚ
-    // ---------------------------------------------------------
+
+    // =========================================================
+    // MENÚ
+    // =========================================================
 
     private lateinit var rvMenu: RecyclerView
     private lateinit var menuAdapter: MenuUsuarioAdapter
 
-    // ---------------------------------------------------------
-    // OTROS COMPONENTES
-    // ---------------------------------------------------------
+
+    // =========================================================
+    // OTROS
+    // =========================================================
 
     private lateinit var progressBarMenu: ProgressBar
     private lateinit var tvCantidadCarrito: TextView
     private lateinit var btnCarrito: FloatingActionButton
 
+
+    // =========================================================
+    // ON CREATE
+    // =========================================================
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,14 +118,20 @@ class ActivityMenuUsuario : AppCompatActivity() {
             window.decorView
         ).apply {
 
-            hide(WindowInsetsCompat.Type.statusBars())
+            hide(
+                WindowInsetsCompat.Type.statusBars()
+            )
 
             systemBarsBehavior =
                 WindowInsetsControllerCompat
                     .BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
 
-        setContentView(R.layout.activity_menu_usuario)
+
+        setContentView(
+            R.layout.activity_menu_usuario
+        )
+
 
         // -----------------------------------------------------
         // INSETS
@@ -120,6 +156,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
             insets
         }
 
+
         // -----------------------------------------------------
         // INICIALIZAR
         // -----------------------------------------------------
@@ -127,9 +164,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
         initComponent()
         initUI()
 
-        // -----------------------------------------------------
-        // CARGAR FIREBASE
-        // -----------------------------------------------------
+        cargarExtrasDePrueba()
 
         cargarDatosDesdeFirebase()
     }
@@ -147,6 +182,12 @@ class ActivityMenuUsuario : AppCompatActivity() {
         rvMenu =
             findViewById(R.id.rvMenu)
 
+        rvCategorias =
+            findViewById(R.id.rvCategorias)
+
+        rvExtras =
+            findViewById(R.id.rvExtras)
+
         progressBarMenu =
             findViewById(R.id.progressBarMenu)
 
@@ -155,9 +196,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         btnCarrito =
             findViewById(R.id.btnCarrito)
-
-        rvCategorias =
-            findViewById(R.id.rvCategorias)
     }
 
 
@@ -172,7 +210,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
         // -----------------------------------------------------
 
         entradasAdapter =
-            EntradasUsuarioAdapter(entradas)
+            EntradasUsuarioAdapter(
+                entradas
+            )
 
         rvEntradas.layoutManager =
             LinearLayoutManager(
@@ -190,9 +230,13 @@ class ActivityMenuUsuario : AppCompatActivity() {
         // -----------------------------------------------------
 
         menuAdapter =
-            MenuUsuarioAdapter(listaMenu) { plato ->
+            MenuUsuarioAdapter(
+                listaMenu
+            ) { plato ->
 
-                mostrarAlertaAgregar(plato)
+                mostrarAlertaAgregar(
+                    plato
+                )
             }
 
         rvMenu.layoutManager =
@@ -203,7 +247,28 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
         // -----------------------------------------------------
-        // BOTÓN CARRITO
+        // EXTRAS
+        // -----------------------------------------------------
+
+        extraAdapter =
+            ExtraAdapter(
+                listaExtras
+            ) { extra ->
+
+                agregarExtraAlPedido(
+                    extra
+                )
+            }
+
+        rvExtras.layoutManager =
+            LinearLayoutManager(this)
+
+        rvExtras.adapter =
+            extraAdapter
+
+
+        // -----------------------------------------------------
+        // CARRITO
         // -----------------------------------------------------
 
         btnCarrito.setOnClickListener {
@@ -219,7 +284,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
         // -----------------------------------------------------
-        // ESTADO INICIAL DEL CONTADOR
+        // CONTADOR
         // -----------------------------------------------------
 
         actualizarContadorCarrito()
@@ -227,10 +292,156 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
     // =========================================================
-    // ALERTA AGREGAR AL PEDIDO
+    // EXTRAS DE PRUEBA
     // =========================================================
 
-    private fun mostrarAlertaAgregar(plato: TaskMenu) {
+    private fun cargarExtrasDePrueba() {
+
+        todosLosExtras.clear()
+
+
+        // -----------------------------------------------------
+        // GASEOSAS
+        // -----------------------------------------------------
+
+        todosLosExtras.add(
+            ExtraItem(
+                101,
+                "Inca Kola",
+                4.00,
+                1,
+                R.drawable.ic_gaseosa
+            )
+        )
+
+        todosLosExtras.add(
+            ExtraItem(
+                102,
+                "Coca Cola",
+                4.00,
+                1,
+                R.drawable.ic_gaseosa
+            )
+        )
+
+
+        // -----------------------------------------------------
+        // TORTAS
+        // -----------------------------------------------------
+
+        todosLosExtras.add(
+            ExtraItem(
+                201,
+                "Torta de Chocolate",
+                8.00,
+                2,
+                R.drawable.ic_torta
+            )
+        )
+
+        todosLosExtras.add(
+            ExtraItem(
+                202,
+                "Torta Tres Leches",
+                8.00,
+                2,
+                R.drawable.ic_torta
+            )
+        )
+
+
+        // -----------------------------------------------------
+        // POSTRES
+        // -----------------------------------------------------
+
+        todosLosExtras.add(
+            ExtraItem(
+                301,
+                "Gelatina",
+                3.00,
+                3,
+                R.drawable.ic_postre
+            )
+        )
+
+
+        // -----------------------------------------------------
+        // BEBIDAS
+        // -----------------------------------------------------
+
+        todosLosExtras.add(
+            ExtraItem(
+                401,
+                "Café",
+                3.50,
+                4,
+                R.drawable.ic_bebida
+            )
+        )
+    }
+
+
+    // =========================================================
+    // MOSTRAR / OCULTAR EXTRAS
+    // =========================================================
+
+    private fun mostrarExtrasPorCategoria(
+        categoriaId: Int
+    ) {
+
+        listaExtras.clear()
+
+        listaExtras.addAll(
+            todosLosExtras.filter {
+                it.categoriaId == categoriaId
+            }
+        )
+
+        extraAdapter.notifyDataSetChanged()
+
+        rvExtras.visibility =
+            if (listaExtras.isEmpty()) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
+    }
+
+
+    // =========================================================
+    // AGREGAR EXTRA
+    // =========================================================
+
+    private fun agregarExtraAlPedido(
+        extra: ExtraItem
+    ) {
+
+        PedidoManager.agregarProducto(
+
+            PedidoItem(
+                id = extra.id,
+                nombre = extra.nombre,
+                cantidad = 1
+            )
+        )
+
+        actualizarContadorCarrito()
+
+        android.widget.Toast.makeText(
+            this,
+            "${extra.nombre} agregado al pedido",
+            android.widget.Toast.LENGTH_SHORT
+        ).show()
+    }
+
+
+    // =========================================================
+    // ALERTA DEL MENÚ
+    // =========================================================
+
+    private fun mostrarAlertaAgregar(
+        plato: TaskMenu
+    ) {
 
         val dialogView =
             layoutInflater.inflate(
@@ -238,41 +449,54 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 null
             )
 
+
         val tvNombrePlato =
             dialogView.findViewById<TextView>(
                 R.id.tvNombrePlato
             )
+
 
         val btnCancelar =
             dialogView.findViewById<Button>(
                 R.id.btnCancelarPedido
             )
 
+
         val btnAgregar =
             dialogView.findViewById<Button>(
                 R.id.btnAgregarPedido
             )
 
-        tvNombrePlato.text = plato.name
+
+        tvNombrePlato.text =
+            plato.name
+
 
         val dialog =
             AlertDialog.Builder(this)
                 .setView(dialogView)
                 .create()
 
+
         dialog.window?.setBackgroundDrawable(
             android.graphics.Color.TRANSPARENT.toDrawable()
         )
 
+
         dialog.show()
 
+
         btnCancelar.setOnClickListener {
+
             dialog.dismiss()
         }
 
+
         btnAgregar.setOnClickListener {
 
-            agregarAlPedido(plato)
+            agregarAlPedido(
+                plato
+            )
 
             dialog.dismiss()
         }
@@ -280,12 +504,15 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
     // =========================================================
-    // AGREGAR AL PEDIDO
+    // AGREGAR MENÚ AL PEDIDO
     // =========================================================
 
-    private fun agregarAlPedido(plato: TaskMenu) {
+    private fun agregarAlPedido(
+        plato: TaskMenu
+    ) {
 
         PedidoManager.agregarProducto(
+
             PedidoItem(
                 id = plato.id,
                 nombre = plato.name,
@@ -293,7 +520,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
             )
         )
 
+
         actualizarContadorCarrito()
+
 
         android.widget.Toast.makeText(
             this,
@@ -304,7 +533,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
     // =========================================================
-    // ACTUALIZAR CONTADOR CARRITO
+    // CONTADOR DEL CARRITO
     // =========================================================
 
     private fun actualizarContadorCarrito() {
@@ -312,8 +541,10 @@ class ActivityMenuUsuario : AppCompatActivity() {
         val cantidadTotal =
             PedidoManager.cantidadTotal()
 
+
         tvCantidadCarrito.text =
             cantidadTotal.toString()
+
 
         tvCantidadCarrito.visibility =
             if (cantidadTotal > 0) {
@@ -322,6 +553,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 View.GONE
             }
     }
+
 
     // =========================================================
     // CARGAR DATOS
@@ -338,12 +570,16 @@ class ActivityMenuUsuario : AppCompatActivity() {
         rvMenu.visibility =
             View.GONE
 
+        rvExtras.visibility =
+            View.GONE
+
 
         // =====================================================
-        // CATEGORÍAS / EXTRAS
+        // CATEGORÍAS
         // =====================================================
 
         categorias.clear()
+
 
         categorias.add(
             CategoriaItem(
@@ -353,6 +589,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
             )
         )
 
+
         categorias.add(
             CategoriaItem(
                 2,
@@ -361,6 +598,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
             )
         )
 
+
         categorias.add(
             CategoriaItem(
                 3,
@@ -368,6 +606,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 R.drawable.ic_postre
             )
         )
+
 
         categorias.add(
             CategoriaItem(
@@ -387,11 +626,35 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 categorias
             ) { categoria ->
 
-                android.widget.Toast.makeText(
-                    this,
-                    "Seleccionaste ${categoria.nombre}",
-                    android.widget.Toast.LENGTH_SHORT
-                ).show()
+                // ---------------------------------------------
+                // SI ES LA MISMA CATEGORÍA
+                // ---------------------------------------------
+
+                if (
+                    categoriaSeleccionadaId ==
+                    categoria.id &&
+                    rvExtras.visibility ==
+                    View.VISIBLE
+                ) {
+
+                    // Ocultar extras
+
+                    rvExtras.visibility =
+                        View.GONE
+
+                } else {
+
+                    // -----------------------------------------
+                    // NUEVA CATEGORÍA
+                    // -----------------------------------------
+
+                    categoriaSeleccionadaId =
+                        categoria.id
+
+                    mostrarExtrasPorCategoria(
+                        categoria.id
+                    )
+                }
             }
 
 
@@ -405,6 +668,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 LinearLayoutManager.HORIZONTAL,
                 false
             )
+
 
         rvCategorias.adapter =
             categoriaAdapter
@@ -440,16 +704,14 @@ class ActivityMenuUsuario : AppCompatActivity() {
                     return@addSnapshotListener
                 }
 
+
                 if (resultado == null) {
                     return@addSnapshotListener
                 }
 
+
                 entradas.clear()
 
-
-                // -------------------------------------------------
-                // LEER ENTRADAS
-                // -------------------------------------------------
 
                 for (documento in resultado) {
 
@@ -459,10 +721,12 @@ class ActivityMenuUsuario : AppCompatActivity() {
                             ?.toInt()
                             ?: 0
 
+
                     val nombre =
                         documento
                             .getString("nombre")
                             ?: ""
+
 
                     val disponible =
                         documento
@@ -497,14 +761,13 @@ class ActivityMenuUsuario : AppCompatActivity() {
                                     )
                             }
 
-                        entradas.add(entrada)
+
+                        entradas.add(
+                            entrada
+                        )
                     }
                 }
 
-
-                // -------------------------------------------------
-                // ACTUALIZAR UI
-                // -------------------------------------------------
 
                 entradasAdapter.notifyDataSetChanged()
 
@@ -539,16 +802,14 @@ class ActivityMenuUsuario : AppCompatActivity() {
                     return@addSnapshotListener
                 }
 
+
                 if (resultado == null) {
                     return@addSnapshotListener
                 }
 
+
                 listaMenu.clear()
 
-
-                // -------------------------------------------------
-                // LEER MENÚ
-                // -------------------------------------------------
 
                 for (documento in resultado) {
 
@@ -557,11 +818,13 @@ class ActivityMenuUsuario : AppCompatActivity() {
                         "Menú: ${documento.id} - ${documento.data}"
                     )
 
+
                     val id =
                         documento
                             .getLong("id")
                             ?.toInt()
                             ?: 0
+
 
                     val nombre =
                         documento
@@ -581,11 +844,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 }
 
 
-                // -------------------------------------------------
-                // ACTUALIZAR UI
-                // -------------------------------------------------
-
                 menuAdapter.notifyDataSetChanged()
+
 
                 mostrarContenido()
 
@@ -612,5 +872,16 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         rvMenu.visibility =
             View.VISIBLE
+    }
+
+
+    // =========================================================
+    // ACTUALIZAR AL REGRESAR
+    // =========================================================
+
+    override fun onResume() {
+        super.onResume()
+
+        actualizarContadorCarrito()
     }
 }

@@ -124,6 +124,14 @@
                 android:paddingEnd="24dp"
                 android:nestedScrollingEnabled="false" />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvExtras"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:nestedScrollingEnabled="false"
+                android:visibility="gone" />
+
 
             <!-- ================================================= -->
             <!-- TÍTULO MENÚ -->
