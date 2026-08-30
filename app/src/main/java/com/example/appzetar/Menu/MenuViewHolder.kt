@@ -1,5 +1,6 @@
 package com.example.appzetar.Menu
 
+import android.annotation.SuppressLint
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
@@ -22,6 +23,7 @@ class MenuViewHolder(
     val btnEliminar: ImageButton =
         view.findViewById(R.id.btnEliminar)
 
+    @SuppressLint("SetTextI18n")
     fun render(
         taskMenu: TaskMenu,
         onEditClick: (Int) -> Unit,
