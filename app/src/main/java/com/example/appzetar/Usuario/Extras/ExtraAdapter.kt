@@ -38,18 +38,43 @@ class ExtraAdapter(
                 R.id.btnAgregarExtra
             )
 
+
         fun bind(extra: ExtraItem) {
 
-            // Imagen
+            // =====================================================
+            // IMAGEN SEGÚN CATEGORÍA
+            // =====================================================
+
+            val imagen = when (extra.categoriaId) {
+
+                1 -> R.drawable.ic_gaseosa
+
+                2 -> R.drawable.ic_torta
+
+                3 -> R.drawable.ic_postre
+
+                4 -> R.drawable.ic_bebida
+
+                else -> R.drawable.ic_bebida
+            }
+
             imgExtra.setImageResource(
-                extra.icono
+                imagen
             )
 
-            // Nombre
+
+            // =====================================================
+            // NOMBRE
+            // =====================================================
+
             tvNombreExtra.text =
                 extra.nombre
 
-            // Precio
+
+            // =====================================================
+            // PRECIO
+            // =====================================================
+
             tvPrecioExtra.text =
                 String.format(
                     Locale.US,
@@ -57,7 +82,11 @@ class ExtraAdapter(
                     extra.precio
                 )
 
-            // Botón +
+
+            // =====================================================
+            // BOTÓN +
+            // =====================================================
+
             btnAgregarExtra.setOnClickListener {
 
                 onAgregarClick(
@@ -66,6 +95,11 @@ class ExtraAdapter(
             }
         }
     }
+
+
+    // =========================================================
+    // CREAR VIEW HOLDER
+    // =========================================================
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -80,8 +114,15 @@ class ExtraAdapter(
                     false
                 )
 
-        return ExtraViewHolder(view)
+        return ExtraViewHolder(
+            view
+        )
     }
+
+
+    // =========================================================
+    // VINCULAR DATOS
+    // =========================================================
 
     override fun onBindViewHolder(
         holder: ExtraViewHolder,
@@ -92,6 +133,11 @@ class ExtraAdapter(
             extras[position]
         )
     }
+
+
+    // =========================================================
+    // CANTIDAD
+    // =========================================================
 
     override fun getItemCount(): Int =
         extras.size

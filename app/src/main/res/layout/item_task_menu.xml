@@ -23,9 +23,9 @@
         <!-- Barra decorativa -->
         <View
             android:layout_width="5dp"
-            android:layout_height="48dp"
+            android:layout_height="60dp"
             android:layout_marginEnd="14dp"
-            android:background="#FFF" />
+            android:background="#FFFFFF" />
 
         <!-- Información del plato -->
         <LinearLayout
@@ -34,6 +34,7 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
+            <!-- Tipo -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -43,6 +44,7 @@
                 android:textStyle="bold"
                 android:letterSpacing="0.08" />
 
+            <!-- Nombre -->
             <TextView
                 android:id="@+id/tvMenuPlato"
                 android:layout_width="match_parent"
@@ -52,6 +54,17 @@
                 android:maxLines="2"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- Precio -->
+            <TextView
+                android:id="@+id/tvPrecio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/precios_static"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -78,6 +91,7 @@
             android:padding="10dp"
             android:src="@android:drawable/ic_menu_delete"
             app:tint="#FF5252" />
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

@@ -36,8 +36,7 @@ class MenuUsuarioViewHolder(
             R.drawable.fondo_menu
         )
 
-        // Precio provisional
-        tvPrecio.text = "Precio próximamente"
+        tvPrecio.text = "S/ %.2f".format(taskMenu.precio)
 
         // BOTÓN AGREGAR
         btnAgregar.setOnClickListener {

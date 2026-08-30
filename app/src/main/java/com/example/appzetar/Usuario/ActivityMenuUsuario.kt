@@ -1,11 +1,13 @@
 package com.example.appzetar.Usuario
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -25,10 +27,19 @@ import com.google.firebase.firestore.FirebaseFirestore
 class ActivityMenuUsuario : AppCompatActivity() {
 
     // =========================================================
+    // FIREBASE
+    // =========================================================
+
+    private val db =
+        FirebaseFirestore.getInstance()
+
+
+    // =========================================================
     // CATEGORÍAS
     // =========================================================
 
     private lateinit var rvCategorias: RecyclerView
+
     private lateinit var categoriaAdapter: CategoriaAdapter
 
     private val categorias =
@@ -42,6 +53,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
     // =========================================================
 
     private lateinit var rvExtras: RecyclerView
+
     private lateinit var extraAdapter: ExtraAdapter
 
     private val todosLosExtras =
@@ -52,29 +64,14 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
     // =========================================================
-    // FIREBASE
-    // =========================================================
-
-    private val db =
-        FirebaseFirestore.getInstance()
-
-
-    // =========================================================
-    // LISTAS
+    // ENTRADAS
     // =========================================================
 
     private val entradas =
         mutableListOf<TaskEntradas>()
 
-    private val listaMenu =
-        mutableListOf<TaskMenu>()
-
-
-    // =========================================================
-    // ENTRADAS
-    // =========================================================
-
     private lateinit var rvEntradas: RecyclerView
+
     private lateinit var entradasAdapter: EntradasUsuarioAdapter
 
 
@@ -82,7 +79,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
     // MENÚ
     // =========================================================
 
+    private val listaMenu =
+        mutableListOf<TaskMenu>()
+
     private lateinit var rvMenu: RecyclerView
+
     private lateinit var menuAdapter: MenuUsuarioAdapter
 
 
@@ -91,7 +92,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
     // =========================================================
 
     private lateinit var progressBarMenu: ProgressBar
+
     private lateinit var tvCantidadCarrito: TextView
+
     private lateinit var btnCarrito: FloatingActionButton
 
 
@@ -99,12 +102,10 @@ class ActivityMenuUsuario : AppCompatActivity() {
     // ON CREATE
     // =========================================================
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(
+        savedInstanceState: Bundle?
+    ) {
         super.onCreate(savedInstanceState)
-
-        // -----------------------------------------------------
-        // PANTALLA COMPLETA
-        // -----------------------------------------------------
 
         enableEdgeToEdge()
 
@@ -128,14 +129,18 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
 
 
+        // =====================================================
+        // LAYOUT
+        // =====================================================
+
         setContentView(
             R.layout.activity_menu_usuario
         )
 
 
-        // -----------------------------------------------------
+        // =====================================================
         // INSETS
-        // -----------------------------------------------------
+        // =====================================================
 
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
@@ -157,14 +162,15 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
 
 
-        // -----------------------------------------------------
+        // =====================================================
         // INICIALIZAR
-        // -----------------------------------------------------
+        // =====================================================
 
         initComponent()
+
         initUI()
 
-        cargarExtrasDePrueba()
+        cargarCategorias()
 
         cargarDatosDesdeFirebase()
     }
@@ -176,17 +182,17 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
     private fun initComponent() {
 
-        rvEntradas =
-            findViewById(R.id.rvEntradas)
-
-        rvMenu =
-            findViewById(R.id.rvMenu)
-
         rvCategorias =
             findViewById(R.id.rvCategorias)
 
+        rvEntradas =
+            findViewById(R.id.rvEntradas)
+
         rvExtras =
             findViewById(R.id.rvExtras)
+
+        rvMenu =
+            findViewById(R.id.rvMenu)
 
         progressBarMenu =
             findViewById(R.id.progressBarMenu)
@@ -205,14 +211,19 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
     private fun initUI() {
 
-        // -----------------------------------------------------
+        // =====================================================
         // ENTRADAS
-        // -----------------------------------------------------
+        // =====================================================
 
         entradasAdapter =
             EntradasUsuarioAdapter(
                 entradas
-            )
+            ) { entrada ->
+
+                agregarEntradaAlPedido(
+                    entrada
+                )
+            }
 
         rvEntradas.layoutManager =
             LinearLayoutManager(
@@ -225,9 +236,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
             entradasAdapter
 
 
-        // -----------------------------------------------------
+        // =====================================================
         // MENÚ
-        // -----------------------------------------------------
+        // =====================================================
 
         menuAdapter =
             MenuUsuarioAdapter(
@@ -246,9 +257,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
             menuAdapter
 
 
-        // -----------------------------------------------------
+        // =====================================================
         // EXTRAS
-        // -----------------------------------------------------
+        // =====================================================
 
         extraAdapter =
             ExtraAdapter(
@@ -267,122 +278,107 @@ class ActivityMenuUsuario : AppCompatActivity() {
             extraAdapter
 
 
-        // -----------------------------------------------------
+        // =====================================================
         // CARRITO
-        // -----------------------------------------------------
+        // =====================================================
 
         btnCarrito.setOnClickListener {
 
-            val intent =
-                android.content.Intent(
+            startActivity(
+                Intent(
                     this,
                     ActivityPedido::class.java
                 )
-
-            startActivity(intent)
+            )
         }
 
-
-        // -----------------------------------------------------
-        // CONTADOR
-        // -----------------------------------------------------
 
         actualizarContadorCarrito()
     }
 
 
     // =========================================================
-    // EXTRAS DE PRUEBA
+    // CATEGORÍAS
     // =========================================================
 
-    private fun cargarExtrasDePrueba() {
+    private fun cargarCategorias() {
 
-        todosLosExtras.clear()
+        categorias.clear()
 
-
-        // -----------------------------------------------------
-        // GASEOSAS
-        // -----------------------------------------------------
-
-        todosLosExtras.add(
-            ExtraItem(
-                101,
-                "Inca Kola",
-                4.00,
+        categorias.add(
+            CategoriaItem(
                 1,
+                "Gaseosas",
                 R.drawable.ic_gaseosa
             )
         )
 
-        todosLosExtras.add(
-            ExtraItem(
-                102,
-                "Coca Cola",
-                4.00,
-                1,
-                R.drawable.ic_gaseosa
-            )
-        )
-
-
-        // -----------------------------------------------------
-        // TORTAS
-        // -----------------------------------------------------
-
-        todosLosExtras.add(
-            ExtraItem(
-                201,
-                "Torta de Chocolate",
-                8.00,
+        categorias.add(
+            CategoriaItem(
                 2,
+                "Tortas",
                 R.drawable.ic_torta
             )
         )
 
-        todosLosExtras.add(
-            ExtraItem(
-                202,
-                "Torta Tres Leches",
-                8.00,
-                2,
-                R.drawable.ic_torta
-            )
-        )
-
-
-        // -----------------------------------------------------
-        // POSTRES
-        // -----------------------------------------------------
-
-        todosLosExtras.add(
-            ExtraItem(
-                301,
-                "Gelatina",
-                3.00,
+        categorias.add(
+            CategoriaItem(
                 3,
+                "Postres",
                 R.drawable.ic_postre
             )
         )
 
-
-        // -----------------------------------------------------
-        // BEBIDAS
-        // -----------------------------------------------------
-
-        todosLosExtras.add(
-            ExtraItem(
-                401,
-                "Café",
-                3.50,
+        categorias.add(
+            CategoriaItem(
                 4,
+                "Bebidas",
                 R.drawable.ic_bebida
             )
         )
+
+
+        categoriaAdapter =
+            CategoriaAdapter(
+                categorias
+            ) { categoria ->
+
+                if (
+                    categoriaSeleccionadaId ==
+                    categoria.id &&
+                    rvExtras.visibility ==
+                    View.VISIBLE
+                ) {
+
+                    rvExtras.visibility =
+                        View.GONE
+
+                } else {
+
+                    categoriaSeleccionadaId =
+                        categoria.id
+
+                    mostrarExtrasPorCategoria(
+                        categoria.id
+                    )
+                }
+            }
+
+
+        rvCategorias.layoutManager =
+            LinearLayoutManager(
+                this,
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+
+        rvCategorias.adapter =
+            categoriaAdapter
     }
 
 
     // =========================================================
-    // MOSTRAR / OCULTAR EXTRAS
+    // MOSTRAR EXTRAS POR CATEGORÍA
     // =========================================================
 
     private fun mostrarExtrasPorCategoria(
@@ -405,11 +401,17 @@ class ActivityMenuUsuario : AppCompatActivity() {
             } else {
                 View.VISIBLE
             }
+
+
+        Log.d(
+            "USUARIO_FIREBASE",
+            "Categoría $categoriaId: ${listaExtras.size} extras"
+        )
     }
 
 
     // =========================================================
-    // AGREGAR EXTRA
+    // AGREGAR EXTRA AL PEDIDO
     // =========================================================
 
     private fun agregarExtraAlPedido(
@@ -421,16 +423,47 @@ class ActivityMenuUsuario : AppCompatActivity() {
             PedidoItem(
                 id = extra.id,
                 nombre = extra.nombre,
-                cantidad = 1
+                precio = extra.precio,
+                cantidad = 1,
+                tipo = TipoPedido.EXTRA
             )
         )
 
         actualizarContadorCarrito()
 
-        android.widget.Toast.makeText(
+        Toast.makeText(
             this,
             "${extra.nombre} agregado al pedido",
-            android.widget.Toast.LENGTH_SHORT
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+
+    // =========================================================
+    // AGREGAR ENTRADA AL PEDIDO
+    // =========================================================
+
+    private fun agregarEntradaAlPedido(
+        entrada: TaskEntradas
+    ) {
+
+        PedidoManager.agregarProducto(
+
+            PedidoItem(
+                id = entrada.id,
+                nombre = entrada.nombre,
+                precio = 0.0,
+                cantidad = 1,
+                tipo = TipoPedido.ENTRADA
+            )
+        )
+
+        actualizarContadorCarrito()
+
+        Toast.makeText(
+            this,
+            "${entrada.nombre} agregado al pedido",
+            Toast.LENGTH_SHORT
         ).show()
     }
 
@@ -449,54 +482,44 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 null
             )
 
-
         val tvNombrePlato =
             dialogView.findViewById<TextView>(
                 R.id.tvNombrePlato
             )
-
 
         val btnCancelar =
             dialogView.findViewById<Button>(
                 R.id.btnCancelarPedido
             )
 
-
         val btnAgregar =
             dialogView.findViewById<Button>(
                 R.id.btnAgregarPedido
             )
 
-
         tvNombrePlato.text =
             plato.name
-
 
         val dialog =
             AlertDialog.Builder(this)
                 .setView(dialogView)
                 .create()
 
+        dialog.show()
 
         dialog.window?.setBackgroundDrawable(
             android.graphics.Color.TRANSPARENT.toDrawable()
         )
 
 
-        dialog.show()
-
-
         btnCancelar.setOnClickListener {
-
             dialog.dismiss()
         }
 
 
         btnAgregar.setOnClickListener {
 
-            agregarAlPedido(
-                plato
-            )
+            agregarAlPedido(plato)
 
             dialog.dismiss()
         }
@@ -516,18 +539,18 @@ class ActivityMenuUsuario : AppCompatActivity() {
             PedidoItem(
                 id = plato.id,
                 nombre = plato.name,
-                cantidad = 1
+                precio = plato.precio,
+                cantidad = 1,
+                tipo = TipoPedido.MENU
             )
         )
 
-
         actualizarContadorCarrito()
 
-
-        android.widget.Toast.makeText(
+        Toast.makeText(
             this,
             "${plato.name} agregado al pedido",
-            android.widget.Toast.LENGTH_SHORT
+            Toast.LENGTH_SHORT
         ).show()
     }
 
@@ -541,10 +564,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
         val cantidadTotal =
             PedidoManager.cantidadTotal()
 
-
         tvCantidadCarrito.text =
             cantidadTotal.toString()
-
 
         tvCantidadCarrito.visibility =
             if (cantidadTotal > 0) {
@@ -574,113 +595,144 @@ class ActivityMenuUsuario : AppCompatActivity() {
             View.GONE
 
 
-        // =====================================================
-        // CATEGORÍAS
-        // =====================================================
-
-        categorias.clear()
-
-
-        categorias.add(
-            CategoriaItem(
-                1,
-                "Gaseosas",
-                R.drawable.ic_gaseosa
-            )
-        )
-
-
-        categorias.add(
-            CategoriaItem(
-                2,
-                "Tortas",
-                R.drawable.ic_torta
-            )
-        )
-
-
-        categorias.add(
-            CategoriaItem(
-                3,
-                "Postres",
-                R.drawable.ic_postre
-            )
-        )
-
-
-        categorias.add(
-            CategoriaItem(
-                4,
-                "Bebidas",
-                R.drawable.ic_bebida
-            )
-        )
-
-
-        // =====================================================
-        // ADAPTER CATEGORÍAS
-        // =====================================================
-
-        categoriaAdapter =
-            CategoriaAdapter(
-                categorias
-            ) { categoria ->
-
-                // ---------------------------------------------
-                // SI ES LA MISMA CATEGORÍA
-                // ---------------------------------------------
-
-                if (
-                    categoriaSeleccionadaId ==
-                    categoria.id &&
-                    rvExtras.visibility ==
-                    View.VISIBLE
-                ) {
-
-                    // Ocultar extras
-
-                    rvExtras.visibility =
-                        View.GONE
-
-                } else {
-
-                    // -----------------------------------------
-                    // NUEVA CATEGORÍA
-                    // -----------------------------------------
-
-                    categoriaSeleccionadaId =
-                        categoria.id
-
-                    mostrarExtrasPorCategoria(
-                        categoria.id
-                    )
-                }
-            }
-
-
-        // =====================================================
-        // RECYCLERVIEW CATEGORÍAS
-        // =====================================================
-
-        rvCategorias.layoutManager =
-            LinearLayoutManager(
-                this,
-                LinearLayoutManager.HORIZONTAL,
-                false
-            )
-
-
-        rvCategorias.adapter =
-            categoriaAdapter
-
-
-        // =====================================================
-        // FIREBASE
-        // =====================================================
-
         cargarEntradas()
 
         cargarMenu()
+
+        cargarExtrasDesdeFirebase()
+    }
+
+
+    // =========================================================
+    // EXTRAS - FIREBASE
+    // =========================================================
+
+    private fun cargarExtrasDesdeFirebase() {
+
+        db.collection("extras")
+            .addSnapshotListener { resultado, error ->
+
+                if (error != null) {
+
+                    Log.e(
+                        "USUARIO_FIREBASE",
+                        "Error escuchando extras",
+                        error
+                    )
+
+                    return@addSnapshotListener
+                }
+
+                if (resultado == null) {
+                    return@addSnapshotListener
+                }
+
+
+                todosLosExtras.clear()
+
+
+                for (documento in resultado) {
+
+                    Log.d(
+                        "USUARIO_FIREBASE",
+                        "Extra Firebase: ${documento.id} - ${documento.data}"
+                    )
+
+
+                    val id =
+                        documento
+                            .getLong("id")
+                            ?.toInt()
+                            ?: documento.id.toIntOrNull()
+                            ?: 0
+
+
+                    val nombre =
+                        documento
+                            .getString("nombre")
+                            ?: ""
+
+
+                    val precio =
+                        documento
+                            .getDouble("precio")
+                            ?: 0.0
+
+
+                    val categoriaId =
+                        documento
+                            .getLong("categoriaId")
+                            ?.toInt()
+                            ?: 0
+
+
+                    // =================================================
+                    // ICONO SEGÚN CATEGORÍA
+                    // =================================================
+
+                    val icono =
+                        when (categoriaId) {
+
+                            1 ->
+                                R.drawable.ic_gaseosa
+
+                            2 ->
+                                R.drawable.ic_torta
+
+                            3 ->
+                                R.drawable.ic_postre
+
+                            4 ->
+                                R.drawable.ic_bebida
+
+                            else ->
+                                R.drawable.ic_bebida
+                        }
+
+
+                    // =================================================
+                    // AGREGAR EXTRA
+                    // =================================================
+
+                    if (
+                        id > 0 &&
+                        nombre.isNotEmpty() &&
+                        categoriaId > 0
+                    ) {
+
+                        todosLosExtras.add(
+
+                            ExtraItem(
+                                id = id,
+                                nombre = nombre,
+                                precio = precio,
+                                categoriaId = categoriaId,
+                                icono = icono
+                            )
+                        )
+                    }
+                }
+
+
+                // =================================================
+                // ACTUALIZAR CATEGORÍA
+                // =================================================
+
+                if (
+                    categoriaSeleccionadaId != 0
+                ) {
+
+                    mostrarExtrasPorCategoria(
+                        categoriaSeleccionadaId
+                    )
+                }
+
+
+                Log.d(
+                    "USUARIO_FIREBASE",
+                    "Extras actualizados: ${todosLosExtras.size}"
+                )
+            }
     }
 
 
@@ -704,7 +756,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
                     return@addSnapshotListener
                 }
 
-
                 if (resultado == null) {
                     return@addSnapshotListener
                 }
@@ -719,14 +770,13 @@ class ActivityMenuUsuario : AppCompatActivity() {
                         documento
                             .getLong("id")
                             ?.toInt()
+                            ?: documento.id.toIntOrNull()
                             ?: 0
-
 
                     val nombre =
                         documento
                             .getString("nombre")
                             ?: ""
-
 
                     val disponible =
                         documento
@@ -734,7 +784,10 @@ class ActivityMenuUsuario : AppCompatActivity() {
                             ?: true
 
 
-                    if (nombre.isNotEmpty()) {
+                    if (
+                        id > 0 &&
+                        nombre.isNotEmpty()
+                    ) {
 
                         val entrada =
                             when (id) {
@@ -760,7 +813,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
                                         disponible
                                     )
                             }
-
 
                         entradas.add(
                             entrada
@@ -802,7 +854,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
                     return@addSnapshotListener
                 }
 
-
                 if (resultado == null) {
                     return@addSnapshotListener
                 }
@@ -813,31 +864,35 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
                 for (documento in resultado) {
 
-                    Log.d(
-                        "USUARIO_FIREBASE",
-                        "Menú: ${documento.id} - ${documento.data}"
-                    )
-
-
                     val id =
                         documento
                             .getLong("id")
                             ?.toInt()
+                            ?: documento.id.toIntOrNull()
                             ?: 0
-
 
                     val nombre =
                         documento
                             .getString("nombre")
                             ?: ""
 
+                    val precio =
+                        documento
+                            .getDouble("precio")
+                            ?: 0.0
 
-                    if (nombre.isNotEmpty()) {
+
+                    if (
+                        id > 0 &&
+                        nombre.isNotEmpty()
+                    ) {
 
                         listaMenu.add(
+
                             TaskMenu(
-                                id,
-                                nombre
+                                id = id,
+                                name = nombre,
+                                precio = precio
                             )
                         )
                     }
@@ -845,7 +900,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
                 menuAdapter.notifyDataSetChanged()
-
 
                 mostrarContenido()
 
@@ -876,7 +930,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
     // =========================================================
-    // ACTUALIZAR AL REGRESAR
+    // AL REGRESAR
     // =========================================================
 
     override fun onResume() {

@@ -1,7 +1,7 @@
 package com.example.appzetar.Usuario
 
+import android.content.Intent
 import android.os.Bundle
-import com.example.appzetar.Usuario.Pagos.ActivityPagoYape
 import android.view.View
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -12,18 +12,23 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
-import android.content.Intent
-import kotlin.jvm.java
+import com.example.appzetar.Usuario.Pagos.ActivityPagoYape
 
 class ActivityPedido : AppCompatActivity() {
 
     private lateinit var rvPedido: RecyclerView
     private lateinit var tvTotalProductos: TextView
+    private lateinit var tvTotalPedido: TextView
     private lateinit var tvMensajeVacio: TextView
 
     private lateinit var btnContinuar: View
 
     private lateinit var pedidoAdapter: PedidoAdapter
+
+
+    // =========================================================
+    // ON CREATE
+    // =========================================================
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +43,11 @@ class ActivityPedido : AppCompatActivity() {
         setContentView(
             R.layout.activity_pedido
         )
+
+
+        // =====================================================
+        // INSETS
+        // =====================================================
 
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
@@ -58,10 +68,20 @@ class ActivityPedido : AppCompatActivity() {
             insets
         }
 
+
+        // =====================================================
+        // INICIALIZAR
+        // =====================================================
+
         initComponent()
         initUI()
         actualizarPedido()
     }
+
+
+    // =========================================================
+    // COMPONENTES
+    // =========================================================
 
     private fun initComponent() {
 
@@ -71,12 +91,20 @@ class ActivityPedido : AppCompatActivity() {
         tvTotalProductos =
             findViewById(R.id.tvTotalProductos)
 
+        tvTotalPedido =
+            findViewById(R.id.tvTotalPedido)
+
         tvMensajeVacio =
             findViewById(R.id.tvMensajeVacio)
 
         btnContinuar =
             findViewById(R.id.btnContinuar)
     }
+
+
+    // =========================================================
+    // UI
+    // =========================================================
 
     private fun initUI() {
 
@@ -88,38 +116,81 @@ class ActivityPedido : AppCompatActivity() {
                 actualizarPedido()
             }
 
+
         rvPedido.layoutManager =
             LinearLayoutManager(this)
 
         rvPedido.adapter =
             pedidoAdapter
 
+
+        // =====================================================
+        // CONTINUAR AL PAGO
+        // =====================================================
+
         btnContinuar.setOnClickListener {
 
-            if (PedidoManager.pedido.isEmpty()) {
+            if (
+                PedidoManager.pedido.isEmpty()
+            ) {
                 return@setOnClickListener
             }
 
-            val intent = Intent(
-                this,
-                ActivityPagoYape::class.java
-            )
+
+            val intent =
+                Intent(
+                    this,
+                    ActivityPagoYape::class.java
+                )
 
             startActivity(intent)
         }
     }
 
+
+    // =========================================================
+    // ACTUALIZAR PEDIDO
+    // =========================================================
+
     private fun actualizarPedido() {
 
         pedidoAdapter.notifyDataSetChanged()
 
+
+        // =====================================================
+        // CANTIDAD TOTAL
+        // =====================================================
+
         val cantidad =
             PedidoManager.cantidadTotal()
+
 
         tvTotalProductos.text =
             "$cantidad productos"
 
-        if (PedidoManager.pedido.isEmpty()) {
+
+        // =====================================================
+        // CALCULAR TOTAL
+        // =====================================================
+
+        val total =
+            PedidoManager.pedido.sumOf {
+
+                it.precio * it.cantidad
+            }
+
+
+        tvTotalPedido.text =
+            "S/ %.2f".format(total)
+
+
+        // =====================================================
+        // PEDIDO VACÍO
+        // =====================================================
+
+        if (
+            PedidoManager.pedido.isEmpty()
+        ) {
 
             rvPedido.visibility =
                 View.GONE
@@ -133,7 +204,12 @@ class ActivityPedido : AppCompatActivity() {
             btnContinuar.alpha =
                 0.5f
 
+
         } else {
+
+            // =================================================
+            // PEDIDO CON PRODUCTOS
+            // =================================================
 
             rvPedido.visibility =
                 View.VISIBLE
@@ -147,10 +223,16 @@ class ActivityPedido : AppCompatActivity() {
             btnContinuar.alpha =
                 1f
         }
+    }
 
-        }
-        override fun onResume() {
-            super.onResume()
-            actualizarPedido()
-        }
-   }
+
+    // =========================================================
+    // AL REGRESAR
+    // =========================================================
+
+    override fun onResume() {
+        super.onResume()
+
+        actualizarPedido()
+    }
+}

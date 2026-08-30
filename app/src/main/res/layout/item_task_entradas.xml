@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
 
     android:layout_width="150dp"
-    android:layout_height="105dp"
+    android:layout_height="120dp"
 
     android:layout_marginStart="8dp"
     android:layout_marginEnd="8dp"
@@ -19,28 +19,52 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="10dp">
 
         <!-- Línea decorativa -->
         <View
             android:id="@+id/divider"
             android:layout_width="32dp"
             android:layout_height="4dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="6dp"
             android:background="#FF9800" />
 
-        <!-- Nombre -->
-        <TextView
-            android:id="@+id/tvNombrePlato"
+        <!-- Parte inferior -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-            android:ellipsize="end"
-            android:maxLines="2"
+            <!-- Nombre -->
+            <TextView
+                android:id="@+id/tvNombrePlato"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
 
-            android:textColor="#202020"
-            android:textSize="17sp"
-            android:textStyle="bold" />
+                android:layout_weight="1"
+
+                android:ellipsize="end"
+                android:maxLines="2"
+
+                android:textColor="#202020"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- Botón agregar -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnAgregarEntrada"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="6dp"
+                android:contentDescription="Agregar entrada"
+                android:padding="10dp"
+                android:src="@android:drawable/ic_input_add"
+                app:elevation="3dp"
+                app:fabSize="mini"
+                app:maxImageSize="30dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

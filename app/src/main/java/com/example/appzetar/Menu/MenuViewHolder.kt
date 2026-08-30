@@ -13,6 +13,9 @@ class MenuViewHolder(
     val tvNombrePlato: TextView =
         view.findViewById(R.id.tvMenuPlato)
 
+    val tvPrecio: TextView =
+        view.findViewById(R.id.tvPrecio)
+
     val btnEditar: ImageButton =
         view.findViewById(R.id.btnEditar)
 
@@ -25,12 +28,17 @@ class MenuViewHolder(
         onDeleteClick: (Int) -> Unit
     ) {
 
-        tvNombrePlato.text = taskMenu.name
+        tvNombrePlato.text =
+            taskMenu.name
+
+        tvPrecio.text =
+            "S/ %.2f".format(taskMenu.precio)
 
         // EDITAR
         btnEditar.setOnClickListener {
 
-            val posicion = bindingAdapterPosition
+            val posicion =
+                bindingAdapterPosition
 
             if (posicion != RecyclerView.NO_POSITION) {
                 onEditClick(posicion)
@@ -40,7 +48,8 @@ class MenuViewHolder(
         // ELIMINAR
         btnEliminar.setOnClickListener {
 
-            val posicion = bindingAdapterPosition
+            val posicion =
+                bindingAdapterPosition
 
             if (posicion != RecyclerView.NO_POSITION) {
                 onDeleteClick(posicion)

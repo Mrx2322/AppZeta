@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.Menu.TaskEntradas
 import com.example.appzetar.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class EntradasUsuarioViewHolder(
     view: View
@@ -17,13 +18,31 @@ class EntradasUsuarioViewHolder(
     private val divider: View =
         view.findViewById(R.id.divider)
 
-    fun render(taskEntradas: TaskEntradas) {
+    private val btnAgregarEntrada: FloatingActionButton =
+        view.findViewById(R.id.btnAgregarEntrada)
 
-        tvEntradasName.text = taskEntradas.nombre
+
+    fun render(
+        taskEntradas: TaskEntradas,
+        onAgregarClick: (TaskEntradas) -> Unit
+    ) {
+
+        // -----------------------------------------------------
+        // NOMBRE
+        // -----------------------------------------------------
+
+        tvEntradasName.text =
+            taskEntradas.nombre
+
+
+        // -----------------------------------------------------
+        // COLOR DE LA LÍNEA
+        // -----------------------------------------------------
 
         when (taskEntradas) {
 
             is TaskEntradas.Ceviche -> {
+
                 divider.setBackgroundColor(
                     ContextCompat.getColor(
                         divider.context,
@@ -33,6 +52,7 @@ class EntradasUsuarioViewHolder(
             }
 
             is TaskEntradas.Huancaina -> {
+
                 divider.setBackgroundColor(
                     ContextCompat.getColor(
                         divider.context,
@@ -42,6 +62,7 @@ class EntradasUsuarioViewHolder(
             }
 
             is TaskEntradas.Otros -> {
+
                 divider.setBackgroundColor(
                     ContextCompat.getColor(
                         divider.context,
@@ -50,6 +71,23 @@ class EntradasUsuarioViewHolder(
                 )
             }
         }
+
+
+        // -----------------------------------------------------
+        // BOTÓN AGREGAR
+        // -----------------------------------------------------
+
+        btnAgregarEntrada.setOnClickListener {
+
+            onAgregarClick(
+                taskEntradas
+            )
+        }
+
+
+        // -----------------------------------------------------
+        // EVITAR CLICK EN LA TARJETA
+        // -----------------------------------------------------
 
         itemView.setOnClickListener(null)
     }

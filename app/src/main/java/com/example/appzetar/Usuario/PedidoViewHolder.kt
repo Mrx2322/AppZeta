@@ -15,6 +15,11 @@ class PedidoViewHolder(
             R.id.tvNombreProducto
         )
 
+    private val tvPrecio =
+        view.findViewById<TextView>(
+            R.id.tvPrecioProducto
+        )
+
     private val tvCantidad =
         view.findViewById<TextView>(
             R.id.tvCantidad
@@ -35,6 +40,11 @@ class PedidoViewHolder(
             R.id.btnEliminar
         )
 
+
+    // =========================================================
+    // RENDER
+    // =========================================================
+
     fun render(
         item: PedidoItem,
         onPedidoActualizado: () -> Unit
@@ -43,31 +53,52 @@ class PedidoViewHolder(
         tvNombre.text =
             item.nombre
 
+        tvPrecio.text =
+            "S/ %.2f".format(item.precio)
+
         tvCantidad.text =
             item.cantidad.toString()
+
+
+        // =====================================================
+        // BOTÓN +
+        // =====================================================
 
         btnMas.setOnClickListener {
 
             PedidoManager.aumentarCantidad(
-                item.id
+                item.id,
+                item.tipo
             )
 
             onPedidoActualizado()
         }
+
+
+        // =====================================================
+        // BOTÓN -
+        // =====================================================
 
         btnMenos.setOnClickListener {
 
             PedidoManager.disminuirCantidad(
-                item.id
+                item.id,
+                item.tipo
             )
 
             onPedidoActualizado()
         }
 
+
+        // =====================================================
+        // ELIMINAR
+        // =====================================================
+
         btnEliminar.setOnClickListener {
 
             PedidoManager.eliminarProducto(
-                item.id
+                item.id,
+                item.tipo
             )
 
             onPedidoActualizado()

@@ -1,9 +1,16 @@
 package com.example.appzetar.Menu
 
+import android.graphics.Color
 import android.os.Bundle
+import android.text.InputType
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.Spinner
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -15,41 +22,130 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
+import com.example.appzetar.Usuario.ExtraItem
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.Locale
 
 class ActivityMenu : AppCompatActivity() {
 
+    // =========================================================
+    // FIREBASE
+    // =========================================================
+
+    private val db =
+        FirebaseFirestore.getInstance()
+
+
+    // =========================================================
+    // PROGRESS BAR
+    // =========================================================
+
     private lateinit var progressBarMenu: ProgressBar
 
-    private val db = FirebaseFirestore.getInstance()
 
-    private val entradas = mutableListOf<TaskEntradas>()
+    // =========================================================
+    // ENTRADAS
+    // =========================================================
 
-    // Empieza vacía. Los datos vienen de Firebase.
-    private val listaMenu = mutableListOf<TaskMenu>()
+    private val entradas =
+        mutableListOf<TaskEntradas>()
 
     private lateinit var rvEntradas: RecyclerView
+
     private lateinit var entradasAdapter: EntradasAdapter
 
+
+    // =========================================================
+    // MENÚ
+    // =========================================================
+
+    private val listaMenu =
+        mutableListOf<TaskMenu>()
+
     private lateinit var rvMenu: RecyclerView
+
     private lateinit var menuAdapter: MenuAdapter
+
+
+    // =========================================================
+    // EXTRAS
+    // =========================================================
+
+    private val listaExtras =
+        mutableListOf<ExtraItem>()
+
+    private lateinit var rvExtras: RecyclerView
+
+    private lateinit var extraAdminAdapter: ExtraAdminAdapter
+
+
+    // =========================================================
+    // FAB
+    // =========================================================
+
     private lateinit var fabAgregarMenu: FloatingActionButton
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+
+    // =========================================================
+    // ON CREATE
+    // =========================================================
+
+    override fun onCreate(
+        savedInstanceState: Bundle?
+    ) {
+
         super.onCreate(savedInstanceState)
+
+
+        // =====================================================
+        // PANTALLA COMPLETA
+        // =====================================================
+
         enableEdgeToEdge()
-        WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        WindowInsetsControllerCompat(window, window.decorView).apply {
-            hide(WindowInsetsCompat.Type.statusBars())
+        WindowCompat.setDecorFitsSystemWindows(
+            window,
+            false
+        )
+
+        WindowInsetsControllerCompat(
+            window,
+            window.decorView
+        ).apply {
+
+            hide(
+                WindowInsetsCompat.Type.statusBars()
+            )
+
             systemBarsBehavior =
-                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                WindowInsetsControllerCompat
+                    .BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
-        setContentView(R.layout.activity_menu)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+        // =====================================================
+        // LAYOUT
+        // =====================================================
+
+        setContentView(
+            R.layout.activity_menu
+        )
+
+
+        // =====================================================
+        // INSETS
+        // =====================================================
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+            findViewById(R.id.main)
+        ) { v, insets ->
+
+            val systemBars =
+                insets.getInsets(
+                    WindowInsetsCompat.Type.systemBars()
+                )
 
             v.setPadding(
                 systemBars.left,
@@ -61,25 +157,75 @@ class ActivityMenu : AppCompatActivity() {
             insets
         }
 
+
+        // =====================================================
+        // INICIALIZAR
+        // =====================================================
+
         initComponent()
+
         initUI()
+
         cargarDatosDesdeFirebase()
+
         cargarEntradasDesdeFirebase()
+
+        cargarExtrasDesdeFirebase()
     }
 
+
+    // =========================================================
+    // COMPONENTES
+    // =========================================================
+
     private fun initComponent() {
-        rvEntradas = findViewById(R.id.rvEntradas)
-        rvMenu = findViewById(R.id.rvMenu)
-        fabAgregarMenu = findViewById(R.id.fabAgregarMenu)
-        progressBarMenu = findViewById(R.id.progressBarMenu)
+
+        progressBarMenu =
+            findViewById(
+                R.id.progressBarMenu
+            )
+
+        rvEntradas =
+            findViewById(
+                R.id.rvEntradas
+            )
+
+        rvExtras =
+            findViewById(
+                R.id.rvExtras
+            )
+
+        rvMenu =
+            findViewById(
+                R.id.rvMenu
+            )
+
+        fabAgregarMenu =
+            findViewById(
+                R.id.fabAgregarMenu
+            )
     }
+
+
+    // =========================================================
+    // UI
+    // =========================================================
 
     private fun initUI() {
 
-        // Adaptador Entradas
-        entradasAdapter = EntradasAdapter(entradas) { posicion ->
-            mostrarDialogoEdicionEntrada(posicion)
-        }
+        // =====================================================
+        // ENTRADAS
+        // =====================================================
+
+        entradasAdapter =
+            EntradasAdapter(
+                entradas
+            ) { posicion ->
+
+                mostrarDialogoEdicionEntrada(
+                    posicion
+                )
+            }
 
         rvEntradas.layoutManager =
             LinearLayoutManager(
@@ -88,94 +234,185 @@ class ActivityMenu : AppCompatActivity() {
                 false
             )
 
-        rvEntradas.adapter = entradasAdapter
+        rvEntradas.adapter =
+            entradasAdapter
 
-        // Adaptador Menú
-        menuAdapter = MenuAdapter(
-            listaMenu,
 
-            onEditClick = { posicion ->
-                mostrarDialogoEdicionMenu(posicion)
-            },
+        // =====================================================
+        // EXTRAS
+        // =====================================================
 
-            onDeleteClick = { posicion ->
-                eliminarElementoMenu(posicion)
-            }
-        )
+        extraAdminAdapter =
+            ExtraAdminAdapter(
+                listaExtras,
 
-        rvMenu.layoutManager = LinearLayoutManager(this)
-        rvMenu.adapter = menuAdapter
+                onEditClick = { posicion ->
 
-        // Botón agregar
+                    mostrarDialogoEdicionExtra(
+                        posicion
+                    )
+                },
+
+                onDeleteClick = { posicion ->
+
+                    eliminarExtra(
+                        posicion
+                    )
+                }
+            )
+
+        rvExtras.layoutManager =
+            LinearLayoutManager(this)
+
+        rvExtras.adapter =
+            extraAdminAdapter
+
+
+        // =====================================================
+        // MENÚ
+        // =====================================================
+
+        menuAdapter =
+            MenuAdapter(
+                listaMenu,
+
+                onEditClick = { posicion ->
+
+                    mostrarDialogoEdicionMenu(
+                        posicion
+                    )
+                },
+
+                onDeleteClick = { posicion ->
+
+                    eliminarElementoMenu(
+                        posicion
+                    )
+                }
+            )
+
+        rvMenu.layoutManager =
+            LinearLayoutManager(this)
+
+        rvMenu.adapter =
+            menuAdapter
+
+
+        // =====================================================
+        // FAB
+        // =====================================================
+
         fabAgregarMenu.setOnClickListener {
+
             mostrarDialogoSeleccionarTipo()
         }
     }
 
-    // ---------------------------------------------------------
-    // MMOSTRAR SELECCIÓN
-    // -------------------------------------------------------
+
+    // =========================================================
+    // SELECCIONAR QUÉ AGREGAR
+    // =========================================================
+
     private fun mostrarDialogoSeleccionarTipo() {
 
-        val opciones = arrayOf(
-            "Plato del menú",
-            "Entrada"
-        )
+        val opciones =
+            arrayOf(
+                "Plato del menú",
+                "Entrada",
+                "Extra"
+            )
 
         AlertDialog.Builder(this)
-            .setTitle("¿Qué deseas agregar?")
-            .setItems(opciones) { _, cual ->
+            .setTitle(
+                "¿Qué deseas agregar?"
+            )
+            .setItems(
+                opciones
+            ) { _, cual ->
 
                 when (cual) {
 
-                    0 -> {
+                    0 ->
                         mostrarDialogoAgregarMenu()
-                    }
 
-                    1 -> {
+                    1 ->
                         mostrarDialogoAgregarEntrada()
-                    }
+
+                    2 ->
+                        mostrarDialogoAgregarExtra()
                 }
             }
-            .setNegativeButton("Cancelar", null)
+            .setNegativeButton(
+                "Cancelar",
+                null
+            )
             .show()
     }
 
-    // ---------------------------------------------------------
+
+    // =========================================================
     // AGREGAR PLATO
-    // ---------------------------------------------------------
+    // =========================================================
 
     private fun mostrarDialogoAgregarMenu() {
 
-        val dialogView = LayoutInflater.from(this)
-            .inflate(R.layout.dialog_agregar_menu, null)
+        val dialogView =
+            LayoutInflater.from(this)
+                .inflate(
+                    R.layout.dialog_agregar_menu,
+                    null
+                )
 
         val etNombre =
-            dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(
+            dialogView.findViewById<TextInputEditText>(
                 R.id.etNombrePlato
             )
 
-        etNombre.hint = "Nombre del nuevo plato"
+        val etPrecio =
+            dialogView.findViewById<TextInputEditText>(
+                R.id.etPrecioPlato
+            )
 
-        val dialog = AlertDialog.Builder(this)
-            .setTitle("Nuevo Plato")
-            .setView(dialogView)
-            .setPositiveButton("Agregar", null)
-            .setNegativeButton("Cancelar", null)
-            .create()
-
-        dialog.window?.setBackgroundDrawable(
-            android.graphics.Color.TRANSPARENT.toDrawable()
-        )
+        val dialog =
+            AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setPositiveButton(
+                    "Agregar",
+                    null
+                )
+                .setNegativeButton(
+                    "Cancelar",
+                    null
+                )
+                .create()
 
         dialog.show()
 
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+        dialog.window?.setBackgroundDrawable(
+            Color.TRANSPARENT.toDrawable()
+        )
 
-            val nuevoNombre =
-                etNombre.text.toString().trim()
 
-            if (nuevoNombre.isEmpty()) {
+        dialog.getButton(
+            AlertDialog.BUTTON_POSITIVE
+        ).setOnClickListener {
+
+            val nombre =
+                etNombre.text
+                    .toString()
+                    .trim()
+
+            val textoPrecio =
+                etPrecio.text
+                    .toString()
+                    .trim()
+
+
+            // -------------------------------------------------
+            // VALIDAR NOMBRE
+            // -------------------------------------------------
+
+            if (nombre.isEmpty()) {
 
                 etNombre.error =
                     "Escribe un nombre válido"
@@ -183,65 +420,104 @@ class ActivityMenu : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Obtener el siguiente ID
+
+            // -------------------------------------------------
+            // VALIDAR PRECIO
+            // -------------------------------------------------
+
+            val precio =
+                textoPrecio
+                    .replace(",", ".")
+                    .toDoubleOrNull()
+
+            if (
+                precio == null ||
+                precio <= 0
+            ) {
+
+                etPrecio.error =
+                    "Ingresa un precio válido"
+
+                return@setOnClickListener
+            }
+
+
+            // -------------------------------------------------
+            // NUEVO ID
+            // -------------------------------------------------
+
             val nuevoId =
-                (listaMenu.maxOfOrNull { it.id } ?: 0) + 1
+                (
+                        listaMenu.maxOfOrNull {
+                            it.id
+                        } ?: 0
+                        ) + 1
 
-            // Datos para Firebase
-            val datos = hashMapOf(
-                "id" to nuevoId,
-                "nombre" to nuevoNombre
-            )
 
-            // Guardar en Firebase
+            // -------------------------------------------------
+            // DATOS
+            // -------------------------------------------------
+
+            val datos =
+                hashMapOf(
+                    "id" to nuevoId,
+                    "nombre" to nombre,
+                    "precio" to precio
+                )
+
+
+            // -------------------------------------------------
+            // FIREBASE
+            // -------------------------------------------------
+
             db.collection("menu")
-                .document(nuevoId.toString())
+                .document(
+                    nuevoId.toString()
+                )
                 .set(datos)
-
                 .addOnSuccessListener {
 
-                    android.util.Log.d(
-                        "FIREBASE",
-                        "Plato agregado: $nuevoNombre"
-                    )
-
-                    /*
-                     * IMPORTANTE:
-                     *
-                     * NO hacemos:
-                     *
-                     * listaMenu.add(...)
-                     *
-                     * menuAdapter.notifyItemInserted(...)
-                     *
-                     * El addSnapshotListener de cargarDatosDesdeFirebase()
-                     * detectará automáticamente el nuevo documento.
-                     */
+                    Toast.makeText(
+                        this,
+                        "Plato agregado",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
                     dialog.dismiss()
                 }
-
                 .addOnFailureListener { error ->
 
-                    android.util.Log.e(
+                    Log.e(
                         "FIREBASE",
                         "Error agregando plato",
                         error
                     )
 
-                    etNombre.error =
-                        "No se pudo guardar el plato"
+                    Toast.makeText(
+                        this,
+                        "Error al guardar el plato",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
         }
     }
 
+
+    // =========================================================
+    // AGREGAR ENTRADA
+    // =========================================================
+
     private fun mostrarDialogoAgregarEntrada() {
 
-        val dialogView = LayoutInflater.from(this)
-            .inflate(R.layout.dialog_agregar_entrada, null)
+        val dialogView =
+            LayoutInflater.from(this)
+                .inflate(
+                    R.layout.dialog_agregar_entrada,
+                    null
+                )
 
         val etNombre =
-            dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(
+            dialogView.findViewById<TextInputEditText>(
                 R.id.etNombreEntrada
             )
 
@@ -252,395 +528,1340 @@ class ActivityMenu : AppCompatActivity() {
 
         switchDisponible.isChecked = true
 
-        val dialog = AlertDialog.Builder(this)
-            .setView(dialogView)
-            .setPositiveButton("Agregar", null)
-            .setNegativeButton("Cancelar", null)
-            .create()
 
-        dialog.window?.setBackgroundDrawable(
-            android.graphics.Color.TRANSPARENT.toDrawable()
-        )
+        val dialog =
+            AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setPositiveButton(
+                    "Agregar",
+                    null
+                )
+                .setNegativeButton(
+                    "Cancelar",
+                    null
+                )
+                .create()
 
         dialog.show()
 
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+        dialog.window?.setBackgroundDrawable(
+            Color.TRANSPARENT.toDrawable()
+        )
 
-            val nuevoNombre = etNombre.text.toString().trim()
-            val disponible = switchDisponible.isChecked
 
-            if (nuevoNombre.isEmpty()) {
-                etNombre.error = "Escribe un nombre válido"
+        dialog.getButton(
+            AlertDialog.BUTTON_POSITIVE
+        ).setOnClickListener {
+
+            val nombre =
+                etNombre.text
+                    .toString()
+                    .trim()
+
+
+            if (nombre.isEmpty()) {
+
+                etNombre.error =
+                    "Escribe un nombre válido"
+
                 return@setOnClickListener
             }
 
-            val nuevoId =
-                (entradas.maxOfOrNull { it.id } ?: 0) + 1
 
-            val datos = hashMapOf(
-                "id" to nuevoId,
-                "nombre" to nuevoNombre,
-                "disponible" to disponible
-            )
+            val disponible =
+                switchDisponible.isChecked
+
+
+            val nuevoId =
+                (
+                        entradas.maxOfOrNull {
+                            it.id
+                        } ?: 0
+                        ) + 1
+
+
+            val datos =
+                hashMapOf(
+                    "id" to nuevoId,
+                    "nombre" to nombre,
+                    "disponible" to disponible
+                )
+
 
             db.collection("entradas")
-                .document(nuevoId.toString())
+                .document(
+                    nuevoId.toString()
+                )
                 .set(datos)
                 .addOnSuccessListener {
 
-                    android.util.Log.d(
-                        "FIREBASE",
-                        "Entrada agregada: $nuevoNombre"
-                    )
-
-                    // IMPORTANTE:
-                    // NO hacemos entradas.add()
-                    // NO hacemos notifyItemInserted()
-                    //
-                    // addSnapshotListener detectará automáticamente
-                    // la nueva entrada.
+                    Toast.makeText(
+                        this,
+                        "Entrada agregada",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
                     dialog.dismiss()
                 }
                 .addOnFailureListener { error ->
 
-                    android.util.Log.e(
+                    Log.e(
                         "FIREBASE",
-                        "Error agregando entrada",
+                        "Error guardando entrada",
                         error
                     )
 
-                    etNombre.error =
-                        "No se pudo guardar la entrada"
+                    Toast.makeText(
+                        this,
+                        "Error al guardar entrada",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
         }
     }
 
-    // ---------------------------------------------------------
-    // EDITAR ENTRADA
-    // ---------------------------------------------------------
 
-    private fun mostrarDialogoEdicionEntrada(posicion: Int) {
+    // =========================================================
+    // AGREGAR EXTRA
+    // =========================================================
 
-        val entradaActual = entradas[posicion]
+    private fun mostrarDialogoAgregarExtra() {
 
-        val dialogView = LayoutInflater.from(this)
-            .inflate(R.layout.dialog_editar_entrada, null)
+        val layout =
+            LinearLayout(this)
+
+        layout.orientation =
+            LinearLayout.VERTICAL
+
+        layout.setPadding(
+            50,
+            20,
+            50,
+            10
+        )
+
+
+        // =====================================================
+        // NOMBRE
+        // =====================================================
 
         val etNombre =
-            dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(
+            TextInputEditText(this)
+
+        etNombre.hint =
+            "Nombre del extra"
+
+        layout.addView(
+            etNombre
+        )
+
+
+        // =====================================================
+        // PRECIO
+        // =====================================================
+
+        val etPrecio =
+            TextInputEditText(this)
+
+        etPrecio.hint =
+            "Precio"
+
+        etPrecio.inputType =
+            InputType.TYPE_CLASS_NUMBER or
+                    InputType.TYPE_NUMBER_FLAG_DECIMAL
+
+        layout.addView(
+            etPrecio
+        )
+
+
+        // =====================================================
+        // CATEGORÍA
+        // =====================================================
+
+        val spinnerCategoria =
+            Spinner(this)
+
+        val categorias =
+            arrayOf(
+                "Gaseosas",
+                "Tortas",
+                "Postres",
+                "Bebidas"
+            )
+
+        val categoriaAdapter =
+            ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                categorias
+            )
+
+        spinnerCategoria.adapter =
+            categoriaAdapter
+
+        layout.addView(
+            spinnerCategoria
+        )
+
+
+        // =====================================================
+        // DIÁLOGO
+        // =====================================================
+
+        val dialog =
+            AlertDialog.Builder(this)
+                .setTitle(
+                    "Agregar extra"
+                )
+                .setView(layout)
+                .setPositiveButton(
+                    "Guardar",
+                    null
+                )
+                .setNegativeButton(
+                    "Cancelar",
+                    null
+                )
+                .create()
+
+        dialog.show()
+
+
+        // =====================================================
+        // GUARDAR
+        // =====================================================
+
+        dialog.getButton(
+            AlertDialog.BUTTON_POSITIVE
+        ).setOnClickListener {
+
+            val nombre =
+                etNombre.text
+                    .toString()
+                    .trim()
+
+
+            val textoPrecio =
+                etPrecio.text
+                    .toString()
+                    .trim()
+
+
+            // -------------------------------------------------
+            // VALIDAR NOMBRE
+            // -------------------------------------------------
+
+            if (nombre.isEmpty()) {
+
+                etNombre.error =
+                    "Escribe un nombre"
+
+                return@setOnClickListener
+            }
+
+
+            // -------------------------------------------------
+            // VALIDAR PRECIO
+            // -------------------------------------------------
+
+            val precio =
+                textoPrecio
+                    .replace(",", ".")
+                    .toDoubleOrNull()
+
+            if (
+                precio == null ||
+                precio <= 0
+            ) {
+
+                etPrecio.error =
+                    "Ingresa un precio válido"
+
+                return@setOnClickListener
+            }
+
+
+            // -------------------------------------------------
+            // CATEGORÍA
+            // -------------------------------------------------
+
+            val categoriaId =
+                spinnerCategoria.selectedItemPosition + 1
+
+
+            // -------------------------------------------------
+            // ICONO AUTOMÁTICO
+            // -------------------------------------------------
+
+            val icono =
+                obtenerIconoPorCategoria(
+                    categoriaId
+                )
+
+
+            // -------------------------------------------------
+            // NUEVO ID
+            // -------------------------------------------------
+
+            val nuevoId =
+                (
+                        listaExtras.maxOfOrNull {
+                            it.id
+                        } ?: 0
+                        ) + 1
+
+
+            // =================================================
+            // DATOS FIREBASE
+            // =================================================
+
+            val datos =
+                hashMapOf(
+                    "id" to nuevoId,
+                    "nombre" to nombre,
+                    "precio" to precio,
+                    "categoriaId" to categoriaId,
+                    "icono" to icono
+                )
+
+
+            // =================================================
+            // GUARDAR
+            // =================================================
+
+            db.collection("extras")
+                .document(
+                    nuevoId.toString()
+                )
+                .set(datos)
+                .addOnSuccessListener {
+
+                    Toast.makeText(
+                        this,
+                        "Extra agregado",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    dialog.dismiss()
+                }
+                .addOnFailureListener { error ->
+
+                    Log.e(
+                        "FIREBASE",
+                        "Error agregando extra",
+                        error
+                    )
+
+                    Toast.makeText(
+                        this,
+                        "No se pudo guardar el extra",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+        }
+    }
+
+
+    // =========================================================
+    // ICONO SEGÚN CATEGORÍA
+    // =========================================================
+
+    private fun obtenerIconoPorCategoria(
+        categoriaId: Int
+    ): Int {
+
+        return when (categoriaId) {
+
+            1 ->
+                R.drawable.ic_gaseosa
+
+            2 ->
+                R.drawable.ic_torta
+
+            3 ->
+                R.drawable.ic_postre
+
+            4 ->
+                R.drawable.ic_bebida
+
+            else ->
+                R.drawable.ic_bebida
+        }
+    }
+
+
+    // =========================================================
+    // CARGAR EXTRAS
+    // =========================================================
+
+    private fun cargarExtrasDesdeFirebase() {
+
+        db.collection("extras")
+            .addSnapshotListener { resultado, error ->
+
+                if (error != null) {
+
+                    Log.e(
+                        "FIREBASE",
+                        "Error escuchando extras",
+                        error
+                    )
+
+                    return@addSnapshotListener
+                }
+
+
+                if (resultado == null) {
+                    return@addSnapshotListener
+                }
+
+
+                listaExtras.clear()
+
+
+                for (documento in resultado) {
+
+                    // =================================================
+                    // ID
+                    // =================================================
+
+                    val id =
+                        documento
+                            .getLong("id")
+                            ?.toInt()
+                            ?: documento.id.toIntOrNull()
+                            ?: 0
+
+
+                    // =================================================
+                    // NOMBRE
+                    // =================================================
+
+                    val nombre =
+                        documento
+                            .getString("nombre")
+                            ?: ""
+
+
+                    // =================================================
+                    // PRECIO
+                    // =================================================
+
+                    val precio =
+                        documento
+                            .getDouble("precio")
+                            ?: 0.0
+
+
+                    // =================================================
+                    // CATEGORÍA
+                    // =================================================
+
+                    val categoriaId =
+                        documento
+                            .getLong("categoriaId")
+                            ?.toInt()
+                            ?: 1
+
+
+                    // =================================================
+                    // ICONO
+                    //
+                    // IMPORTANTE:
+                    // NO usamos el icono antiguo de Firebase.
+                    // Siempre se calcula según la categoría.
+                    // =================================================
+
+                    val icono =
+                        obtenerIconoPorCategoria(
+                            categoriaId
+                        )
+
+
+                    // =================================================
+                    // AGREGAR
+                    // =================================================
+
+                    if (
+                        id > 0 &&
+                        nombre.isNotEmpty()
+                    ) {
+
+                        listaExtras.add(
+
+                            ExtraItem(
+                                id = id,
+                                nombre = nombre,
+                                precio = precio,
+                                categoriaId = categoriaId,
+                                icono = icono
+                            )
+                        )
+                    }
+                }
+
+
+                // =================================================
+                // ACTUALIZAR
+                // =================================================
+
+                extraAdminAdapter
+                    .notifyDataSetChanged()
+
+
+                Log.d(
+                    "FIREBASE",
+                    "Extras actualizados: ${listaExtras.size}"
+                )
+            }
+    }
+
+
+    // =========================================================
+    // EDITAR EXTRA
+    // =========================================================
+
+    private fun mostrarDialogoEdicionExtra(
+        posicion: Int
+    ) {
+
+        if (
+            posicion < 0 ||
+            posicion >= listaExtras.size
+        ) {
+            return
+        }
+
+
+        val extra =
+            listaExtras[posicion]
+
+
+        // =====================================================
+        // LAYOUT
+        // =====================================================
+
+        val layout =
+            LinearLayout(this)
+
+        layout.orientation =
+            LinearLayout.VERTICAL
+
+        layout.setPadding(
+            50,
+            20,
+            50,
+            10
+        )
+
+
+        // =====================================================
+        // NOMBRE
+        // =====================================================
+
+        val etNombre =
+            TextInputEditText(this)
+
+        etNombre.hint =
+            "Nombre del extra"
+
+        etNombre.setText(
+            extra.nombre
+        )
+
+        layout.addView(
+            etNombre
+        )
+
+
+        // =====================================================
+        // PRECIO
+        // =====================================================
+
+        val etPrecio =
+            TextInputEditText(this)
+
+        etPrecio.hint =
+            "Precio"
+
+        etPrecio.inputType =
+            InputType.TYPE_CLASS_NUMBER or
+                    InputType.TYPE_NUMBER_FLAG_DECIMAL
+
+        etPrecio.setText(
+            String.format(
+                Locale.US,
+                "%.2f",
+                extra.precio
+            )
+        )
+
+        layout.addView(
+            etPrecio
+        )
+
+
+        // =====================================================
+        // CATEGORÍA
+        // =====================================================
+
+        val spinnerCategoria =
+            Spinner(this)
+
+        val categorias =
+            arrayOf(
+                "Gaseosas",
+                "Tortas",
+                "Postres",
+                "Bebidas"
+            )
+
+        val categoriaAdapter =
+            ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                categorias
+            )
+
+        spinnerCategoria.adapter =
+            categoriaAdapter
+
+
+        val categoriaSeleccionada =
+            extra.categoriaId - 1
+
+
+        if (
+            categoriaSeleccionada >= 0 &&
+            categoriaSeleccionada < categorias.size
+        ) {
+
+            spinnerCategoria.setSelection(
+                categoriaSeleccionada
+            )
+        }
+
+
+        layout.addView(
+            spinnerCategoria
+        )
+
+
+        // =====================================================
+        // DIÁLOGO
+        // =====================================================
+
+        val dialog =
+            AlertDialog.Builder(this)
+                .setTitle(
+                    "Editar extra"
+                )
+                .setView(layout)
+                .setPositiveButton(
+                    "Guardar",
+                    null
+                )
+                .setNegativeButton(
+                    "Cancelar",
+                    null
+                )
+                .create()
+
+        dialog.show()
+
+
+        // =====================================================
+        // GUARDAR CAMBIOS
+        // =====================================================
+
+        dialog.getButton(
+            AlertDialog.BUTTON_POSITIVE
+        ).setOnClickListener {
+
+            val nombre =
+                etNombre.text
+                    .toString()
+                    .trim()
+
+
+            val textoPrecio =
+                etPrecio.text
+                    .toString()
+                    .trim()
+
+
+            // -------------------------------------------------
+            // VALIDAR NOMBRE
+            // -------------------------------------------------
+
+            if (nombre.isEmpty()) {
+
+                etNombre.error =
+                    "Escribe un nombre"
+
+                return@setOnClickListener
+            }
+
+
+            // -------------------------------------------------
+            // VALIDAR PRECIO
+            // -------------------------------------------------
+
+            val precio =
+                textoPrecio
+                    .replace(",", ".")
+                    .toDoubleOrNull()
+
+            if (
+                precio == null ||
+                precio <= 0
+            ) {
+
+                etPrecio.error =
+                    "Ingresa un precio válido"
+
+                return@setOnClickListener
+            }
+
+
+            // -------------------------------------------------
+            // CATEGORÍA
+            // -------------------------------------------------
+
+            val categoriaId =
+                spinnerCategoria.selectedItemPosition + 1
+
+
+            // -------------------------------------------------
+            // ICONO AUTOMÁTICO
+            // -------------------------------------------------
+
+            val icono =
+                obtenerIconoPorCategoria(
+                    categoriaId
+                )
+
+
+            // =================================================
+            // DATOS
+            // =================================================
+
+            val datos =
+                hashMapOf(
+                    "id" to extra.id,
+                    "nombre" to nombre,
+                    "precio" to precio,
+                    "categoriaId" to categoriaId,
+                    "icono" to icono
+                )
+
+
+            // =================================================
+            // FIREBASE
+            // =================================================
+
+            db.collection("extras")
+                .document(
+                    extra.id.toString()
+                )
+                .set(datos)
+                .addOnSuccessListener {
+
+                    Toast.makeText(
+                        this,
+                        "Extra actualizado",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    dialog.dismiss()
+                }
+                .addOnFailureListener { error ->
+
+                    Log.e(
+                        "FIREBASE",
+                        "Error actualizando extra",
+                        error
+                    )
+
+                    Toast.makeText(
+                        this,
+                        "No se pudo actualizar",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+        }
+    }
+
+
+    // =========================================================
+    // ELIMINAR EXTRA
+    // =========================================================
+
+    private fun eliminarExtra(
+        posicion: Int
+    ) {
+
+        if (
+            posicion < 0 ||
+            posicion >= listaExtras.size
+        ) {
+            return
+        }
+
+
+        val extra =
+            listaExtras[posicion]
+
+
+        AlertDialog.Builder(this)
+            .setTitle(
+                "Eliminar extra"
+            )
+            .setMessage(
+                "¿Deseas eliminar \"${extra.nombre}\"?"
+            )
+            .setNegativeButton(
+                "Cancelar",
+                null
+            )
+            .setPositiveButton(
+                "Eliminar"
+            ) { _, _ ->
+
+                db.collection("extras")
+                    .document(
+                        extra.id.toString()
+                    )
+                    .delete()
+                    .addOnSuccessListener {
+
+                        Toast.makeText(
+                            this,
+                            "Extra eliminado",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    .addOnFailureListener { error ->
+
+                        Log.e(
+                            "FIREBASE",
+                            "Error eliminando extra",
+                            error
+                        )
+
+                        Toast.makeText(
+                            this,
+                            "No se pudo eliminar",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+            .show()
+    }
+
+
+    // =========================================================
+    // EDITAR ENTRADA
+    // =========================================================
+
+    private fun mostrarDialogoEdicionEntrada(
+        posicion: Int
+    ) {
+
+        if (
+            posicion < 0 ||
+            posicion >= entradas.size
+        ) {
+            return
+        }
+
+
+        val entrada =
+            entradas[posicion]
+
+
+        val dialogView =
+            LayoutInflater.from(this)
+                .inflate(
+                    R.layout.dialog_editar_entrada,
+                    null
+                )
+
+
+        val etNombre =
+            dialogView.findViewById<TextInputEditText>(
                 R.id.etNombrePlato
             )
+
 
         val switchDisponible =
             dialogView.findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(
                 R.id.switchDisponible
             )
 
-        // Mostrar datos actuales
-        etNombre.setText(entradaActual.nombre)
-        switchDisponible.isChecked = entradaActual.disponible
 
-        val dialog = AlertDialog.Builder(this)
-            .setView(dialogView)
-            .setPositiveButton("Guardar", null)
-            .setNegativeButton("Eliminar", null)
-            .create()
-
-        dialog.window?.setBackgroundDrawable(
-            android.graphics.Color.TRANSPARENT.toDrawable()
+        etNombre.setText(
+            entrada.nombre
         )
+
+
+        switchDisponible.isChecked =
+            entrada.disponible
+
+
+        val dialog =
+            AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setPositiveButton(
+                    "Guardar",
+                    null
+                )
+                .setNegativeButton(
+                    "Eliminar",
+                    null
+                )
+                .create()
+
 
         dialog.show()
 
-        // BOTÓN GUARDAR
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
 
-            val nuevoNombre = etNombre.text.toString().trim()
-            val nuevaDisponibilidad = switchDisponible.isChecked
+        // =====================================================
+        // GUARDAR
+        // =====================================================
 
-            if (nuevoNombre.isEmpty()) {
+        dialog.getButton(
+            AlertDialog.BUTTON_POSITIVE
+        ).setOnClickListener {
 
-                etNombre.error = "Escribe un nombre válido"
+            val nombre =
+                etNombre.text
+                    .toString()
+                    .trim()
+
+
+            if (nombre.isEmpty()) {
+
+                etNombre.error =
+                    "Escribe un nombre válido"
+
                 return@setOnClickListener
             }
 
-            val datosActualizados = hashMapOf(
-                "id" to entradaActual.id,
-                "nombre" to nuevoNombre,
-                "disponible" to nuevaDisponibilidad
-            )
+
+            val datos =
+                hashMapOf(
+                    "id" to entrada.id,
+                    "nombre" to nombre,
+                    "disponible" to switchDisponible.isChecked
+                )
+
 
             db.collection("entradas")
-                .document(entradaActual.id.toString())
-                .set(datosActualizados)
+                .document(
+                    entrada.id.toString()
+                )
+                .set(datos)
                 .addOnSuccessListener {
 
-                    entradaActual.nombre = nuevoNombre
-                    entradaActual.disponible = nuevaDisponibilidad
-
-                    entradasAdapter.notifyItemChanged(posicion)
-
-                    android.util.Log.d(
-                        "FIREBASE",
-                        "Entrada actualizada: $nuevoNombre"
-                    )
+                    Toast.makeText(
+                        this,
+                        "Entrada actualizada",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
                     dialog.dismiss()
                 }
                 .addOnFailureListener { error ->
 
-                    android.util.Log.e(
+                    Log.e(
                         "FIREBASE",
                         "Error actualizando entrada",
                         error
                     )
 
-                    etNombre.error =
-                        "No se pudo actualizar la entrada"
+                    Toast.makeText(
+                        this,
+                        "No se pudo actualizar",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
         }
 
-        // BOTÓN ELIMINAR
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
+
+        // =====================================================
+        // ELIMINAR
+        // =====================================================
+
+        dialog.getButton(
+            AlertDialog.BUTTON_NEGATIVE
+        ).setOnClickListener {
 
             AlertDialog.Builder(this)
-                .setTitle("Eliminar entrada")
-                .setMessage(
-                    "¿Estás seguro de que deseas eliminar \"${entradaActual.nombre}\"?"
+                .setTitle(
+                    "Eliminar entrada"
                 )
-                .setNegativeButton("Cancelar", null)
-                .setPositiveButton("Eliminar") { _, _ ->
+                .setMessage(
+                    "¿Eliminar \"${entrada.nombre}\"?"
+                )
+                .setNegativeButton(
+                    "Cancelar",
+                    null
+                )
+                .setPositiveButton(
+                    "Eliminar"
+                ) { _, _ ->
 
-                    eliminarEntradaDeFirebase(
-                        entradaActual,
-                        dialog
-                    )
+                    db.collection("entradas")
+                        .document(
+                            entrada.id.toString()
+                        )
+                        .delete()
+                        .addOnSuccessListener {
+
+                            Toast.makeText(
+                                this,
+                                "Entrada eliminada",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        .addOnFailureListener { error ->
+
+                            Log.e(
+                                "FIREBASE",
+                                "Error eliminando entrada",
+                                error
+                            )
+
+                            Toast.makeText(
+                                this,
+                                "No se pudo eliminar",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                    dialog.dismiss()
                 }
                 .show()
         }
     }
 
-    // ---------------------------------------------------------
-    // ELIMINAR ENTRADA
-    // ---------------------------------------------------------
-    private fun eliminarEntradaDeFirebase(
-        entrada: TaskEntradas,
-        dialog: AlertDialog
+
+    // =========================================================
+    // EDITAR MENÚ
+    // =========================================================
+
+    private fun mostrarDialogoEdicionMenu(
+        posicion: Int
     ) {
 
-        db.collection("entradas")
-            .document(entrada.id.toString())
-            .delete()
-            .addOnSuccessListener {
+        if (
+            posicion < 0 ||
+            posicion >= listaMenu.size
+        ) {
+            return
+        }
 
-                android.util.Log.d(
-                    "FIREBASE",
-                    "Entrada eliminada: ${entrada.nombre}"
+
+        val item =
+            listaMenu[posicion]
+
+
+        val dialogView =
+            LayoutInflater.from(this)
+                .inflate(
+                    R.layout.dialog_editar_menu,
+                    null
                 )
 
-                // Firebase actualizará automáticamente
-                // la lista mediante addSnapshotListener.
-
-                dialog.dismiss()
-            }
-            .addOnFailureListener { error ->
-
-                android.util.Log.e(
-                    "FIREBASE",
-                    "Error eliminando entrada",
-                    error
-                )
-            }
-    }
-
-
-    // ---------------------------------------------------------
-    // EDITAR MENÚ
-    // ---------------------------------------------------------
-
-    private fun mostrarDialogoEdicionMenu(posicion: Int) {
-
-        val itemActual = listaMenu[posicion]
-
-        val dialogView = LayoutInflater.from(this)
-            .inflate(R.layout.dialog_editar_menu, null)
 
         val etNombre =
-            dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(
+            dialogView.findViewById<TextInputEditText>(
                 R.id.etNombrePlato
             )
 
-        etNombre.setText(itemActual.name)
 
-        val dialog = AlertDialog.Builder(this)
-            .setView(dialogView)
-            .setPositiveButton("Guardar", null)
-            .setNegativeButton("Cancelar", null)
-            .create()
+        val etPrecio =
+            dialogView.findViewById<TextInputEditText>(
+                R.id.etPrecioPlato
+            )
 
-        dialog.window?.setBackgroundDrawable(
-            android.graphics.Color.TRANSPARENT.toDrawable()
+
+        etNombre.setText(
+            item.name
         )
+
+
+        etPrecio.setText(
+            String.format(
+                Locale.US,
+                "%.2f",
+                item.precio
+            )
+        )
+
+
+        val dialog =
+            AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setPositiveButton(
+                    "Guardar",
+                    null
+                )
+                .setNegativeButton(
+                    "Cancelar",
+                    null
+                )
+                .create()
+
 
         dialog.show()
 
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
 
-            val nuevoNombre = etNombre.text.toString().trim()
+        // =====================================================
+        // GUARDAR
+        // =====================================================
 
-            if (nuevoNombre.isEmpty()) {
+        dialog.getButton(
+            AlertDialog.BUTTON_POSITIVE
+        ).setOnClickListener {
 
-                etNombre.error = "Escribe un nombre válido"
+            val nombre =
+                etNombre.text
+                    .toString()
+                    .trim()
+
+
+            val precio =
+                etPrecio.text
+                    .toString()
+                    .replace(",", ".")
+                    .toDoubleOrNull()
+
+
+            if (nombre.isEmpty()) {
+
+                etNombre.error =
+                    "Escribe un nombre"
+
                 return@setOnClickListener
             }
 
-            // Datos actualizados
-            val datosActualizados = hashMapOf(
-                "id" to itemActual.id,
-                "nombre" to nuevoNombre
-            )
 
-            // Actualizar SOLO este plato en Firebase
+            if (
+                precio == null ||
+                precio <= 0
+            ) {
+
+                etPrecio.error =
+                    "Precio inválido"
+
+                return@setOnClickListener
+            }
+
+
+            val datos =
+                hashMapOf(
+                    "id" to item.id,
+                    "nombre" to nombre,
+                    "precio" to precio
+                )
+
+
             db.collection("menu")
-                .document(itemActual.id.toString())
-                .set(datosActualizados)
+                .document(
+                    item.id.toString()
+                )
+                .set(datos)
                 .addOnSuccessListener {
 
-                    // Actualizar el objeto local
-                    itemActual.name = nuevoNombre
-
-                    // Actualizar RecyclerView
-                    menuAdapter.notifyItemChanged(posicion)
-
-                    android.util.Log.d(
-                        "FIREBASE",
-                        "Plato actualizado: $nuevoNombre"
-                    )
+                    Toast.makeText(
+                        this,
+                        "Plato actualizado",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
                     dialog.dismiss()
                 }
                 .addOnFailureListener { error ->
 
-                    android.util.Log.e(
+                    Log.e(
                         "FIREBASE",
                         "Error actualizando plato",
                         error
                     )
 
-                    etNombre.error =
-                        "No se pudo actualizar el plato"
+                    Toast.makeText(
+                        this,
+                        "No se pudo actualizar",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
         }
     }
 
-    // ---------------------------------------------------------
+
+    // =========================================================
     // ELIMINAR MENÚ
-    // ---------------------------------------------------------
+    // =========================================================
 
-    private fun eliminarElementoMenu(posicion: Int) {
+    private fun eliminarElementoMenu(
+        posicion: Int
+    ) {
 
-        if (posicion == RecyclerView.NO_POSITION) {
+        if (
+            posicion < 0 ||
+            posicion >= listaMenu.size
+        ) {
             return
         }
 
-        if (posicion < 0 || posicion >= listaMenu.size) {
-            return
-        }
 
-        val plato = listaMenu[posicion]
+        val plato =
+            listaMenu[posicion]
 
-        db.collection("menu")
-            .document(plato.id.toString())
-            .delete()
-            .addOnSuccessListener {
 
-                android.util.Log.d(
-                    "FIREBASE",
-                    "Plato eliminado: ${plato.name}"
-                )
+        AlertDialog.Builder(this)
+            .setTitle(
+                "Eliminar plato"
+            )
+            .setMessage(
+                "¿Eliminar \"${plato.name}\"?"
+            )
+            .setNegativeButton(
+                "Cancelar",
+                null
+            )
+            .setPositiveButton(
+                "Eliminar"
+            ) { _, _ ->
 
-                // NO eliminar manualmente de listaMenu.
-                // NO usar notifyItemRemoved().
-                //
-                // addSnapshotListener() actualizará
-                // automáticamente el RecyclerView.
+                db.collection("menu")
+                    .document(
+                        plato.id.toString()
+                    )
+                    .delete()
+                    .addOnSuccessListener {
+
+                        Toast.makeText(
+                            this,
+                            "Plato eliminado",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    .addOnFailureListener { error ->
+
+                        Log.e(
+                            "FIREBASE",
+                            "Error eliminando plato",
+                            error
+                        )
+
+                        Toast.makeText(
+                            this,
+                            "No se pudo eliminar",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
             }
-            .addOnFailureListener { error ->
-
-                android.util.Log.e(
-                    "FIREBASE",
-                    "Error eliminando plato",
-                    error
-                )
-            }
+            .show()
     }
 
-    // ---------------------------------------------------------
-    // CARGAR MENÚ DESDE FIREBASE
-    // ---------------------------------------------------------
+
+    // =========================================================
+    // CARGAR MENÚ FIREBASE
+    // =========================================================
 
     private fun cargarDatosDesdeFirebase() {
 
-        progressBarMenu.visibility = View.VISIBLE
-        rvMenu.visibility = View.GONE
+        progressBarMenu.visibility =
+            View.VISIBLE
+
 
         db.collection("menu")
             .addSnapshotListener { resultado, error ->
 
                 if (error != null) {
 
-                    android.util.Log.e(
+                    Log.e(
                         "FIREBASE",
                         "Error escuchando menú",
                         error
                     )
 
-                    progressBarMenu.visibility = View.GONE
-                    rvMenu.visibility = View.VISIBLE
+                    progressBarMenu.visibility =
+                        View.GONE
 
                     return@addSnapshotListener
                 }
+
 
                 if (resultado == null) {
                     return@addSnapshotListener
                 }
 
+
                 listaMenu.clear()
+
 
                 for (documento in resultado) {
 
                     val id =
-                        documento.getLong("id")?.toInt() ?: 0
+                        documento
+                            .getLong("id")
+                            ?.toInt()
+                            ?: documento.id.toIntOrNull()
+                            ?: 0
+
 
                     val nombre =
-                        documento.getString("nombre") ?: ""
+                        documento
+                            .getString("nombre")
+                            ?: ""
 
-                    if (nombre.isNotEmpty()) {
+
+                    val precio =
+                        documento
+                            .getDouble("precio")
+                            ?: 0.0
+
+
+                    if (
+                        id > 0 &&
+                        nombre.isNotEmpty()
+                    ) {
 
                         listaMenu.add(
+
                             TaskMenu(
-                                id,
-                                nombre
+                                id = id,
+                                name = nombre,
+                                precio = precio
                             )
                         )
                     }
                 }
 
+
                 menuAdapter.notifyDataSetChanged()
 
-                progressBarMenu.visibility = View.GONE
-                rvMenu.visibility = View.VISIBLE
+
+                progressBarMenu.visibility =
+                    View.GONE
+
+
+                Log.d(
+                    "FIREBASE",
+                    "Menú actualizado: ${listaMenu.size}"
+                )
             }
     }
 
-    // ---------------------------------------------------------
-// CARGAR ENTRADAS DESDE FIREBASE
-// ---------------------------------------------------------
 
-    // ---------------------------------------------------------
-// CARGAR ENTRADAS DESDE FIREBASE EN TIEMPO REAL
-// ---------------------------------------------------------
+    // =========================================================
+    // CARGAR ENTRADAS FIREBASE
+    // =========================================================
 
     private fun cargarEntradasDesdeFirebase() {
 
@@ -649,7 +1870,7 @@ class ActivityMenu : AppCompatActivity() {
 
                 if (error != null) {
 
-                    android.util.Log.e(
+                    Log.e(
                         "FIREBASE",
                         "Error escuchando entradas",
                         error
@@ -658,107 +1879,81 @@ class ActivityMenu : AppCompatActivity() {
                     return@addSnapshotListener
                 }
 
+
                 if (resultado == null) {
                     return@addSnapshotListener
                 }
 
+
                 entradas.clear()
 
-                // -------------------------------------------------
-                // SI FIREBASE ESTÁ VACÍO
-                // -------------------------------------------------
-
-                if (resultado.isEmpty) {
-
-                    val entradasIniciales = listOf(
-                        TaskEntradas.Ceviche(),
-                        TaskEntradas.Huancaina(),
-                        TaskEntradas.Otros()
-                    )
-
-                    for (entrada in entradasIniciales) {
-
-                        val datos = hashMapOf(
-                            "id" to entrada.id,
-                            "nombre" to entrada.nombre,
-                            "disponible" to entrada.disponible
-                        )
-
-                        db.collection("entradas")
-                            .document(entrada.id.toString())
-                            .set(datos)
-                            .addOnSuccessListener {
-
-                                android.util.Log.d(
-                                    "FIREBASE",
-                                    "Entrada inicial guardada: ${entrada.nombre}"
-                                )
-                            }
-                            .addOnFailureListener { error ->
-
-                                android.util.Log.e(
-                                    "FIREBASE",
-                                    "Error guardando entrada inicial",
-                                    error
-                                )
-                            }
-                    }
-
-                    return@addSnapshotListener
-                }
-
-                // -------------------------------------------------
-                // FIREBASE YA TIENE ENTRADAS
-                // -------------------------------------------------
 
                 for (documento in resultado) {
 
                     val id =
-                        documento.getLong("id")?.toInt()
+                        documento
+                            .getLong("id")
+                            ?.toInt()
+                            ?: documento.id.toIntOrNull()
                             ?: 0
 
+
                     val nombre =
-                        documento.getString("nombre")
+                        documento
+                            .getString("nombre")
                             ?: ""
 
+
                     val disponible =
-                        documento.getBoolean("disponible")
+                        documento
+                            .getBoolean("disponible")
                             ?: true
 
-                    if (nombre.isNotEmpty()) {
 
-                        val entrada: TaskEntradas =
+                    if (
+                        id > 0 &&
+                        nombre.isNotEmpty()
+                    ) {
+
+                        val entrada =
                             when (id) {
 
-                                1 -> TaskEntradas.Ceviche(
-                                    id,
-                                    nombre,
-                                    disponible
-                                )
+                                1 ->
+                                    TaskEntradas.Ceviche(
+                                        id,
+                                        nombre,
+                                        disponible
+                                    )
 
-                                2 -> TaskEntradas.Huancaina(
-                                    id,
-                                    nombre,
-                                    disponible
-                                )
+                                2 ->
+                                    TaskEntradas.Huancaina(
+                                        id,
+                                        nombre,
+                                        disponible
+                                    )
 
-                                else -> TaskEntradas.Otros(
-                                    id,
-                                    nombre,
-                                    disponible
-                                )
+                                else ->
+                                    TaskEntradas.Otros(
+                                        id,
+                                        nombre,
+                                        disponible
+                                    )
                             }
 
-                        entradas.add(entrada)
+
+                        entradas.add(
+                            entrada
+                        )
                     }
                 }
 
-                // Actualizar RecyclerView
+
                 entradasAdapter.notifyDataSetChanged()
 
-                android.util.Log.d(
+
+                Log.d(
                     "FIREBASE",
-                    "Entradas actualizadas en tiempo real: ${entradas.size}"
+                    "Entradas actualizadas: ${entradas.size}"
                 )
             }
     }

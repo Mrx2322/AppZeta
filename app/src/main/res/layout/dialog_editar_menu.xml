@@ -15,7 +15,7 @@
         android:orientation="vertical"
         android:padding="28dp">
 
-        <!-- Circulo con ícono de encabezado -->
+        <!-- Círculo con ícono -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="56dp"
             android:layout_height="56dp"
@@ -32,28 +32,30 @@
                 android:layout_gravity="center"
                 android:text="✏️"
                 android:textSize="22sp" />
+
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Título y subtítulo centrados -->
+        <!-- Título -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Editar Menu"
+            android:text="Editar Menú"
             android:textAlignment="center"
             android:textColor="#1D1B20"
             android:textSize="22sp"
             android:textStyle="bold" />
 
+        <!-- Subtítulo -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:text="Agregar Nuevo Plato de Menu"
+            android:text="Modifica el nombre y precio del plato"
             android:textAlignment="center"
             android:textColor="#49454F"
             android:textSize="14sp" />
 
-        <!-- Caja de texto estilizada con bordes curvos -->
+        <!-- NOMBRE -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilNombrePlato"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -74,7 +76,34 @@
                 android:maxLines="1"
                 android:textColor="#1D1B20"
                 android:textSize="16sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- PRECIO -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilPrecioPlato"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:boxCornerRadiusBottomEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusTopStart="16dp"
+            app:prefixText="S/ ">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPrecioPlato"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Precio"
+                android:inputType="numberDecimal"
+                android:maxLines="1"
+                android:textColor="#1D1B20"
+                android:textSize="16sp" />
+
         </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
+
 </com.google.android.material.card.MaterialCardView>

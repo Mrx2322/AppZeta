@@ -7,7 +7,8 @@ import com.example.appzetar.Menu.TaskEntradas
 import com.example.appzetar.R
 
 class EntradasUsuarioAdapter(
-    private val entradas: MutableList<TaskEntradas>
+    private val entradas: MutableList<TaskEntradas>,
+    private val onAgregarClick: (TaskEntradas) -> Unit
 ) : RecyclerView.Adapter<EntradasUsuarioViewHolder>() {
 
     override fun onCreateViewHolder(
@@ -29,7 +30,11 @@ class EntradasUsuarioAdapter(
         holder: EntradasUsuarioViewHolder,
         position: Int
     ) {
-        holder.render(entradas[position])
+
+        holder.render(
+            entradas[position],
+            onAgregarClick
+        )
     }
 
     override fun getItemCount(): Int {
