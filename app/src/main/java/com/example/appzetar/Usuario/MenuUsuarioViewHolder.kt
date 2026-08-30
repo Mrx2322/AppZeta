@@ -1,5 +1,6 @@
 package com.example.appzetar.Usuario
 
+import android.annotation.SuppressLint
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -24,6 +25,7 @@ class MenuUsuarioViewHolder(
     private val btnAgregar: FloatingActionButton =
         view.findViewById(R.id.btnAgregar)
 
+    @SuppressLint("SetTextI18n")
     fun render(
         taskMenu: TaskMenu,
         onAgregarClick: (TaskMenu) -> Unit
