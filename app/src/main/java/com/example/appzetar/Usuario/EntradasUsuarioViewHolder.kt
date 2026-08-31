@@ -2,11 +2,10 @@ package com.example.appzetar.Usuario
 
 import android.view.View
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.Menu.TaskEntradas
 import com.example.appzetar.R
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.button.MaterialButton
 
 class EntradasUsuarioViewHolder(
     view: View
@@ -15,80 +14,23 @@ class EntradasUsuarioViewHolder(
     private val tvEntradasName: TextView =
         view.findViewById(R.id.tvNombrePlato)
 
-    private val divider: View =
-        view.findViewById(R.id.divider)
-
-    private val btnAgregarEntrada: FloatingActionButton =
+    private val btnAgregarEntrada: MaterialButton =
         view.findViewById(R.id.btnAgregarEntrada)
-
 
     fun render(
         taskEntradas: TaskEntradas,
         onAgregarClick: (TaskEntradas) -> Unit
     ) {
 
-        // -----------------------------------------------------
-        // NOMBRE
-        // -----------------------------------------------------
+        // Nombre
+        tvEntradasName.text = taskEntradas.nombre
 
-        tvEntradasName.text =
-            taskEntradas.nombre
-
-
-        // -----------------------------------------------------
-        // COLOR DE LA LÍNEA
-        // -----------------------------------------------------
-
-        when (taskEntradas) {
-
-            is TaskEntradas.Ceviche -> {
-
-                divider.setBackgroundColor(
-                    ContextCompat.getColor(
-                        divider.context,
-                        R.color.black
-                    )
-                )
-            }
-
-            is TaskEntradas.Huancaina -> {
-
-                divider.setBackgroundColor(
-                    ContextCompat.getColor(
-                        divider.context,
-                        R.color.todo_business_category
-                    )
-                )
-            }
-
-            is TaskEntradas.Otros -> {
-
-                divider.setBackgroundColor(
-                    ContextCompat.getColor(
-                        divider.context,
-                        R.color.todo_background_todo_app
-                    )
-                )
-            }
-        }
-
-
-        // -----------------------------------------------------
-        // BOTÓN AGREGAR
-        // -----------------------------------------------------
-
+        // Botón agregar
         btnAgregarEntrada.setOnClickListener {
-
-            onAgregarClick(
-                taskEntradas
-            )
+            onAgregarClick(taskEntradas)
         }
 
-
-        // -----------------------------------------------------
-        // EVITAR CLICK EN LA TARJETA
-        // -----------------------------------------------------
-
+        // La tarjeta no realiza ninguna acción
         itemView.setOnClickListener(null)
     }
 }

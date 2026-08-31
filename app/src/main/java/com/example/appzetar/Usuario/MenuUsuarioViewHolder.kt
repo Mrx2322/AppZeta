@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.Menu.TaskMenu
 import com.example.appzetar.R
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.button.MaterialButton
 
 class MenuUsuarioViewHolder(
     view: View
@@ -22,8 +22,7 @@ class MenuUsuarioViewHolder(
     private val tvPrecio: TextView =
         view.findViewById(R.id.tvPrecio)
 
-    private val btnAgregar: FloatingActionButton =
-        view.findViewById(R.id.btnAgregar)
+    val btnAgregar = itemView.findViewById<MaterialButton>(R.id.btnAgregar)
 
     @SuppressLint("SetTextI18n")
     fun render(
