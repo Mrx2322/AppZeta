@@ -55,6 +55,17 @@
         <activity
             android:name=".Usuario.RegistroActivity"
             android:exported="false" />
+        <activity
+            android:name=".Usuario.ActivityConfirmarPedido"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Usuario.ActivityEntrega"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Usuario.ActivityDireccion"
+            android:exported="false" />
     </application>
 
 </manifest>

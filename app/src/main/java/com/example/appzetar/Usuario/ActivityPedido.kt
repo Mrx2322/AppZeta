@@ -12,16 +12,19 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
-import com.example.appzetar.Usuario.Pagos.ActivityPagoYape
+import com.google.android.material.button.MaterialButton
 
 class ActivityPedido : AppCompatActivity() {
+
+    // =========================================================
+    // COMPONENTES
+    // =========================================================
 
     private lateinit var rvPedido: RecyclerView
     private lateinit var tvTotalProductos: TextView
     private lateinit var tvTotalPedido: TextView
     private lateinit var tvMensajeVacio: TextView
-
-    private lateinit var btnContinuar: View
+    private lateinit var btnContinuar: MaterialButton
 
     private lateinit var pedidoAdapter: PedidoAdapter
 
@@ -74,7 +77,9 @@ class ActivityPedido : AppCompatActivity() {
         // =====================================================
 
         initComponent()
+
         initUI()
+
         actualizarPedido()
     }
 
@@ -125,26 +130,44 @@ class ActivityPedido : AppCompatActivity() {
 
 
         // =====================================================
-        // CONTINUAR AL PAGO
+        // BOTÓN CONTINUAR
         // =====================================================
 
         btnContinuar.setOnClickListener {
 
-            if (
-                PedidoManager.pedido.isEmpty()
-            ) {
-                return@setOnClickListener
-            }
-
-
-            val intent =
-                Intent(
-                    this,
-                    ActivityPagoYape::class.java
-                )
-
-            startActivity(intent)
+            continuarCompra()
         }
+    }
+
+
+    // =========================================================
+    // CONTINUAR COMPRA
+    // =========================================================
+
+    private fun continuarCompra() {
+
+        // =====================================================
+        // VERIFICAR SI EL PEDIDO ESTÁ VACÍO
+        // =====================================================
+
+        if (PedidoManager.pedido.isEmpty()) {
+
+            return
+        }
+
+
+        // =====================================================
+        // IR A SELECCIONAR TIPO DE ENTREGA
+        // =====================================================
+
+        val intent =
+            Intent(
+                this,
+                ActivityEntrega::class.java
+            )
+
+
+        startActivity(intent)
     }
 
 
@@ -166,7 +189,14 @@ class ActivityPedido : AppCompatActivity() {
 
 
         tvTotalProductos.text =
-            "$cantidad productos"
+            if (cantidad == 1) {
+
+                "1 producto"
+
+            } else {
+
+                "$cantidad productos"
+            }
 
 
         // =====================================================
@@ -188,9 +218,7 @@ class ActivityPedido : AppCompatActivity() {
         // PEDIDO VACÍO
         // =====================================================
 
-        if (
-            PedidoManager.pedido.isEmpty()
-        ) {
+        if (PedidoManager.pedido.isEmpty()) {
 
             rvPedido.visibility =
                 View.GONE
@@ -203,7 +231,6 @@ class ActivityPedido : AppCompatActivity() {
 
             btnContinuar.alpha =
                 0.5f
-
 
         } else {
 
@@ -227,7 +254,7 @@ class ActivityPedido : AppCompatActivity() {
 
 
     // =========================================================
-    // AL REGRESAR
+    // AL REGRESAR A LA ACTIVIDAD
     // =========================================================
 
     override fun onResume() {

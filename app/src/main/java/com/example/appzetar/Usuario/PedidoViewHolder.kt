@@ -25,6 +25,11 @@ class PedidoViewHolder(
             R.id.tvCantidad
         )
 
+    private val tvSubtotal =
+        view.findViewById<TextView>(
+            R.id.tvSubtotalProducto
+        )
+
     private val btnMenos =
         view.findViewById<ImageButton>(
             R.id.btnMenos
@@ -50,14 +55,33 @@ class PedidoViewHolder(
         onPedidoActualizado: () -> Unit
     ) {
 
+        // =====================================================
+        // DATOS
+        // =====================================================
+
         tvNombre.text =
             item.nombre
 
         tvPrecio.text =
-            "S/ %.2f".format(item.precio)
+            "S/ %.2f c/u".format(
+                item.precio
+            )
 
         tvCantidad.text =
             item.cantidad.toString()
+
+
+        // =====================================================
+        // SUBTOTAL DEL PRODUCTO
+        // =====================================================
+
+        val subtotal =
+            item.precio * item.cantidad
+
+        tvSubtotal.text =
+            "S/ %.2f".format(
+                subtotal
+            )
 
 
         // =====================================================
