@@ -22,6 +22,7 @@ import com.example.appzetar.Menu.TaskEntradas
 import com.example.appzetar.Menu.TaskMenu
 import com.example.appzetar.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityMenuUsuario : AppCompatActivity() {
@@ -32,6 +33,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
     private val db =
         FirebaseFirestore.getInstance()
+
+    private val auth =
+        FirebaseAuth.getInstance()
 
 
     // =========================================================
@@ -96,6 +100,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
     private lateinit var tvCantidadCarrito: TextView
 
     private lateinit var btnCarrito: FloatingActionButton
+
+    private lateinit var tvSaludo: TextView
 
 
     // =========================================================
@@ -170,6 +176,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         initUI()
 
+        cargarNombreUsuario()
+
         cargarCategorias()
 
         cargarDatosDesdeFirebase()
@@ -202,6 +210,73 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         btnCarrito =
             findViewById(R.id.btnCarrito)
+
+        tvSaludo =
+            findViewById(R.id.tvSaludo)
+    }
+
+
+    // =========================================================
+    // CARGAR NOMBRE DEL USUARIO
+    // =========================================================
+
+    private fun cargarNombreUsuario() {
+
+        val usuarioActual =
+            auth.currentUser
+
+        if (usuarioActual == null) {
+
+            tvSaludo.text =
+                "¡Hola!"
+
+            return
+        }
+
+
+        val uid =
+            usuarioActual.uid
+
+
+        db.collection("usuarios")
+            .document(uid)
+            .get()
+            .addOnSuccessListener { documento ->
+
+                if (documento.exists()) {
+
+                    val nombre =
+                        documento.getString("nombre")
+
+
+                    if (!nombre.isNullOrEmpty()) {
+
+                        tvSaludo.text =
+                            "¡Hola, $nombre!"
+
+                    } else {
+
+                        tvSaludo.text =
+                            "¡Hola!"
+                    }
+
+                } else {
+
+                    tvSaludo.text =
+                        "¡Hola!"
+                }
+            }
+            .addOnFailureListener { error ->
+
+                Log.e(
+                    "USUARIO_FIREBASE",
+                    "Error obteniendo nombre del usuario",
+                    error
+                )
+
+                tvSaludo.text =
+                    "¡Hola!"
+            }
     }
 
 

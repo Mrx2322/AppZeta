@@ -7,8 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.appzetar.Usuario.LoginActivity
 import com.example.appzetar.splash.SplashActivity
-import com.example.appzetar.Usuario.ActivityMenuUsuario
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,9 +38,9 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // -------------------------------------------------
-        // BOTÓN INGRESAR
-        // -------------------------------------------------
+        // =====================================================
+        // BOTÓN VISTA ADMIN
+        // =====================================================
 
         val btnInicio =
             findViewById<Button>(R.id.btnIngresar)
@@ -49,21 +49,21 @@ class MainActivity : AppCompatActivity() {
             navigateToIngresar()
         }
 
-        // -------------------------------------------------
+        // =====================================================
         // BOTÓN VISTA USUARIO
-        // -------------------------------------------------
+        // =====================================================
 
         val btnUsuario =
             findViewById<Button>(R.id.btnUsuario)
 
         btnUsuario.setOnClickListener {
-            navigateToUsuario()
+            navigateToLogin()
         }
     }
 
-    // ---------------------------------------------------------
-    // IR AL INGRESO / ADMIN
-    // ---------------------------------------------------------
+    // =========================================================
+    // IR A ADMIN
+    // =========================================================
 
     private fun navigateToIngresar() {
 
@@ -76,16 +76,16 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    // ---------------------------------------------------------
-    // IR A LA VISTA USUARIO
-    // ---------------------------------------------------------
+    // =========================================================
+    // IR AL LOGIN DE USUARIO
+    // =========================================================
 
-    private fun navigateToUsuario() {
+    private fun navigateToLogin() {
 
         val intent =
             Intent(
                 this,
-                ActivityMenuUsuario::class.java
+                LoginActivity::class.java
             )
 
         startActivity(intent)
