@@ -98,7 +98,6 @@ class ActivityMenu : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
 
-
         // =====================================================
         // PANTALLA COMPLETA
         // =====================================================
@@ -181,29 +180,19 @@ class ActivityMenu : AppCompatActivity() {
     private fun initComponent() {
 
         progressBarMenu =
-            findViewById(
-                R.id.progressBarMenu
-            )
+            findViewById(R.id.progressBarMenu)
 
         rvEntradas =
-            findViewById(
-                R.id.rvEntradas
-            )
+            findViewById(R.id.rvEntradas)
 
         rvExtras =
-            findViewById(
-                R.id.rvExtras
-            )
+            findViewById(R.id.rvExtras)
 
         rvMenu =
-            findViewById(
-                R.id.rvMenu
-            )
+            findViewById(R.id.rvMenu)
 
         fabAgregarMenu =
-            findViewById(
-                R.id.fabAgregarMenu
-            )
+            findViewById(R.id.fabAgregarMenu)
     }
 
 
@@ -363,15 +352,28 @@ class ActivityMenu : AppCompatActivity() {
                     null
                 )
 
+
         val etNombre =
             dialogView.findViewById<TextInputEditText>(
                 R.id.etNombrePlato
             )
 
+
         val etPrecio =
             dialogView.findViewById<TextInputEditText>(
                 R.id.etPrecioPlato
             )
+
+
+        val etStock =
+            dialogView.findViewById<TextInputEditText>(
+                R.id.etStockPlato
+            )
+
+
+        // =====================================================
+        // DIÁLOGO
+        // =====================================================
 
         val dialog =
             AlertDialog.Builder(this)
@@ -386,12 +388,18 @@ class ActivityMenu : AppCompatActivity() {
                 )
                 .create()
 
+
         dialog.show()
+
 
         dialog.window?.setBackgroundDrawable(
             Color.TRANSPARENT.toDrawable()
         )
 
+
+        // =====================================================
+        // GUARDAR
+        // =====================================================
 
         dialog.getButton(
             AlertDialog.BUTTON_POSITIVE
@@ -402,11 +410,22 @@ class ActivityMenu : AppCompatActivity() {
                     .toString()
                     .trim()
 
+
             val textoPrecio =
                 etPrecio.text
                     .toString()
                     .trim()
 
+
+            val textoStock =
+                etStock.text
+                    .toString()
+                    .trim()
+
+
+            // =================================================
+            // VALIDAR NOMBRE
+            // =================================================
 
             if (nombre.isEmpty()) {
 
@@ -417,10 +436,15 @@ class ActivityMenu : AppCompatActivity() {
             }
 
 
+            // =================================================
+            // VALIDAR PRECIO
+            // =================================================
+
             val precio =
                 textoPrecio
                     .replace(",", ".")
                     .toDoubleOrNull()
+
 
             if (
                 precio == null ||
@@ -434,6 +458,30 @@ class ActivityMenu : AppCompatActivity() {
             }
 
 
+            // =================================================
+            // VALIDAR STOCK
+            // =================================================
+
+            val stock =
+                textoStock.toIntOrNull()
+
+
+            if (
+                stock == null ||
+                stock <= 0
+            ) {
+
+                etStock.error =
+                    "Ingresa una cantidad mayor a 0"
+
+                return@setOnClickListener
+            }
+
+
+            // =================================================
+            // NUEVO ID
+            // =================================================
+
             val nuevoId =
                 (
                         listaMenu.maxOfOrNull {
@@ -442,13 +490,22 @@ class ActivityMenu : AppCompatActivity() {
                         ) + 1
 
 
+            // =================================================
+            // DATOS FIREBASE
+            // =================================================
+
             val datos =
                 hashMapOf(
                     "id" to nuevoId,
                     "nombre" to nombre,
-                    "precio" to precio
+                    "precio" to precio,
+                    "stock" to stock
                 )
 
+
+            // =================================================
+            // GUARDAR
+            // =================================================
 
             db.collection("menu")
                 .document(
@@ -459,7 +516,7 @@ class ActivityMenu : AppCompatActivity() {
 
                     Toast.makeText(
                         this,
-                        "Plato agregado",
+                        "Plato agregado. Stock: $stock",
                         Toast.LENGTH_SHORT
                     ).show()
 
@@ -484,6 +541,392 @@ class ActivityMenu : AppCompatActivity() {
 
 
     // =========================================================
+    // EDITAR MENÚ
+    // =========================================================
+
+    private fun mostrarDialogoEdicionMenu(
+        posicion: Int
+    ) {
+
+        if (
+            posicion < 0 ||
+            posicion >= listaMenu.size
+        ) {
+            return
+        }
+
+
+        val item =
+            listaMenu[posicion]
+
+
+        val dialogView =
+            LayoutInflater.from(this)
+                .inflate(
+                    R.layout.dialog_editar_menu,
+                    null
+                )
+
+
+        val etNombre =
+            dialogView.findViewById<TextInputEditText>(
+                R.id.etNombrePlato
+            )
+
+
+        val etPrecio =
+            dialogView.findViewById<TextInputEditText>(
+                R.id.etPrecioPlato
+            )
+
+
+        val etStock =
+            dialogView.findViewById<TextInputEditText>(
+                R.id.etStockPlato
+            )
+
+
+        // =====================================================
+        // CARGAR DATOS ACTUALES
+        // =====================================================
+
+        etNombre.setText(
+            item.name
+        )
+
+
+        etPrecio.setText(
+            String.format(
+                Locale.US,
+                "%.2f",
+                item.precio
+            )
+        )
+
+
+        etStock.setText(
+            item.stock.toString()
+        )
+
+
+        // =====================================================
+        // DIÁLOGO
+        // =====================================================
+
+        val dialog =
+            AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setPositiveButton(
+                    "Guardar",
+                    null
+                )
+                .setNegativeButton(
+                    "Cancelar",
+                    null
+                )
+                .create()
+
+
+        dialog.show()
+
+
+        dialog.window?.setBackgroundDrawable(
+            Color.TRANSPARENT.toDrawable()
+        )
+
+
+        // =====================================================
+        // GUARDAR CAMBIOS
+        // =====================================================
+
+        dialog.getButton(
+            AlertDialog.BUTTON_POSITIVE
+        ).setOnClickListener {
+
+            val nombre =
+                etNombre.text
+                    .toString()
+                    .trim()
+
+
+            val precio =
+                etPrecio.text
+                    .toString()
+                    .replace(",", ".")
+                    .toDoubleOrNull()
+
+
+            val stock =
+                etStock.text
+                    .toString()
+                    .trim()
+                    .toIntOrNull()
+
+
+            // =================================================
+            // VALIDAR NOMBRE
+            // =================================================
+
+            if (nombre.isEmpty()) {
+
+                etNombre.error =
+                    "Escribe un nombre"
+
+                return@setOnClickListener
+            }
+
+
+            // =================================================
+            // VALIDAR PRECIO
+            // =================================================
+
+            if (
+                precio == null ||
+                precio <= 0
+            ) {
+
+                etPrecio.error =
+                    "Precio inválido"
+
+                return@setOnClickListener
+            }
+
+
+            // =================================================
+            // VALIDAR STOCK
+            // =================================================
+
+            if (
+                stock == null ||
+                stock < 0
+            ) {
+
+                etStock.error =
+                    "Cantidad inválida"
+
+                return@setOnClickListener
+            }
+
+
+            // =================================================
+            // DATOS
+            // =================================================
+
+            val datos =
+                hashMapOf(
+                    "id" to item.id,
+                    "nombre" to nombre,
+                    "precio" to precio,
+                    "stock" to stock
+                )
+
+
+            // =================================================
+            // FIREBASE
+            // =================================================
+
+            db.collection("menu")
+                .document(
+                    item.id.toString()
+                )
+                .set(datos)
+                .addOnSuccessListener {
+
+                    Toast.makeText(
+                        this,
+                        "Plato actualizado",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    dialog.dismiss()
+                }
+                .addOnFailureListener { error ->
+
+                    Log.e(
+                        "FIREBASE",
+                        "Error actualizando plato",
+                        error
+                    )
+
+                    Toast.makeText(
+                        this,
+                        "No se pudo actualizar",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+        }
+    }
+
+
+    // =========================================================
+    // ELIMINAR MENÚ
+    // =========================================================
+
+    private fun eliminarElementoMenu(
+        posicion: Int
+    ) {
+
+        if (
+            posicion < 0 ||
+            posicion >= listaMenu.size
+        ) {
+            return
+        }
+
+
+        val plato =
+            listaMenu[posicion]
+
+
+        AlertDialog.Builder(this)
+            .setTitle(
+                "Eliminar plato"
+            )
+            .setMessage(
+                "¿Eliminar \"${plato.name}\"?"
+            )
+            .setNegativeButton(
+                "Cancelar",
+                null
+            )
+            .setPositiveButton(
+                "Eliminar"
+            ) { _, _ ->
+
+                db.collection("menu")
+                    .document(
+                        plato.id.toString()
+                    )
+                    .delete()
+                    .addOnSuccessListener {
+
+                        Toast.makeText(
+                            this,
+                            "Plato eliminado",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    .addOnFailureListener { error ->
+
+                        Log.e(
+                            "FIREBASE",
+                            "Error eliminando plato",
+                            error
+                        )
+
+                        Toast.makeText(
+                            this,
+                            "No se pudo eliminar",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+            .show()
+    }
+
+
+    // =========================================================
+    // CARGAR MENÚ FIREBASE
+    // =========================================================
+
+    private fun cargarDatosDesdeFirebase() {
+
+        progressBarMenu.visibility =
+            View.VISIBLE
+
+
+        db.collection("menu")
+            .addSnapshotListener { resultado, error ->
+
+                if (error != null) {
+
+                    Log.e(
+                        "FIREBASE",
+                        "Error escuchando menú",
+                        error
+                    )
+
+                    progressBarMenu.visibility =
+                        View.GONE
+
+                    return@addSnapshotListener
+                }
+
+
+                if (resultado == null) {
+
+                    progressBarMenu.visibility =
+                        View.GONE
+
+                    return@addSnapshotListener
+                }
+
+
+                listaMenu.clear()
+
+
+                for (documento in resultado) {
+
+                    val id =
+                        documento
+                            .getLong("id")
+                            ?.toInt()
+                            ?: documento.id.toIntOrNull()
+                            ?: 0
+
+
+                    val nombre =
+                        documento
+                            .getString("nombre")
+                            ?: ""
+
+
+                    val precio =
+                        documento
+                            .getDouble("precio")
+                            ?: 0.0
+
+
+                    val stock =
+                        documento
+                            .getLong("stock")
+                            ?.toInt()
+                            ?: 0
+
+
+                    if (
+                        id > 0 &&
+                        nombre.isNotEmpty()
+                    ) {
+
+                        listaMenu.add(
+                            TaskMenu(
+                                id = id,
+                                name = nombre,
+                                precio = precio,
+                                stock = stock
+                            )
+                        )
+                    }
+                }
+
+
+                menuAdapter.notifyDataSetChanged()
+
+
+                progressBarMenu.visibility =
+                    View.GONE
+
+
+                Log.d(
+                    "FIREBASE",
+                    "Menú actualizado: ${listaMenu.size}"
+                )
+            }
+    }
+
+
+    // =========================================================
     // AGREGAR ENTRADA
     // =========================================================
 
@@ -496,17 +939,21 @@ class ActivityMenu : AppCompatActivity() {
                     null
                 )
 
+
         val etNombre =
             dialogView.findViewById<TextInputEditText>(
                 R.id.etNombreEntrada
             )
+
 
         val switchDisponible =
             dialogView.findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(
                 R.id.switchDisponible
             )
 
-        switchDisponible.isChecked = true
+
+        switchDisponible.isChecked =
+            true
 
 
         val dialog =
@@ -522,11 +969,8 @@ class ActivityMenu : AppCompatActivity() {
                 )
                 .create()
 
-        dialog.show()
 
-        dialog.window?.setBackgroundDrawable(
-            Color.TRANSPARENT.toDrawable()
-        )
+        dialog.show()
 
 
         dialog.getButton(
@@ -548,10 +992,6 @@ class ActivityMenu : AppCompatActivity() {
             }
 
 
-            val disponible =
-                switchDisponible.isChecked
-
-
             val nuevoId =
                 (
                         entradas.maxOfOrNull {
@@ -564,7 +1004,7 @@ class ActivityMenu : AppCompatActivity() {
                 hashMapOf(
                     "id" to nuevoId,
                     "nombre" to nombre,
-                    "disponible" to disponible
+                    "disponible" to switchDisponible.isChecked
                 )
 
 
@@ -602,6 +1042,106 @@ class ActivityMenu : AppCompatActivity() {
 
 
     // =========================================================
+    // CARGAR ENTRADAS FIREBASE
+    // =========================================================
+
+    private fun cargarEntradasDesdeFirebase() {
+
+        db.collection("entradas")
+            .addSnapshotListener { resultado, error ->
+
+                if (error != null) {
+
+                    Log.e(
+                        "FIREBASE",
+                        "Error escuchando entradas",
+                        error
+                    )
+
+                    return@addSnapshotListener
+                }
+
+
+                if (resultado == null) {
+                    return@addSnapshotListener
+                }
+
+
+                entradas.clear()
+
+
+                for (documento in resultado) {
+
+                    val id =
+                        documento
+                            .getLong("id")
+                            ?.toInt()
+                            ?: documento.id.toIntOrNull()
+                            ?: 0
+
+
+                    val nombre =
+                        documento
+                            .getString("nombre")
+                            ?: ""
+
+
+                    val disponible =
+                        documento
+                            .getBoolean("disponible")
+                            ?: true
+
+
+                    if (
+                        id > 0 &&
+                        nombre.isNotEmpty()
+                    ) {
+
+                        val entrada =
+                            when (id) {
+
+                                1 ->
+                                    TaskEntradas.Ceviche(
+                                        id,
+                                        nombre,
+                                        disponible
+                                    )
+
+                                2 ->
+                                    TaskEntradas.Huancaina(
+                                        id,
+                                        nombre,
+                                        disponible
+                                    )
+
+                                else ->
+                                    TaskEntradas.Otros(
+                                        id,
+                                        nombre,
+                                        disponible
+                                    )
+                            }
+
+
+                        entradas.add(
+                            entrada
+                        )
+                    }
+                }
+
+
+                entradasAdapter.notifyDataSetChanged()
+
+
+                Log.d(
+                    "FIREBASE",
+                    "Entradas actualizadas: ${entradas.size}"
+                )
+            }
+    }
+
+
+    // =========================================================
     // AGREGAR EXTRA
     // =========================================================
 
@@ -621,10 +1161,6 @@ class ActivityMenu : AppCompatActivity() {
         )
 
 
-        // =====================================================
-        // NOMBRE
-        // =====================================================
-
         val etNombre =
             TextInputEditText(this)
 
@@ -635,10 +1171,6 @@ class ActivityMenu : AppCompatActivity() {
             etNombre
         )
 
-
-        // =====================================================
-        // PRECIO
-        // =====================================================
 
         val etPrecio =
             TextInputEditText(this)
@@ -655,12 +1187,9 @@ class ActivityMenu : AppCompatActivity() {
         )
 
 
-        // =====================================================
-        // CATEGORÍA
-        // =====================================================
-
         val spinnerCategoria =
             Spinner(this)
+
 
         val categorias =
             arrayOf(
@@ -681,14 +1210,11 @@ class ActivityMenu : AppCompatActivity() {
         spinnerCategoria.adapter =
             categoriaAdapter
 
+
         layout.addView(
             spinnerCategoria
         )
 
-
-        // =====================================================
-        // DIÁLOGO
-        // =====================================================
 
         val dialog =
             AlertDialog.Builder(this)
@@ -706,12 +1232,9 @@ class ActivityMenu : AppCompatActivity() {
                 )
                 .create()
 
+
         dialog.show()
 
-
-        // =====================================================
-        // GUARDAR
-        // =====================================================
 
         dialog.getButton(
             AlertDialog.BUTTON_POSITIVE
@@ -723,15 +1246,12 @@ class ActivityMenu : AppCompatActivity() {
                     .trim()
 
 
-            val textoPrecio =
+            val precio =
                 etPrecio.text
                     .toString()
-                    .trim()
+                    .replace(",", ".")
+                    .toDoubleOrNull()
 
-
-            // -------------------------------------------------
-            // VALIDAR NOMBRE
-            // -------------------------------------------------
 
             if (nombre.isEmpty()) {
 
@@ -740,16 +1260,6 @@ class ActivityMenu : AppCompatActivity() {
 
                 return@setOnClickListener
             }
-
-
-            // -------------------------------------------------
-            // VALIDAR PRECIO
-            // -------------------------------------------------
-
-            val precio =
-                textoPrecio
-                    .replace(",", ".")
-                    .toDoubleOrNull()
 
 
             if (
@@ -764,27 +1274,15 @@ class ActivityMenu : AppCompatActivity() {
             }
 
 
-            // -------------------------------------------------
-            // CATEGORÍA
-            // -------------------------------------------------
-
             val categoriaId =
                 spinnerCategoria.selectedItemPosition + 1
 
-
-            // -------------------------------------------------
-            // ICONO
-            // -------------------------------------------------
 
             val icono =
                 obtenerIconoPorCategoria(
                     categoriaId
                 )
 
-
-            // -------------------------------------------------
-            // NUEVO ID
-            // -------------------------------------------------
 
             val nuevoId =
                 (
@@ -793,10 +1291,6 @@ class ActivityMenu : AppCompatActivity() {
                         } ?: 0
                         ) + 1
 
-
-            // =================================================
-            // DATOS FIREBASE
-            // =================================================
 
             val datos =
                 hashMapOf(
@@ -807,10 +1301,6 @@ class ActivityMenu : AppCompatActivity() {
                     "icono" to icono
                 )
 
-
-            // =================================================
-            // GUARDAR
-            // =================================================
 
             db.collection("extras")
                 .document(
@@ -855,15 +1345,12 @@ class ActivityMenu : AppCompatActivity() {
 
         return when (categoriaId) {
 
-            // Gaseosas
             1 ->
                 R.drawable.ic_gaseosa
 
-            // Tortas
             2 ->
                 R.drawable.ic_torta
 
-            // Platos
             3 ->
                 R.drawable.ic_plato
 
@@ -931,10 +1418,6 @@ class ActivityMenu : AppCompatActivity() {
                             ?: 1
 
 
-                    // =================================================
-                    // ICONO CALCULADO POR CATEGORÍA
-                    // =================================================
-
                     val icono =
                         obtenerIconoPorCategoria(
                             categoriaId
@@ -947,7 +1430,6 @@ class ActivityMenu : AppCompatActivity() {
                     ) {
 
                         listaExtras.add(
-
                             ExtraItem(
                                 id = id,
                                 nombre = nombre,
@@ -1006,10 +1488,6 @@ class ActivityMenu : AppCompatActivity() {
         )
 
 
-        // =====================================================
-        // NOMBRE
-        // =====================================================
-
         val etNombre =
             TextInputEditText(this)
 
@@ -1024,10 +1502,6 @@ class ActivityMenu : AppCompatActivity() {
             etNombre
         )
 
-
-        // =====================================================
-        // PRECIO
-        // =====================================================
 
         val etPrecio =
             TextInputEditText(this)
@@ -1052,12 +1526,9 @@ class ActivityMenu : AppCompatActivity() {
         )
 
 
-        // =====================================================
-        // CATEGORÍA
-        // =====================================================
-
         val spinnerCategoria =
             Spinner(this)
+
 
         val categorias =
             arrayOf(
@@ -1099,10 +1570,6 @@ class ActivityMenu : AppCompatActivity() {
         )
 
 
-        // =====================================================
-        // DIÁLOGO
-        // =====================================================
-
         val dialog =
             AlertDialog.Builder(this)
                 .setTitle(
@@ -1123,10 +1590,6 @@ class ActivityMenu : AppCompatActivity() {
         dialog.show()
 
 
-        // =====================================================
-        // GUARDAR CAMBIOS
-        // =====================================================
-
         dialog.getButton(
             AlertDialog.BUTTON_POSITIVE
         ).setOnClickListener {
@@ -1137,10 +1600,11 @@ class ActivityMenu : AppCompatActivity() {
                     .trim()
 
 
-            val textoPrecio =
+            val precio =
                 etPrecio.text
                     .toString()
-                    .trim()
+                    .replace(",", ".")
+                    .toDoubleOrNull()
 
 
             if (nombre.isEmpty()) {
@@ -1150,12 +1614,6 @@ class ActivityMenu : AppCompatActivity() {
 
                 return@setOnClickListener
             }
-
-
-            val precio =
-                textoPrecio
-                    .replace(",", ".")
-                    .toDoubleOrNull()
 
 
             if (
@@ -1170,27 +1628,15 @@ class ActivityMenu : AppCompatActivity() {
             }
 
 
-            // -------------------------------------------------
-            // CATEGORÍA
-            // -------------------------------------------------
-
             val categoriaId =
                 spinnerCategoria.selectedItemPosition + 1
 
-
-            // -------------------------------------------------
-            // ICONO
-            // -------------------------------------------------
 
             val icono =
                 obtenerIconoPorCategoria(
                     categoriaId
                 )
 
-
-            // =================================================
-            // DATOS
-            // =================================================
 
             val datos =
                 hashMapOf(
@@ -1201,10 +1647,6 @@ class ActivityMenu : AppCompatActivity() {
                     "icono" to icono
                 )
 
-
-            // =================================================
-            // FIREBASE
-            // =================================================
 
             db.collection("extras")
                 .document(
@@ -1372,10 +1814,6 @@ class ActivityMenu : AppCompatActivity() {
         dialog.show()
 
 
-        // =====================================================
-        // GUARDAR
-        // =====================================================
-
         dialog.getButton(
             AlertDialog.BUTTON_POSITIVE
         ).setOnClickListener {
@@ -1435,10 +1873,6 @@ class ActivityMenu : AppCompatActivity() {
         }
 
 
-        // =====================================================
-        // ELIMINAR
-        // =====================================================
-
         dialog.getButton(
             AlertDialog.BUTTON_NEGATIVE
         ).setOnClickListener {
@@ -1490,416 +1924,5 @@ class ActivityMenu : AppCompatActivity() {
                 }
                 .show()
         }
-    }
-
-
-    // =========================================================
-    // EDITAR MENÚ
-    // =========================================================
-
-    private fun mostrarDialogoEdicionMenu(
-        posicion: Int
-    ) {
-
-        if (
-            posicion < 0 ||
-            posicion >= listaMenu.size
-        ) {
-            return
-        }
-
-
-        val item =
-            listaMenu[posicion]
-
-
-        val dialogView =
-            LayoutInflater.from(this)
-                .inflate(
-                    R.layout.dialog_editar_menu,
-                    null
-                )
-
-
-        val etNombre =
-            dialogView.findViewById<TextInputEditText>(
-                R.id.etNombrePlato
-            )
-
-
-        val etPrecio =
-            dialogView.findViewById<TextInputEditText>(
-                R.id.etPrecioPlato
-            )
-
-
-        etNombre.setText(
-            item.name
-        )
-
-
-        etPrecio.setText(
-            String.format(
-                Locale.US,
-                "%.2f",
-                item.precio
-            )
-        )
-
-
-        val dialog =
-            AlertDialog.Builder(this)
-                .setView(dialogView)
-                .setPositiveButton(
-                    "Guardar",
-                    null
-                )
-                .setNegativeButton(
-                    "Cancelar",
-                    null
-                )
-                .create()
-
-
-        dialog.show()
-
-
-        // =====================================================
-        // GUARDAR
-        // =====================================================
-
-        dialog.getButton(
-            AlertDialog.BUTTON_POSITIVE
-        ).setOnClickListener {
-
-            val nombre =
-                etNombre.text
-                    .toString()
-                    .trim()
-
-
-            val precio =
-                etPrecio.text
-                    .toString()
-                    .replace(",", ".")
-                    .toDoubleOrNull()
-
-
-            if (nombre.isEmpty()) {
-
-                etNombre.error =
-                    "Escribe un nombre"
-
-                return@setOnClickListener
-            }
-
-
-            if (
-                precio == null ||
-                precio <= 0
-            ) {
-
-                etPrecio.error =
-                    "Precio inválido"
-
-                return@setOnClickListener
-            }
-
-
-            val datos =
-                hashMapOf(
-                    "id" to item.id,
-                    "nombre" to nombre,
-                    "precio" to precio
-                )
-
-
-            db.collection("menu")
-                .document(
-                    item.id.toString()
-                )
-                .set(datos)
-                .addOnSuccessListener {
-
-                    Toast.makeText(
-                        this,
-                        "Plato actualizado",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    dialog.dismiss()
-                }
-                .addOnFailureListener { error ->
-
-                    Log.e(
-                        "FIREBASE",
-                        "Error actualizando plato",
-                        error
-                    )
-
-                    Toast.makeText(
-                        this,
-                        "No se pudo actualizar",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-        }
-    }
-
-
-    // =========================================================
-    // ELIMINAR MENÚ
-    // =========================================================
-
-    private fun eliminarElementoMenu(
-        posicion: Int
-    ) {
-
-        if (
-            posicion < 0 ||
-            posicion >= listaMenu.size
-        ) {
-            return
-        }
-
-
-        val plato =
-            listaMenu[posicion]
-
-
-        AlertDialog.Builder(this)
-            .setTitle(
-                "Eliminar plato"
-            )
-            .setMessage(
-                "¿Eliminar \"${plato.name}\"?"
-            )
-            .setNegativeButton(
-                "Cancelar",
-                null
-            )
-            .setPositiveButton(
-                "Eliminar"
-            ) { _, _ ->
-
-                db.collection("menu")
-                    .document(
-                        plato.id.toString()
-                    )
-                    .delete()
-                    .addOnSuccessListener {
-
-                        Toast.makeText(
-                            this,
-                            "Plato eliminado",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    .addOnFailureListener { error ->
-
-                        Log.e(
-                            "FIREBASE",
-                            "Error eliminando plato",
-                            error
-                        )
-
-                        Toast.makeText(
-                            this,
-                            "No se pudo eliminar",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-            }
-            .show()
-    }
-
-
-    // =========================================================
-    // CARGAR MENÚ FIREBASE
-    // =========================================================
-
-    private fun cargarDatosDesdeFirebase() {
-
-        progressBarMenu.visibility =
-            View.VISIBLE
-
-
-        db.collection("menu")
-            .addSnapshotListener { resultado, error ->
-
-                if (error != null) {
-
-                    Log.e(
-                        "FIREBASE",
-                        "Error escuchando menú",
-                        error
-                    )
-
-                    progressBarMenu.visibility =
-                        View.GONE
-
-                    return@addSnapshotListener
-                }
-
-
-                if (resultado == null) {
-                    return@addSnapshotListener
-                }
-
-
-                listaMenu.clear()
-
-
-                for (documento in resultado) {
-
-                    val id =
-                        documento
-                            .getLong("id")
-                            ?.toInt()
-                            ?: documento.id.toIntOrNull()
-                            ?: 0
-
-
-                    val nombre =
-                        documento
-                            .getString("nombre")
-                            ?: ""
-
-
-                    val precio =
-                        documento
-                            .getDouble("precio")
-                            ?: 0.0
-
-
-                    if (
-                        id > 0 &&
-                        nombre.isNotEmpty()
-                    ) {
-
-                        listaMenu.add(
-
-                            TaskMenu(
-                                id = id,
-                                name = nombre,
-                                precio = precio
-                            )
-                        )
-                    }
-                }
-
-
-                menuAdapter.notifyDataSetChanged()
-
-
-                progressBarMenu.visibility =
-                    View.GONE
-
-
-                Log.d(
-                    "FIREBASE",
-                    "Menú actualizado: ${listaMenu.size}"
-                )
-            }
-    }
-
-
-    // =========================================================
-    // CARGAR ENTRADAS FIREBASE
-    // =========================================================
-
-    private fun cargarEntradasDesdeFirebase() {
-
-        db.collection("entradas")
-            .addSnapshotListener { resultado, error ->
-
-                if (error != null) {
-
-                    Log.e(
-                        "FIREBASE",
-                        "Error escuchando entradas",
-                        error
-                    )
-
-                    return@addSnapshotListener
-                }
-
-
-                if (resultado == null) {
-                    return@addSnapshotListener
-                }
-
-
-                entradas.clear()
-
-
-                for (documento in resultado) {
-
-                    val id =
-                        documento
-                            .getLong("id")
-                            ?.toInt()
-                            ?: documento.id.toIntOrNull()
-                            ?: 0
-
-
-                    val nombre =
-                        documento
-                            .getString("nombre")
-                            ?: ""
-
-
-                    val disponible =
-                        documento
-                            .getBoolean("disponible")
-                            ?: true
-
-
-                    if (
-                        id > 0 &&
-                        nombre.isNotEmpty()
-                    ) {
-
-                        val entrada =
-                            when (id) {
-
-                                1 ->
-                                    TaskEntradas.Ceviche(
-                                        id,
-                                        nombre,
-                                        disponible
-                                    )
-
-                                2 ->
-                                    TaskEntradas.Huancaina(
-                                        id,
-                                        nombre,
-                                        disponible
-                                    )
-
-                                else ->
-                                    TaskEntradas.Otros(
-                                        id,
-                                        nombre,
-                                        disponible
-                                    )
-                            }
-
-
-                        entradas.add(
-                            entrada
-                        )
-                    }
-                }
-
-
-                entradasAdapter.notifyDataSetChanged()
-
-
-                Log.d(
-                    "FIREBASE",
-                    "Entradas actualizadas: ${entradas.size}"
-                )
-            }
     }
 }
