@@ -325,8 +325,16 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 )
             }
 
+        // =====================================================
+        // CARRUSEL HORIZONTAL DEL MENÚ
+        // =====================================================
+
         rvMenu.layoutManager =
-            LinearLayoutManager(this)
+            LinearLayoutManager(
+                this,
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
 
         rvMenu.adapter =
             menuAdapter
