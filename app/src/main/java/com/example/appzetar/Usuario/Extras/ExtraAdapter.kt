@@ -14,6 +14,10 @@ class ExtraAdapter(
     private val onAgregarClick: (ExtraItem) -> Unit
 ) : RecyclerView.Adapter<ExtraAdapter.ExtraViewHolder>() {
 
+    // =========================================================
+    // VIEW HOLDER
+    // =========================================================
+
     inner class ExtraViewHolder(
         itemView: View
     ) : RecyclerView.ViewHolder(itemView) {
@@ -39,41 +43,48 @@ class ExtraAdapter(
             )
 
 
+        // =====================================================
+        // BIND
+        // =====================================================
+
         fun bind(extra: ExtraItem) {
 
-            // =====================================================
+            // =================================================
             // IMAGEN SEGÚN CATEGORÍA
-            // =====================================================
+            // =================================================
 
             val imagen = when (extra.categoriaId) {
 
-                1 -> R.drawable.ic_gaseosa
+                // Gaseosas
+                1 ->
+                    R.drawable.ic_gaseosa
 
-                2 -> R.drawable.ic_torta
+                // Tortas
+                2 ->
+                    R.drawable.ic_torta
 
-                3 -> R.drawable.ic_postre
-
-                4 -> R.drawable.ic_bebida
-
-                else -> R.drawable.ic_bebida
+                // Cualquier categoría no válida
+                else ->
+                    R.drawable.ic_plato
             }
+
 
             imgExtra.setImageResource(
                 imagen
             )
 
 
-            // =====================================================
+            // =================================================
             // NOMBRE
-            // =====================================================
+            // =================================================
 
             tvNombreExtra.text =
                 extra.nombre
 
 
-            // =====================================================
+            // =================================================
             // PRECIO
-            // =====================================================
+            // =================================================
 
             tvPrecioExtra.text =
                 String.format(
@@ -83,9 +94,9 @@ class ExtraAdapter(
                 )
 
 
-            // =====================================================
-            // BOTÓN +
-            // =====================================================
+            // =================================================
+            // BOTÓN AGREGAR
+            // =================================================
 
             btnAgregarExtra.setOnClickListener {
 
@@ -107,12 +118,14 @@ class ExtraAdapter(
     ): ExtraViewHolder {
 
         val view =
-            LayoutInflater.from(parent.context)
-                .inflate(
-                    R.layout.item_extra,
-                    parent,
-                    false
-                )
+            LayoutInflater.from(
+                parent.context
+            ).inflate(
+                R.layout.item_extra,
+                parent,
+                false
+            )
+
 
         return ExtraViewHolder(
             view

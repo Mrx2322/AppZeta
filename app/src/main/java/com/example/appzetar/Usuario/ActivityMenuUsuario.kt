@@ -585,6 +585,10 @@ class ActivityMenuUsuario : AppCompatActivity() {
         categorias.clear()
 
 
+        // =====================================================
+        // GASEOSAS
+        // =====================================================
+
         categorias.add(
             CategoriaItem(
                 1,
@@ -593,6 +597,10 @@ class ActivityMenuUsuario : AppCompatActivity() {
             )
         )
 
+
+        // =====================================================
+        // TORTAS
+        // =====================================================
 
         categorias.add(
             CategoriaItem(
@@ -603,20 +611,15 @@ class ActivityMenuUsuario : AppCompatActivity() {
         )
 
 
+        // =====================================================
+        // PLATOS
+        // =====================================================
+
         categorias.add(
             CategoriaItem(
                 3,
-                "Postres",
-                R.drawable.ic_postre
-            )
-        )
-
-
-        categorias.add(
-            CategoriaItem(
-                4,
-                "Bebidas",
-                R.drawable.ic_bebida
+                "Platos",
+                R.drawable.ic_plato
             )
         )
 
@@ -989,13 +992,10 @@ class ActivityMenuUsuario : AppCompatActivity() {
                                 R.drawable.ic_torta
 
                             3 ->
-                                R.drawable.ic_postre
-
-                            4 ->
-                                R.drawable.ic_bebida
+                                R.drawable.ic_plato
 
                             else ->
-                                R.drawable.ic_bebida
+                                R.drawable.ic_gaseosa
                         }
 
 

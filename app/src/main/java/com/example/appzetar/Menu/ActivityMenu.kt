@@ -408,10 +408,6 @@ class ActivityMenu : AppCompatActivity() {
                     .trim()
 
 
-            // -------------------------------------------------
-            // VALIDAR NOMBRE
-            // -------------------------------------------------
-
             if (nombre.isEmpty()) {
 
                 etNombre.error =
@@ -420,10 +416,6 @@ class ActivityMenu : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-
-            // -------------------------------------------------
-            // VALIDAR PRECIO
-            // -------------------------------------------------
 
             val precio =
                 textoPrecio
@@ -442,10 +434,6 @@ class ActivityMenu : AppCompatActivity() {
             }
 
 
-            // -------------------------------------------------
-            // NUEVO ID
-            // -------------------------------------------------
-
             val nuevoId =
                 (
                         listaMenu.maxOfOrNull {
@@ -454,10 +442,6 @@ class ActivityMenu : AppCompatActivity() {
                         ) + 1
 
 
-            // -------------------------------------------------
-            // DATOS
-            // -------------------------------------------------
-
             val datos =
                 hashMapOf(
                     "id" to nuevoId,
@@ -465,10 +449,6 @@ class ActivityMenu : AppCompatActivity() {
                     "precio" to precio
                 )
 
-
-            // -------------------------------------------------
-            // FIREBASE
-            // -------------------------------------------------
 
             db.collection("menu")
                 .document(
@@ -686,9 +666,9 @@ class ActivityMenu : AppCompatActivity() {
             arrayOf(
                 "Gaseosas",
                 "Tortas",
-                "Postres",
-                "Bebidas"
+                "Platos"
             )
+
 
         val categoriaAdapter =
             ArrayAdapter(
@@ -696,6 +676,7 @@ class ActivityMenu : AppCompatActivity() {
                 android.R.layout.simple_spinner_dropdown_item,
                 categorias
             )
+
 
         spinnerCategoria.adapter =
             categoriaAdapter
@@ -770,6 +751,7 @@ class ActivityMenu : AppCompatActivity() {
                     .replace(",", ".")
                     .toDoubleOrNull()
 
+
             if (
                 precio == null ||
                 precio <= 0
@@ -791,7 +773,7 @@ class ActivityMenu : AppCompatActivity() {
 
 
             // -------------------------------------------------
-            // ICONO AUTOMÁTICO
+            // ICONO
             // -------------------------------------------------
 
             val icono =
@@ -873,20 +855,20 @@ class ActivityMenu : AppCompatActivity() {
 
         return when (categoriaId) {
 
+            // Gaseosas
             1 ->
                 R.drawable.ic_gaseosa
 
+            // Tortas
             2 ->
                 R.drawable.ic_torta
 
+            // Platos
             3 ->
-                R.drawable.ic_postre
-
-            4 ->
-                R.drawable.ic_bebida
+                R.drawable.ic_plato
 
             else ->
-                R.drawable.ic_bebida
+                R.drawable.ic_plato
         }
     }
 
@@ -922,10 +904,6 @@ class ActivityMenu : AppCompatActivity() {
 
                 for (documento in resultado) {
 
-                    // =================================================
-                    // ID
-                    // =================================================
-
                     val id =
                         documento
                             .getLong("id")
@@ -934,29 +912,17 @@ class ActivityMenu : AppCompatActivity() {
                             ?: 0
 
 
-                    // =================================================
-                    // NOMBRE
-                    // =================================================
-
                     val nombre =
                         documento
                             .getString("nombre")
                             ?: ""
 
 
-                    // =================================================
-                    // PRECIO
-                    // =================================================
-
                     val precio =
                         documento
                             .getDouble("precio")
                             ?: 0.0
 
-
-                    // =================================================
-                    // CATEGORÍA
-                    // =================================================
 
                     val categoriaId =
                         documento
@@ -966,11 +932,7 @@ class ActivityMenu : AppCompatActivity() {
 
 
                     // =================================================
-                    // ICONO
-                    //
-                    // IMPORTANTE:
-                    // NO usamos el icono antiguo de Firebase.
-                    // Siempre se calcula según la categoría.
+                    // ICONO CALCULADO POR CATEGORÍA
                     // =================================================
 
                     val icono =
@@ -978,10 +940,6 @@ class ActivityMenu : AppCompatActivity() {
                             categoriaId
                         )
 
-
-                    // =================================================
-                    // AGREGAR
-                    // =================================================
 
                     if (
                         id > 0 &&
@@ -1001,10 +959,6 @@ class ActivityMenu : AppCompatActivity() {
                     }
                 }
 
-
-                // =================================================
-                // ACTUALIZAR
-                // =================================================
 
                 extraAdminAdapter
                     .notifyDataSetChanged()
@@ -1037,10 +991,6 @@ class ActivityMenu : AppCompatActivity() {
         val extra =
             listaExtras[posicion]
 
-
-        // =====================================================
-        // LAYOUT
-        // =====================================================
 
         val layout =
             LinearLayout(this)
@@ -1113,9 +1063,9 @@ class ActivityMenu : AppCompatActivity() {
             arrayOf(
                 "Gaseosas",
                 "Tortas",
-                "Postres",
-                "Bebidas"
+                "Platos"
             )
+
 
         val categoriaAdapter =
             ArrayAdapter(
@@ -1123,6 +1073,7 @@ class ActivityMenu : AppCompatActivity() {
                 android.R.layout.simple_spinner_dropdown_item,
                 categorias
             )
+
 
         spinnerCategoria.adapter =
             categoriaAdapter
@@ -1168,6 +1119,7 @@ class ActivityMenu : AppCompatActivity() {
                 )
                 .create()
 
+
         dialog.show()
 
 
@@ -1191,10 +1143,6 @@ class ActivityMenu : AppCompatActivity() {
                     .trim()
 
 
-            // -------------------------------------------------
-            // VALIDAR NOMBRE
-            // -------------------------------------------------
-
             if (nombre.isEmpty()) {
 
                 etNombre.error =
@@ -1204,14 +1152,11 @@ class ActivityMenu : AppCompatActivity() {
             }
 
 
-            // -------------------------------------------------
-            // VALIDAR PRECIO
-            // -------------------------------------------------
-
             val precio =
                 textoPrecio
                     .replace(",", ".")
                     .toDoubleOrNull()
+
 
             if (
                 precio == null ||
@@ -1234,7 +1179,7 @@ class ActivityMenu : AppCompatActivity() {
 
 
             // -------------------------------------------------
-            // ICONO AUTOMÁTICO
+            // ICONO
             // -------------------------------------------------
 
             val icono =
