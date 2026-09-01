@@ -17,6 +17,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.Menu.TaskEntradas
 import com.example.appzetar.Menu.TaskMenu
@@ -24,6 +25,7 @@ import com.example.appzetar.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlin.math.abs
 
 class ActivityMenuUsuario : AppCompatActivity() {
 
@@ -111,6 +113,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
     override fun onCreate(
         savedInstanceState: Bundle?
     ) {
+
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
@@ -300,6 +303,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 )
             }
 
+
         rvEntradas.layoutManager =
             LinearLayoutManager(
                 this,
@@ -325,16 +329,13 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 )
             }
 
+
         // =====================================================
-        // CARRUSEL HORIZONTAL DEL MENÚ
+        // CONFIGURAR CARRUSEL
         // =====================================================
 
-        rvMenu.layoutManager =
-            LinearLayoutManager(
-                this,
-                LinearLayoutManager.HORIZONTAL,
-                false
-            )
+        configurarCarruselMenu()
+
 
         rvMenu.adapter =
             menuAdapter
@@ -353,6 +354,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
                     extra
                 )
             }
+
 
         rvExtras.layoutManager =
             LinearLayoutManager(this)
@@ -381,12 +383,207 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
     // =========================================================
+    // CARRUSEL PROFESIONAL DEL MENÚ
+    // =========================================================
+
+    private fun configurarCarruselMenu() {
+
+        val layoutManager =
+            LinearLayoutManager(
+                this,
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+
+
+        rvMenu.layoutManager =
+            layoutManager
+
+
+        // =====================================================
+        // ESPACIO LATERAL
+        // =====================================================
+
+        rvMenu.clipToPadding =
+            false
+
+        rvMenu.setPadding(
+            24,
+            0,
+            24,
+            0
+        )
+
+
+        // =====================================================
+        // SIN EFECTO DE REBOTE
+        // =====================================================
+
+        rvMenu.overScrollMode =
+            RecyclerView.OVER_SCROLL_NEVER
+
+
+        // Evitamos animaciones adicionales
+        // que puedan interferir con nuestro efecto.
+
+        rvMenu.itemAnimator =
+            null
+
+
+        // =====================================================
+        // SNAP
+        // =====================================================
+
+        val snapHelper =
+            LinearSnapHelper()
+
+        snapHelper.attachToRecyclerView(
+            rvMenu
+        )
+
+
+        // =====================================================
+        // ANIMACIÓN DURANTE EL DESLIZAMIENTO
+        // =====================================================
+
+        rvMenu.addOnScrollListener(
+
+            object : RecyclerView.OnScrollListener() {
+
+                override fun onScrolled(
+                    recyclerView: RecyclerView,
+                    dx: Int,
+                    dy: Int
+                ) {
+
+                    super.onScrolled(
+                        recyclerView,
+                        dx,
+                        dy
+                    )
+
+
+                    // =================================================
+                    // CENTRO DEL RECYCLERVIEW
+                    // =================================================
+
+                    val centerX =
+                        recyclerView.width / 2f
+
+
+                    // =================================================
+                    // RECORRER CARDS VISIBLES
+                    // =================================================
+
+                    for (
+                    i in 0 until recyclerView.childCount
+                    ) {
+
+                        val child =
+                            recyclerView.getChildAt(i)
+
+
+                        // =================================================
+                        // CENTRO DE LA CARD
+                        // =================================================
+
+                        val childCenter =
+                            (
+                                    child.left +
+                                            child.right
+                                    ) / 2f
+
+
+                        // =================================================
+                        // DISTANCIA AL CENTRO
+                        // =================================================
+
+                        val distance =
+                            abs(
+                                centerX -
+                                        childCenter
+                            )
+
+
+                        // =================================================
+                        // NORMALIZAR DISTANCIA
+                        // =================================================
+
+                        val maxDistance =
+                            recyclerView.width / 2f
+
+
+                        val normalizedDistance =
+                            (
+                                    distance /
+                                            maxDistance
+                                    ).coerceIn(
+                                    0f,
+                                    1f
+                                )
+
+
+                        // =================================================
+                        // ZOOM SUAVE
+                        // =================================================
+
+                        val scale =
+                            1f -
+                                    (
+                                            normalizedDistance *
+                                                    0.06f
+                                            )
+
+
+                        child.scaleX =
+                            scale
+
+                        child.scaleY =
+                            scale
+
+
+                        // =================================================
+                        // OPACIDAD SUAVE
+                        // =================================================
+
+                        val alpha =
+                            1f -
+                                    (
+                                            normalizedDistance *
+                                                    0.12f
+                                            )
+
+
+                        child.alpha =
+                            alpha
+
+
+                        // =================================================
+                        // PEQUEÑO MOVIMIENTO
+                        // =================================================
+
+                        val translationY =
+                            normalizedDistance *
+                                    3f
+
+
+                        child.translationY =
+                            translationY
+                    }
+                }
+            }
+        )
+    }
+
+
+    // =========================================================
     // CATEGORÍAS
     // =========================================================
 
     private fun cargarCategorias() {
 
         categorias.clear()
+
 
         categorias.add(
             CategoriaItem(
@@ -396,6 +593,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
             )
         )
 
+
         categorias.add(
             CategoriaItem(
                 2,
@@ -404,6 +602,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
             )
         )
 
+
         categorias.add(
             CategoriaItem(
                 3,
@@ -411,6 +610,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 R.drawable.ic_postre
             )
         )
+
 
         categorias.add(
             CategoriaItem(
@@ -455,6 +655,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 false
             )
 
+
         rvCategorias.adapter =
             categoriaAdapter
     }
@@ -470,13 +671,16 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         listaExtras.clear()
 
+
         listaExtras.addAll(
             todosLosExtras.filter {
                 it.categoriaId == categoriaId
             }
         )
 
+
         extraAdapter.notifyDataSetChanged()
+
 
         rvExtras.visibility =
             if (listaExtras.isEmpty()) {
@@ -512,7 +716,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
             )
         )
 
+
         actualizarContadorCarrito()
+
 
         Toast.makeText(
             this,
@@ -541,7 +747,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
             )
         )
 
+
         actualizarContadorCarrito()
+
 
         Toast.makeText(
             this,
@@ -565,30 +773,37 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 null
             )
 
+
         val tvNombrePlato =
             dialogView.findViewById<TextView>(
                 R.id.tvNombrePlato
             )
+
 
         val btnCancelar =
             dialogView.findViewById<Button>(
                 R.id.btnCancelarPedido
             )
 
+
         val btnAgregar =
             dialogView.findViewById<Button>(
                 R.id.btnAgregarPedido
             )
 
+
         tvNombrePlato.text =
             plato.name
+
 
         val dialog =
             AlertDialog.Builder(this)
                 .setView(dialogView)
                 .create()
 
+
         dialog.show()
+
 
         dialog.window?.setBackgroundDrawable(
             android.graphics.Color.TRANSPARENT.toDrawable()
@@ -596,13 +811,16 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
         btnCancelar.setOnClickListener {
+
             dialog.dismiss()
         }
 
 
         btnAgregar.setOnClickListener {
 
-            agregarAlPedido(plato)
+            agregarAlPedido(
+                plato
+            )
 
             dialog.dismiss()
         }
@@ -628,7 +846,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
             )
         )
 
+
         actualizarContadorCarrito()
+
 
         Toast.makeText(
             this,
@@ -647,8 +867,10 @@ class ActivityMenuUsuario : AppCompatActivity() {
         val cantidadTotal =
             PedidoManager.cantidadTotal()
 
+
         tvCantidadCarrito.text =
             cantidadTotal.toString()
+
 
         tvCantidadCarrito.visibility =
             if (cantidadTotal > 0) {
@@ -668,11 +890,14 @@ class ActivityMenuUsuario : AppCompatActivity() {
         progressBarMenu.visibility =
             View.VISIBLE
 
+
         rvEntradas.visibility =
             View.GONE
 
+
         rvMenu.visibility =
             View.GONE
+
 
         rvExtras.visibility =
             View.GONE
@@ -705,6 +930,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
                     return@addSnapshotListener
                 }
+
 
                 if (resultado == null) {
                     return@addSnapshotListener
@@ -839,6 +1065,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
                     return@addSnapshotListener
                 }
 
+
                 if (resultado == null) {
                     return@addSnapshotListener
                 }
@@ -856,10 +1083,12 @@ class ActivityMenuUsuario : AppCompatActivity() {
                             ?: documento.id.toIntOrNull()
                             ?: 0
 
+
                     val nombre =
                         documento
                             .getString("nombre")
                             ?: ""
+
 
                     val disponible =
                         documento
@@ -896,6 +1125,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
                                         disponible
                                     )
                             }
+
 
                         entradas.add(
                             entrada
@@ -937,6 +1167,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
                     return@addSnapshotListener
                 }
 
+
                 if (resultado == null) {
                     return@addSnapshotListener
                 }
@@ -954,10 +1185,12 @@ class ActivityMenuUsuario : AppCompatActivity() {
                             ?: documento.id.toIntOrNull()
                             ?: 0
 
+
                     val nombre =
                         documento
                             .getString("nombre")
                             ?: ""
+
 
                     val precio =
                         documento
@@ -984,6 +1217,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
                 menuAdapter.notifyDataSetChanged()
 
+
                 mostrarContenido()
 
 
@@ -1004,8 +1238,10 @@ class ActivityMenuUsuario : AppCompatActivity() {
         progressBarMenu.visibility =
             View.GONE
 
+
         rvEntradas.visibility =
             View.VISIBLE
+
 
         rvMenu.visibility =
             View.VISIBLE
@@ -1017,6 +1253,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
     // =========================================================
 
     override fun onResume() {
+
         super.onResume()
 
         actualizarContadorCarrito()
