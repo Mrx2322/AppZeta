@@ -330,10 +330,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
             }
 
 
-        // =====================================================
-        // CONFIGURAR CARRUSEL
-        // =====================================================
-
         configurarCarruselMenu()
 
 
@@ -400,12 +396,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
             layoutManager
 
 
-        // =====================================================
-        // ESPACIO LATERAL
-        // =====================================================
-
         rvMenu.clipToPadding =
             false
+
 
         rvMenu.setPadding(
             24,
@@ -415,36 +408,22 @@ class ActivityMenuUsuario : AppCompatActivity() {
         )
 
 
-        // =====================================================
-        // SIN EFECTO DE REBOTE
-        // =====================================================
-
         rvMenu.overScrollMode =
             RecyclerView.OVER_SCROLL_NEVER
 
-
-        // Evitamos animaciones adicionales
-        // que puedan interferir con nuestro efecto.
 
         rvMenu.itemAnimator =
             null
 
 
-        // =====================================================
-        // SNAP
-        // =====================================================
-
         val snapHelper =
             LinearSnapHelper()
+
 
         snapHelper.attachToRecyclerView(
             rvMenu
         )
 
-
-        // =====================================================
-        // ANIMACIÓN DURANTE EL DESLIZAMIENTO
-        // =====================================================
 
         rvMenu.addOnScrollListener(
 
@@ -463,17 +442,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
                     )
 
 
-                    // =================================================
-                    // CENTRO DEL RECYCLERVIEW
-                    // =================================================
-
                     val centerX =
                         recyclerView.width / 2f
 
-
-                    // =================================================
-                    // RECORRER CARDS VISIBLES
-                    // =================================================
 
                     for (
                     i in 0 until recyclerView.childCount
@@ -483,10 +454,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
                             recyclerView.getChildAt(i)
 
 
-                        // =================================================
-                        // CENTRO DE LA CARD
-                        // =================================================
-
                         val childCenter =
                             (
                                     child.left +
@@ -494,20 +461,12 @@ class ActivityMenuUsuario : AppCompatActivity() {
                                     ) / 2f
 
 
-                        // =================================================
-                        // DISTANCIA AL CENTRO
-                        // =================================================
-
                         val distance =
                             abs(
                                 centerX -
                                         childCenter
                             )
 
-
-                        // =================================================
-                        // NORMALIZAR DISTANCIA
-                        // =================================================
 
                         val maxDistance =
                             recyclerView.width / 2f
@@ -522,10 +481,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
                                     1f
                                 )
 
-
-                        // =================================================
-                        // ZOOM SUAVE
-                        // =================================================
 
                         val scale =
                             1f -
@@ -542,10 +497,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
                             scale
 
 
-                        // =================================================
-                        // OPACIDAD SUAVE
-                        // =================================================
-
                         val alpha =
                             1f -
                                     (
@@ -557,10 +508,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
                         child.alpha =
                             alpha
 
-
-                        // =================================================
-                        // PEQUEÑO MOVIMIENTO
-                        // =================================================
 
                         val translationY =
                             normalizedDistance *
@@ -585,10 +532,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
         categorias.clear()
 
 
-        // =====================================================
-        // GASEOSAS
-        // =====================================================
-
         categorias.add(
             CategoriaItem(
                 1,
@@ -598,10 +541,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
         )
 
 
-        // =====================================================
-        // TORTAS
-        // =====================================================
-
         categorias.add(
             CategoriaItem(
                 2,
@@ -610,10 +549,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
             )
         )
 
-
-        // =====================================================
-        // PLATOS
-        // =====================================================
 
         categorias.add(
             CategoriaItem(
@@ -701,7 +636,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
     // =========================================================
-    // AGREGAR EXTRA AL PEDIDO
+    // AGREGAR EXTRA
     // =========================================================
 
     private fun agregarExtraAlPedido(
@@ -732,7 +667,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
     // =========================================================
-    // AGREGAR ENTRADA AL PEDIDO
+    // AGREGAR ENTRADA
     // =========================================================
 
     private fun agregarEntradaAlPedido(
@@ -831,7 +766,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
     // =========================================================
-    // AGREGAR MENÚ AL PEDIDO
+    // AGREGAR MENÚ
     // =========================================================
 
     private fun agregarAlPedido(
@@ -862,7 +797,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
     // =========================================================
-    // CONTADOR DEL CARRITO
+    // CONTADOR CARRITO
     // =========================================================
 
     private fun actualizarContadorCarrito() {
@@ -945,12 +880,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
                 for (documento in resultado) {
 
-                    Log.d(
-                        "USUARIO_FIREBASE",
-                        "Extra Firebase: ${documento.id} - ${documento.data}"
-                    )
-
-
                     val id =
                         documento
                             .getLong("id")
@@ -978,10 +907,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
                             ?: 0
 
 
-                    // =================================================
-                    // ICONO SEGÚN CATEGORÍA
-                    // =================================================
-
                     val icono =
                         when (categoriaId) {
 
@@ -998,10 +923,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
                                 R.drawable.ic_gaseosa
                         }
 
-
-                    // =================================================
-                    // AGREGAR EXTRA
-                    // =================================================
 
                     if (
                         id > 0 &&
@@ -1022,10 +943,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
                     }
                 }
 
-
-                // =================================================
-                // ACTUALIZAR CATEGORÍA
-                // =================================================
 
                 if (
                     categoriaSeleccionadaId != 0
@@ -1096,6 +1013,17 @@ class ActivityMenuUsuario : AppCompatActivity() {
                             ?: true
 
 
+                    // =================================================
+                    // STOCK
+                    // =================================================
+
+                    val stock =
+                        documento
+                            .getLong("stock")
+                            ?.toInt()
+                            ?: 0
+
+
                     if (
                         id > 0 &&
                         nombre.isNotEmpty()
@@ -1106,23 +1034,26 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
                                 1 ->
                                     TaskEntradas.Ceviche(
-                                        id,
-                                        nombre,
-                                        disponible
+                                        id = id,
+                                        nombre = nombre,
+                                        disponible = disponible,
+                                        stock = stock
                                     )
 
                                 2 ->
                                     TaskEntradas.Huancaina(
-                                        id,
-                                        nombre,
-                                        disponible
+                                        id = id,
+                                        nombre = nombre,
+                                        disponible = disponible,
+                                        stock = stock
                                     )
 
                                 else ->
                                     TaskEntradas.Otros(
-                                        id,
-                                        nombre,
-                                        disponible
+                                        id = id,
+                                        nombre = nombre,
+                                        disponible = disponible,
+                                        stock = stock
                                     )
                             }
 
@@ -1198,6 +1129,17 @@ class ActivityMenuUsuario : AppCompatActivity() {
                             ?: 0.0
 
 
+                    // =================================================
+                    // STOCK
+                    // =================================================
+
+                    val stock =
+                        documento
+                            .getLong("stock")
+                            ?.toInt()
+                            ?: 0
+
+
                     if (
                         id > 0 &&
                         nombre.isNotEmpty()
@@ -1208,7 +1150,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
                             TaskMenu(
                                 id = id,
                                 name = nombre,
-                                precio = precio
+                                precio = precio,
+                                stock = stock
                             )
                         )
                     }

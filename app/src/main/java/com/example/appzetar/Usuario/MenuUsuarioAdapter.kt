@@ -15,13 +15,11 @@ class MenuUsuarioAdapter(
         parent: ViewGroup,
         viewType: Int
     ): MenuUsuarioViewHolder {
-
-        val view = LayoutInflater.from(parent.context)
-            .inflate(
-                R.layout.item_task_menu_usuario,
-                parent,
-                false
-            )
+        val view = LayoutInflater.from(parent.context).inflate(
+            R.layout.item_task_menu_usuario,
+            parent,
+            false
+        )
 
         return MenuUsuarioViewHolder(view)
     }

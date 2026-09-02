@@ -16,12 +16,11 @@ class EntradasUsuarioAdapter(
         viewType: Int
     ): EntradasUsuarioViewHolder {
 
-        val view = LayoutInflater.from(parent.context)
-            .inflate(
-                R.layout.item_task_entradas,
-                parent,
-                false
-            )
+        val view = LayoutInflater.from(parent.context).inflate(
+            R.layout.item_task_entradas,
+            parent,
+            false
+        )
 
         return EntradasUsuarioViewHolder(view)
     }
@@ -30,14 +29,11 @@ class EntradasUsuarioAdapter(
         holder: EntradasUsuarioViewHolder,
         position: Int
     ) {
-
         holder.render(
             entradas[position],
             onAgregarClick
         )
     }
 
-    override fun getItemCount(): Int {
-        return entradas.size
-    }
+    override fun getItemCount(): Int = entradas.size
 }
