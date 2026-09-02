@@ -22,7 +22,9 @@
             android:paddingEnd="24dp"
             android:paddingBottom="30dp">
 
+            <!-- ================================================= -->
             <!-- ENCABEZADO -->
+            <!-- ================================================= -->
 
             <TextView
                 android:layout_width="wrap_content"
@@ -41,7 +43,9 @@
                 android:textSize="15sp" />
 
 
+            <!-- ================================================= -->
             <!-- DELIVERY -->
+            <!-- ================================================= -->
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardDelivery"
@@ -52,7 +56,7 @@
                 app:cardCornerRadius="18dp"
                 app:cardElevation="2dp"
                 app:strokeColor="#FF9500"
-                app:strokeWidth="2dp">
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -103,7 +107,9 @@
             </com.google.android.material.card.MaterialCardView>
 
 
+            <!-- ================================================= -->
             <!-- RECOJO -->
+            <!-- ================================================= -->
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardRecojo"
@@ -113,6 +119,7 @@
                 app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="18dp"
                 app:cardElevation="2dp"
+                app:strokeColor="#FF9500"
                 app:strokeWidth="0dp">
 
                 <LinearLayout
@@ -164,7 +171,180 @@
             </com.google.android.material.card.MaterialCardView>
 
 
+            <!-- ================================================= -->
+            <!-- MÉTODO DE PAGO -->
+            <!-- ================================================= -->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="¿Cómo quieres pagar?"
+                android:textColor="#202020"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Selecciona tu método de pago"
+                android:textColor="#888888"
+                android:textSize="14sp" />
+
+
+            <!-- ================================================= -->
+            <!-- CONTRA ENTREGA -->
+            <!-- ================================================= -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardContraEntrega"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="2dp"
+                app:strokeColor="#FF9500"
+                app:strokeWidth="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="18dp">
+
+                    <TextView
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
+                        android:gravity="center"
+                        android:text="💵"
+                        android:textSize="30sp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Contra entrega"
+                            android:textColor="#202020"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Paga cuando recibas tu pedido"
+                            android:textColor="#888888"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:text="✓ Disponible ahora"
+                            android:textColor="#4CAF50"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <RadioButton
+                        android:id="@+id/rbContraEntrega"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- ================================================= -->
+            <!-- YAPE - PRÓXIMAMENTE -->
+            <!-- ================================================= -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardYape"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="18dp">
+
+                    <TextView
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
+                        android:gravity="center"
+                        android:text="📱"
+                        android:textSize="30sp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pagar con Yape"
+                            android:textColor="#202020"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Paga directamente desde tu celular"
+                            android:textColor="#888888"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:text="🔜 Próximamente"
+                            android:textColor="#FF9500"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <RadioButton
+                        android:id="@+id/rbYape"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:alpha="0.5" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- ================================================= -->
             <!-- CONTINUAR -->
+            <!-- ================================================= -->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnContinuarEntrega"

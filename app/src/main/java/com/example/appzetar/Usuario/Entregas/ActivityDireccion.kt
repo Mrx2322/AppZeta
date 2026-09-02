@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.appzetar.R
-import com.example.appzetar.Usuario.Pagos.ActivityPagoYape
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 
@@ -35,38 +34,46 @@ class ActivityDireccion : AppCompatActivity() {
 
 
         // =====================================================
-        // INICIALIZAR
+        // INICIALIZAR COMPONENTES
         // =====================================================
 
         etDireccion =
-            findViewById(R.id.etDireccion)
+            findViewById(
+                R.id.etDireccion
+            )
 
         etReferencia =
-            findViewById(R.id.etReferencia)
+            findViewById(
+                R.id.etReferencia
+            )
 
         etTelefono =
-            findViewById(R.id.etTelefono)
+            findViewById(
+                R.id.etTelefono
+            )
 
         btnContinuar =
-            findViewById(R.id.btnContinuarDireccion)
+            findViewById(
+                R.id.btnContinuarDireccion
+            )
 
 
         // =====================================================
-        // CONTINUAR
+        // BOTÓN CONTINUAR
         // =====================================================
 
         btnContinuar.setOnClickListener {
 
-            continuarAlPago()
+            continuarAConfirmacion()
         }
     }
 
 
     // =========================================================
-    // CONTINUAR AL PAGO
+    // CONTINUAR A CONFIRMAR PEDIDO
     // =========================================================
 
-    private fun continuarAlPago() {
+    private fun continuarAConfirmacion() {
 
         val direccion =
             etDireccion.text
@@ -74,11 +81,13 @@ class ActivityDireccion : AppCompatActivity() {
                 ?.trim()
                 ?: ""
 
+
         val referencia =
             etReferencia.text
                 ?.toString()
                 ?.trim()
                 ?: ""
+
 
         val telefono =
             etTelefono.text
@@ -129,41 +138,52 @@ class ActivityDireccion : AppCompatActivity() {
 
 
         // =====================================================
-        // IR AL PAGO
+        // IR A CONFIRMAR PEDIDO
         // =====================================================
 
-        val intent =
+        val intentConfirmacion =
             Intent(
                 this,
-                ActivityPagoYape::class.java
+                ActivityConfirmarPedido::class.java
             )
 
 
         // =====================================================
-        // ENVIAR DATOS AL PAGO
+        // ENVIAR DATOS
         // =====================================================
 
-        intent.putExtra(
+        intentConfirmacion.putExtra(
             "tipoEntrega",
-            "DELIVERY"
+            "Delivery"
         )
 
-        intent.putExtra(
+        intentConfirmacion.putExtra(
+            "metodoPago",
+            "Contra entrega"
+        )
+
+        intentConfirmacion.putExtra(
             "direccion",
             direccion
         )
 
-        intent.putExtra(
+        intentConfirmacion.putExtra(
             "referencia",
             referencia
         )
 
-        intent.putExtra(
+        intentConfirmacion.putExtra(
             "telefono",
             telefono
         )
 
 
-        startActivity(intent)
+        // =====================================================
+        // ABRIR CONFIRMACIÓN
+        // =====================================================
+
+        startActivity(
+            intentConfirmacion
+        )
     }
 }

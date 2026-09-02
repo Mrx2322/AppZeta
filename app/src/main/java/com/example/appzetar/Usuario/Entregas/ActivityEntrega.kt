@@ -1,19 +1,17 @@
 package com.example.appzetar.Usuario
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.RadioButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.appzetar.R
-import com.example.appzetar.Usuario.Pagos.ActivityPagoYape
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
-import kotlin.jvm.java
 
 class ActivityEntrega : AppCompatActivity() {
 
     // =========================================================
-    // COMPONENTES
+    // ENTREGA
     // =========================================================
 
     private lateinit var cardDelivery: MaterialCardView
@@ -21,6 +19,20 @@ class ActivityEntrega : AppCompatActivity() {
 
     private lateinit var rbDelivery: RadioButton
     private lateinit var rbRecojo: RadioButton
+
+    // =========================================================
+    // PAGO
+    // =========================================================
+
+    private lateinit var cardContraEntrega: MaterialCardView
+    private lateinit var cardYape: MaterialCardView
+
+    private lateinit var rbContraEntrega: RadioButton
+    private lateinit var rbYape: RadioButton
+
+    // =========================================================
+    // BOTÓN
+    // =========================================================
 
     private lateinit var btnContinuar: MaterialButton
 
@@ -36,9 +48,8 @@ class ActivityEntrega : AppCompatActivity() {
             R.layout.activity_entrega
         )
 
-
         // =====================================================
-        // INICIALIZAR COMPONENTES
+        // INICIALIZAR ENTREGA
         // =====================================================
 
         cardDelivery =
@@ -53,6 +64,26 @@ class ActivityEntrega : AppCompatActivity() {
         rbRecojo =
             findViewById(R.id.rbRecojo)
 
+        // =====================================================
+        // INICIALIZAR PAGO
+        // =====================================================
+
+        cardContraEntrega =
+            findViewById(R.id.cardContraEntrega)
+
+        cardYape =
+            findViewById(R.id.cardYape)
+
+        rbContraEntrega =
+            findViewById(R.id.rbContraEntrega)
+
+        rbYape =
+            findViewById(R.id.rbYape)
+
+        // =====================================================
+        // BOTÓN
+        // =====================================================
+
         btnContinuar =
             findViewById(R.id.btnContinuarEntrega)
 
@@ -64,12 +95,16 @@ class ActivityEntrega : AppCompatActivity() {
         rbDelivery.isChecked = false
         rbRecojo.isChecked = false
 
-        cardDelivery.strokeWidth = 0
-        cardRecojo.strokeWidth = 0
+        // Contra entrega será la opción inicial
+        rbContraEntrega.isChecked = true
+        rbYape.isChecked = false
+
+        actualizarSeleccionEntrega()
+        actualizarSeleccionPago()
 
 
         // =====================================================
-        // SELECCIONAR DELIVERY
+        // DELIVERY
         // =====================================================
 
         cardDelivery.setOnClickListener {
@@ -84,7 +119,7 @@ class ActivityEntrega : AppCompatActivity() {
 
 
         // =====================================================
-        // SELECCIONAR RECOJO
+        // RECOJO
         // =====================================================
 
         cardRecojo.setOnClickListener {
@@ -95,6 +130,39 @@ class ActivityEntrega : AppCompatActivity() {
         rbRecojo.setOnClickListener {
 
             seleccionarRecojo()
+        }
+
+
+        // =====================================================
+        // CONTRA ENTREGA
+        // =====================================================
+
+        cardContraEntrega.setOnClickListener {
+
+            seleccionarContraEntrega()
+        }
+
+        rbContraEntrega.setOnClickListener {
+
+            seleccionarContraEntrega()
+        }
+
+
+        // =====================================================
+        // YAPE
+        // =====================================================
+
+        cardYape.setOnClickListener {
+
+            mostrarYapeProximamente()
+        }
+
+        rbYape.setOnClickListener {
+
+            // No permitimos seleccionar Yape todavía
+            rbYape.isChecked = false
+
+            mostrarYapeProximamente()
         }
 
 
@@ -118,7 +186,7 @@ class ActivityEntrega : AppCompatActivity() {
         rbDelivery.isChecked = true
         rbRecojo.isChecked = false
 
-        actualizarSeleccion()
+        actualizarSeleccionEntrega()
     }
 
 
@@ -131,15 +199,15 @@ class ActivityEntrega : AppCompatActivity() {
         rbDelivery.isChecked = false
         rbRecojo.isChecked = true
 
-        actualizarSeleccion()
+        actualizarSeleccionEntrega()
     }
 
 
     // =========================================================
-    // ACTUALIZAR SELECCIÓN
+    // ACTUALIZAR ENTREGA
     // =========================================================
 
-    private fun actualizarSeleccion() {
+    private fun actualizarSeleccionEntrega() {
 
         if (rbDelivery.isChecked) {
 
@@ -160,10 +228,74 @@ class ActivityEntrega : AppCompatActivity() {
 
 
     // =========================================================
+    // SELECCIONAR CONTRA ENTREGA
+    // =========================================================
+
+    private fun seleccionarContraEntrega() {
+
+        rbContraEntrega.isChecked = true
+        rbYape.isChecked = false
+
+        actualizarSeleccionPago()
+    }
+
+
+    // =========================================================
+    // ACTUALIZAR PAGO
+    // =========================================================
+
+    private fun actualizarSeleccionPago() {
+
+        if (rbContraEntrega.isChecked) {
+
+            cardContraEntrega.strokeWidth = 2
+            cardYape.strokeWidth = 0
+
+        } else {
+
+            cardContraEntrega.strokeWidth = 0
+            cardYape.strokeWidth = 0
+        }
+    }
+
+
+    // =========================================================
+    // MENSAJE YAPE
+    // =========================================================
+
+    private fun mostrarYapeProximamente() {
+
+        Toast.makeText(
+            this,
+            "Yape estará disponible muy pronto 🚀\nPor ahora puedes pagar contra entrega.",
+            Toast.LENGTH_LONG
+        ).show()
+
+        // Siempre volvemos a Contra entrega
+        rbContraEntrega.isChecked = true
+        rbYape.isChecked = false
+
+        actualizarSeleccionPago()
+    }
+
+
+    // =========================================================
     // CONTINUAR
     // =========================================================
 
     private fun continuar() {
+
+        // -----------------------------------------------------
+        // Verificar método de pago
+        // -----------------------------------------------------
+
+        if (!rbContraEntrega.isChecked) {
+
+            mostrarYapeProximamente()
+
+            return
+        }
+
 
         // -----------------------------------------------------
         // DELIVERY
@@ -172,10 +304,20 @@ class ActivityEntrega : AppCompatActivity() {
         if (rbDelivery.isChecked) {
 
             val intent =
-                Intent(
+                android.content.Intent(
                     this,
                     ActivityDireccion::class.java
                 )
+
+            intent.putExtra(
+                "metodoPago",
+                "Contra entrega"
+            )
+
+            intent.putExtra(
+                "tipoEntrega",
+                "Delivery"
+            )
 
             startActivity(intent)
 
@@ -189,15 +331,31 @@ class ActivityEntrega : AppCompatActivity() {
 
         if (rbRecojo.isChecked) {
 
-            val intent =
-                Intent(
-                    this,
-                    ActivityPagoYape::class.java
-                )
+            /*
+             * Aquí NO abrimos ActivityPagoYape.
+             *
+             * El siguiente paso para RECOJO lo conectaremos
+             * con la pantalla de confirmación del pedido.
+             */
 
-            startActivity(intent)
+            Toast.makeText(
+                this,
+                "Pago contra entrega seleccionado.",
+                Toast.LENGTH_SHORT
+            ).show()
 
             return
         }
+
+
+        // -----------------------------------------------------
+        // SIN SELECCIÓN
+        // -----------------------------------------------------
+
+        Toast.makeText(
+            this,
+            "Selecciona cómo quieres recibir tu pedido.",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }

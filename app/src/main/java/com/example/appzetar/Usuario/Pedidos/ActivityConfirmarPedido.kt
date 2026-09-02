@@ -12,9 +12,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.appzetar.R
-import com.example.appzetar.Usuario.Pagos.ActivityPagoYape
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityConfirmarPedido : AppCompatActivity() {
@@ -44,7 +45,49 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     private lateinit var radioDelivery: RadioButton
     private lateinit var radioRecojo: RadioButton
 
+    private lateinit var tvDireccion: TextView
+    private lateinit var tvReferencia: TextView
+    private lateinit var tvTelefono: TextView
+
+    private lateinit var tvMetodoPago: TextView
+
     private lateinit var btnContinuarPago: MaterialButton
+
+
+    // =========================================================
+    // DATOS RECIBIDOS
+    // =========================================================
+
+    private var tipoEntrega =
+        "Delivery"
+
+    private var metodoPago =
+        "Contra entrega"
+
+    private var direccion =
+        ""
+
+    private var referencia =
+        ""
+
+    private var telefono =
+        ""
+
+
+    // =========================================================
+    // DATOS DEL USUARIO
+    // =========================================================
+
+    private var nombreUsuario =
+        "Cliente"
+
+
+    // =========================================================
+    // CONTROL
+    // =========================================================
+
+    private var confirmandoPedido =
+        false
 
 
     // =========================================================
@@ -54,6 +97,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     override fun onCreate(
         savedInstanceState: Bundle?
     ) {
+
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
@@ -97,9 +141,17 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         // =====================================================
 
         initComponent()
+
+        recibirDatos()
+
         cargarDatosUsuario()
+
         cargarResumenPedido()
+
+        mostrarDatosEntrega()
+
         configurarEntrega()
+
         configurarBoton()
     }
 
@@ -145,6 +197,26 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 R.id.radioRecojo
             )
 
+        tvDireccion =
+            findViewById(
+                R.id.tvDireccion
+            )
+
+        tvReferencia =
+            findViewById(
+                R.id.tvReferencia
+            )
+
+        tvTelefono =
+            findViewById(
+                R.id.tvTelefono
+            )
+
+        tvMetodoPago =
+            findViewById(
+                R.id.tvMetodoPago
+            )
+
         btnContinuarPago =
             findViewById(
                 R.id.btnContinuarPago
@@ -153,7 +225,49 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
 
     // =========================================================
-    // USUARIO
+    // RECIBIR DATOS
+    // =========================================================
+
+    private fun recibirDatos() {
+
+        tipoEntrega =
+            intent.getStringExtra(
+                "tipoEntrega"
+            )
+                ?: "Delivery"
+
+
+        metodoPago =
+            intent.getStringExtra(
+                "metodoPago"
+            )
+                ?: "Contra entrega"
+
+
+        direccion =
+            intent.getStringExtra(
+                "direccion"
+            )
+                ?: ""
+
+
+        referencia =
+            intent.getStringExtra(
+                "referencia"
+            )
+                ?: ""
+
+
+        telefono =
+            intent.getStringExtra(
+                "telefono"
+            )
+                ?: ""
+    }
+
+
+    // =========================================================
+    // CARGAR USUARIO
     // =========================================================
 
     private fun cargarDatosUsuario() {
@@ -177,7 +291,8 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
 
         tvCorreoUsuario.text =
-            usuario.email ?: ""
+            usuario.email
+                ?: "Sin correo"
 
 
         db.collection("usuarios")
@@ -187,15 +302,38 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
                 if (documento.exists()) {
 
-                    val nombre =
-                        documento
-                            .getString("nombre")
-                            ?: ""
+                    nombreUsuario =
+                        documento.getString(
+                            "nombre"
+                        )
+                            ?: "Cliente"
 
+                } else {
 
-                    tvNombreUsuario.text =
-                        nombre
+                    nombreUsuario =
+                        "Cliente"
                 }
+
+
+                if (
+                    nombreUsuario.isBlank()
+                ) {
+
+                    nombreUsuario =
+                        "Cliente"
+                }
+
+
+                tvNombreUsuario.text =
+                    nombreUsuario
+            }
+            .addOnFailureListener {
+
+                nombreUsuario =
+                    "Cliente"
+
+                tvNombreUsuario.text =
+                    "Cliente"
             }
     }
 
@@ -212,6 +350,12 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
         if (pedido.isEmpty()) {
 
+            Toast.makeText(
+                this,
+                "El carrito está vacío",
+                Toast.LENGTH_SHORT
+            ).show()
+
             finish()
 
             return
@@ -224,21 +368,109 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
         tvResumenProductos.text =
             if (cantidad == 1) {
+
                 "1 producto"
+
             } else {
+
                 "$cantidad productos"
             }
 
 
         val total =
             pedido.sumOf {
-
                 it.precio * it.cantidad
             }
 
 
         tvTotalPedido.text =
             "S/ %.2f".format(total)
+    }
+
+
+    // =========================================================
+    // MOSTRAR DATOS DE ENTREGA
+    // =========================================================
+
+    private fun mostrarDatosEntrega() {
+
+        if (
+            tipoEntrega.equals(
+                "Delivery",
+                ignoreCase = true
+            )
+        ) {
+
+            radioDelivery.isChecked =
+                true
+
+
+            tvDireccion.text =
+                if (
+                    direccion.isNotEmpty()
+                ) {
+
+                    direccion
+
+                } else {
+
+                    "No especificada"
+                }
+
+
+            tvReferencia.text =
+                if (
+                    referencia.isNotEmpty()
+                ) {
+
+                    referencia
+
+                } else {
+
+                    "Sin referencia"
+                }
+
+
+            tvTelefono.text =
+                if (
+                    telefono.isNotEmpty()
+                ) {
+
+                    telefono
+
+                } else {
+
+                    "No especificado"
+                }
+
+        } else {
+
+            radioRecojo.isChecked =
+                true
+
+
+            tvDireccion.text =
+                "Recojo en tienda"
+
+            tvReferencia.text =
+                "No aplica"
+
+            tvTelefono.text =
+                if (
+                    telefono.isNotEmpty()
+                ) {
+
+                    telefono
+
+                } else {
+
+                    "No especificado"
+                }
+        }
+
+
+        tvMetodoPago.text =
+            metodoPago
     }
 
 
@@ -256,21 +488,73 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
                 R.id.radioDelivery -> {
 
-                    Toast.makeText(
-                        this,
-                        "Delivery seleccionado",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    tipoEntrega =
+                        "Delivery"
+
+
+                    tvDireccion.text =
+                        if (
+                            direccion.isNotEmpty()
+                        ) {
+
+                            direccion
+
+                        } else {
+
+                            "No especificada"
+                        }
+
+
+                    tvReferencia.text =
+                        if (
+                            referencia.isNotEmpty()
+                        ) {
+
+                            referencia
+
+                        } else {
+
+                            "Sin referencia"
+                        }
+
+
+                    tvTelefono.text =
+                        if (
+                            telefono.isNotEmpty()
+                        ) {
+
+                            telefono
+
+                        } else {
+
+                            "No especificado"
+                        }
                 }
 
 
                 R.id.radioRecojo -> {
 
-                    Toast.makeText(
-                        this,
-                        "Recojo en tienda seleccionado",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    tipoEntrega =
+                        "Recojo en tienda"
+
+
+                    tvDireccion.text =
+                        "Recojo en tienda"
+
+                    tvReferencia.text =
+                        "No aplica"
+
+                    tvTelefono.text =
+                        if (
+                            telefono.isNotEmpty()
+                        ) {
+
+                            telefono
+
+                        } else {
+
+                            "No especificado"
+                        }
                 }
             }
         }
@@ -278,64 +562,711 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
 
     // =========================================================
-    // BOTÓN CONTINUAR
+    // BOTÓN
     // =========================================================
 
     private fun configurarBoton() {
 
         btnContinuarPago.setOnClickListener {
 
-            val opcionSeleccionada =
-                radioGroupEntrega.checkedRadioButtonId
+            if (!confirmandoPedido) {
 
+                confirmarPedido()
+            }
+        }
+    }
+
+
+    // =========================================================
+    // CONFIRMAR PEDIDO
+    // =========================================================
+
+    private fun confirmarPedido() {
+
+        if (confirmandoPedido) {
+            return
+        }
+
+
+        // -----------------------------------------------------
+        // USUARIO
+        // -----------------------------------------------------
+
+        val usuario =
+            auth.currentUser
+
+
+        if (usuario == null) {
+
+            Toast.makeText(
+                this,
+                "No hay una sesión activa",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
+
+
+        // -----------------------------------------------------
+        // CARRITO
+        // -----------------------------------------------------
+
+        val pedido =
+            PedidoManager.pedido
+
+
+        if (pedido.isEmpty()) {
+
+            Toast.makeText(
+                this,
+                "El carrito está vacío",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
+
+
+        // -----------------------------------------------------
+        // ENTREGA
+        // -----------------------------------------------------
+
+        val opcionSeleccionada =
+            radioGroupEntrega.checkedRadioButtonId
+
+
+        if (
+            opcionSeleccionada == -1
+        ) {
+
+            Toast.makeText(
+                this,
+                "Selecciona cómo deseas recibir tu pedido",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
+
+
+        tipoEntrega =
+            when (opcionSeleccionada) {
+
+                R.id.radioDelivery ->
+                    "Delivery"
+
+                R.id.radioRecojo ->
+                    "Recojo en tienda"
+
+                else ->
+                    ""
+            }
+
+
+        metodoPago =
+            "Contra entrega"
+
+
+        // -----------------------------------------------------
+        // VALIDAR DELIVERY
+        // -----------------------------------------------------
+
+        if (
+            tipoEntrega.equals(
+                "Delivery",
+                ignoreCase = true
+            )
+        ) {
 
             if (
-                opcionSeleccionada ==
-                -1
+                direccion.isBlank()
             ) {
 
                 Toast.makeText(
                     this,
-                    "Selecciona cómo deseas recibir tu pedido",
+                    "No se encontró la dirección de entrega",
                     Toast.LENGTH_SHORT
                 ).show()
 
-                return@setOnClickListener
+                return
             }
 
 
-            val tipoEntrega =
-                when (
-                    opcionSeleccionada
+            if (
+                telefono.isBlank()
+            ) {
+
+                Toast.makeText(
+                    this,
+                    "No se encontró el teléfono",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return
+            }
+        }
+
+
+        // -----------------------------------------------------
+        // BLOQUEAR BOTÓN
+        // -----------------------------------------------------
+
+        confirmandoPedido =
+            true
+
+        btnContinuarPago.isEnabled =
+            false
+
+        btnContinuarPago.alpha =
+            0.5f
+
+        btnContinuarPago.text =
+            "CONFIRMANDO..."
+
+
+        // -----------------------------------------------------
+        // PRODUCTOS
+        // -----------------------------------------------------
+
+        val productos =
+            pedido.map { item ->
+
+                hashMapOf<String, Any>(
+
+                    "id" to item.id,
+
+                    "nombre" to item.nombre,
+
+                    "precio" to item.precio,
+
+                    "cantidad" to item.cantidad,
+
+                    "tipo" to item.tipo.name
+                )
+            }
+
+
+        // -----------------------------------------------------
+        // TOTAL
+        // -----------------------------------------------------
+
+        val total =
+            pedido.sumOf {
+                it.precio * it.cantidad
+            }
+
+
+        // -----------------------------------------------------
+        // BUSCAR REFERENCIAS
+        // -----------------------------------------------------
+
+        buscarReferenciasStock(
+            pedido = pedido,
+
+            onSuccess = { referenciasStock ->
+
+                guardarPedidoYDescontarStock(
+                    usuarioId = usuario.uid,
+                    correo = usuario.email ?: "",
+                    productos = productos,
+                    total = total,
+                    referenciasStock = referenciasStock
+                )
+            },
+
+            onError = { exception ->
+
+                finalizarConError(
+                    exception
+                )
+            }
+        )
+    }
+
+
+    // =========================================================
+    // BUSCAR DOCUMENTOS DE STOCK
+    // =========================================================
+
+    private fun buscarReferenciasStock(
+        pedido: List<PedidoItem>,
+        onSuccess: (
+            Map<PedidoItem, DocumentReference>
+        ) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+
+        val referencias =
+            mutableMapOf<
+                    PedidoItem,
+                    DocumentReference
+                    >()
+
+
+        val productosConStock =
+            pedido.filter {
+
+                it.tipo == TipoPedido.MENU ||
+                        it.tipo == TipoPedido.ENTRADA
+            }
+
+
+        if (
+            productosConStock.isEmpty()
+        ) {
+
+            onSuccess(
+                referencias
+            )
+
+            return
+        }
+
+
+        buscarReferenciaRecursiva(
+            productos = productosConStock,
+            posicion = 0,
+            referencias = referencias,
+            onSuccess = onSuccess,
+            onError = onError
+        )
+    }
+
+
+    // =========================================================
+    // BUSCAR REFERENCIA
+    // =========================================================
+
+    private fun buscarReferenciaRecursiva(
+        productos: List<PedidoItem>,
+        posicion: Int,
+        referencias: MutableMap<
+                PedidoItem,
+                DocumentReference
+                >,
+        onSuccess: (
+            Map<PedidoItem, DocumentReference>
+        ) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+
+        if (
+            posicion >= productos.size
+        ) {
+
+            onSuccess(
+                referencias
+            )
+
+            return
+        }
+
+
+        val item =
+            productos[posicion]
+
+
+        val coleccion =
+            when (item.tipo) {
+
+                TipoPedido.MENU ->
+                    "menu"
+
+                TipoPedido.ENTRADA ->
+                    "entradas"
+
+                TipoPedido.EXTRA ->
+                    ""
+            }
+
+
+        if (
+            coleccion.isEmpty()
+        ) {
+
+            buscarReferenciaRecursiva(
+                productos = productos,
+                posicion = posicion + 1,
+                referencias = referencias,
+                onSuccess = onSuccess,
+                onError = onError
+            )
+
+            return
+        }
+
+
+        db.collection(coleccion)
+            .whereEqualTo(
+                "id",
+                item.id
+            )
+            .limit(1)
+            .get()
+            .addOnSuccessListener { resultado ->
+
+                if (
+                    resultado.isEmpty
                 ) {
 
-                    R.id.radioDelivery ->
-                        "Delivery"
+                    onError(
+                        IllegalStateException(
+                            "No se encontró '${item.nombre}' en la colección '$coleccion' con id ${item.id}."
+                        )
+                    )
 
-                    R.id.radioRecojo ->
-                        "Recojo en tienda"
-
-                    else ->
-                        ""
+                    return@addOnSuccessListener
                 }
 
 
-            // =================================================
-            // GUARDAMOS TEMPORALMENTE LA ELECCIÓN
-            // =================================================
+                val documento =
+                    resultado.documents.first()
 
-            val intent =
-                Intent(
-                    this,
-                    ActivityPagoYape::class.java
+
+                referencias[item] =
+                    documento.reference
+
+
+                buscarReferenciaRecursiva(
+                    productos = productos,
+                    posicion = posicion + 1,
+                    referencias = referencias,
+                    onSuccess = onSuccess,
+                    onError = onError
+                )
+            }
+            .addOnFailureListener { exception ->
+
+                onError(
+                    exception
+                )
+            }
+    }
+
+
+    // =========================================================
+    // GUARDAR PEDIDO + DESCONTAR STOCK
+    // =========================================================
+
+    private fun guardarPedidoYDescontarStock(
+        usuarioId: String,
+        correo: String,
+        productos: List<HashMap<String, Any>>,
+        total: Double,
+        referenciasStock: Map<
+                PedidoItem,
+                DocumentReference
+                >
+    ) {
+
+        val referenciaPedido =
+            db.collection("pedidos")
+                .document()
+
+
+        db.runTransaction { transaction ->
+
+            // -------------------------------------------------
+            // STOCK ACTUAL
+            // -------------------------------------------------
+
+            val stocksActuales =
+                mutableMapOf<
+                        PedidoItem,
+                        Long
+                        >()
+
+
+            // -------------------------------------------------
+            // LEER STOCK DE TODOS LOS PRODUCTOS
+            // -------------------------------------------------
+
+            for (
+            entrada
+            in referenciasStock.entries
+            ) {
+
+                val item =
+                    entrada.key
+
+                val referencia =
+                    entrada.value
+
+
+                val snapshot =
+                    transaction.get(
+                        referencia
+                    )
+
+
+                if (
+                    !snapshot.exists()
+                ) {
+
+                    throw IllegalStateException(
+                        "El producto '${item.nombre}' ya no existe."
+                    )
+                }
+
+
+                val stockValue =
+                    snapshot.getLong(
+                        "stock"
+                    )
+
+
+                if (
+                    stockValue == null
+                ) {
+
+                    throw IllegalStateException(
+                        "El producto '${item.nombre}' no tiene un stock válido en Firebase."
+                    )
+                }
+
+
+                val stock =
+                    stockValue
+
+
+                if (
+                    stock < 0
+                ) {
+
+                    throw IllegalStateException(
+                        "El stock de '${item.nombre}' no es válido."
+                    )
+                }
+
+
+                if (
+                    stock < item.cantidad
+                ) {
+
+                    throw IllegalStateException(
+                        "SIN_STOCK:${item.nombre}:$stock:${item.cantidad}"
+                    )
+                }
+
+
+                stocksActuales[item] =
+                    stock
+            }
+
+
+            // -------------------------------------------------
+            // DESCONTAR STOCK
+            // -------------------------------------------------
+
+            for (
+            entrada
+            in referenciasStock.entries
+            ) {
+
+                val item =
+                    entrada.key
+
+                val referencia =
+                    entrada.value
+
+
+                val stockActual =
+                    stocksActuales[item]
+                        ?: 0L
+
+
+                val nuevoStock =
+                    stockActual -
+                            item.cantidad
+
+
+                transaction.update(
+                    referencia,
+                    "stock",
+                    nuevoStock
+                )
+            }
+
+
+            // -------------------------------------------------
+            // DATOS DEL PEDIDO
+            // -------------------------------------------------
+
+            val datosPedido =
+                hashMapOf<String, Any>(
+
+                    "usuarioId" to usuarioId,
+
+                    "nombreUsuario" to nombreUsuario,
+
+                    "correo" to correo,
+
+                    "productos" to productos,
+
+                    "total" to total,
+
+                    "tipoEntrega" to tipoEntrega,
+
+                    "direccion" to direccion,
+
+                    "referencia" to referencia,
+
+                    "telefono" to telefono,
+
+                    "metodoPago" to "Contra entrega",
+
+                    "estadoPago" to "Pendiente",
+
+                    "estadoPedido" to "Pendiente",
+
+                    "fecha" to
+                            FieldValue.serverTimestamp()
                 )
 
-            intent.putExtra(
-                "tipoEntrega",
-                tipoEntrega
+
+            // -------------------------------------------------
+            // GUARDAR PEDIDO
+            // -------------------------------------------------
+
+            transaction.set(
+                referenciaPedido,
+                datosPedido
             )
 
-            startActivity(intent)
         }
+            .addOnSuccessListener {
+
+                pedidoConfirmado()
+            }
+            .addOnFailureListener { exception ->
+
+                finalizarConError(
+                    exception
+                )
+            }
+    }
+
+
+    // =========================================================
+    // PEDIDO CONFIRMADO
+    // =========================================================
+
+    private fun pedidoConfirmado() {
+
+        // -----------------------------------------------------
+        // LIMPIAR CARRITO
+        // -----------------------------------------------------
+
+        PedidoManager.limpiar()
+
+
+        Toast.makeText(
+            this,
+            "¡Pedido confirmado correctamente! 🚀",
+            Toast.LENGTH_LONG
+        ).show()
+
+
+        // -----------------------------------------------------
+        // VOLVER AL MENÚ
+        // -----------------------------------------------------
+
+        val intent =
+            Intent(
+                this,
+                ActivityMenuUsuario::class.java
+            )
+
+
+        intent.flags =
+            Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+
+        startActivity(
+            intent
+        )
+
+
+        finish()
+    }
+
+
+    // =========================================================
+    // ERROR
+    // =========================================================
+
+    private fun finalizarConError(
+        exception: Exception
+    ) {
+
+        confirmandoPedido =
+            false
+
+        btnContinuarPago.isEnabled =
+            true
+
+        btnContinuarPago.alpha =
+            1f
+
+        btnContinuarPago.text =
+            "CONFIRMAR PEDIDO"
+
+
+        val mensaje =
+            when {
+
+                exception.message
+                    ?.startsWith(
+                        "SIN_STOCK:"
+                    ) == true -> {
+
+                    val partes =
+                        exception.message
+                            ?.split(":")
+
+
+                    val nombre =
+                        partes
+                            ?.getOrNull(1)
+                            ?: "este producto"
+
+
+                    val stockActual =
+                        partes
+                            ?.getOrNull(2)
+                            ?: "0"
+
+
+                    val cantidadSolicitada =
+                        partes
+                            ?.getOrNull(3)
+                            ?: "0"
+
+
+                    "No hay stock suficiente de $nombre. Disponible: $stockActual. Solicitado: $cantidadSolicitada."
+                }
+
+
+                exception is IllegalStateException -> {
+
+                    exception.message
+                        ?: "No se pudo confirmar el pedido."
+                }
+
+
+                else -> {
+
+                    "No se pudo confirmar el pedido. Inténtalo nuevamente."
+                }
+            }
+
+
+        Toast.makeText(
+            this,
+            mensaje,
+            Toast.LENGTH_LONG
+        ).show()
     }
 }

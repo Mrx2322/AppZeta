@@ -3,87 +3,93 @@ package com.example.appzetar.Usuario.Pagos
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.appzetar.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
+import com.example.appzetar.Usuario.PedidoManager
 
 class ActivityPagoYape : AppCompatActivity() {
 
+    // =========================================================
+    // COMPONENTES
+    // =========================================================
+
     private lateinit var tvTotal: TextView
-    private lateinit var btnYaPague: MaterialButton
+
     private lateinit var etOperacion: TextInputEditText
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    private lateinit var btnYaPague: MaterialButton
+
+
+    // =========================================================
+    // ON CREATE
+    // =========================================================
+
+    override fun onCreate(
+        savedInstanceState: Bundle?
+    ) {
         super.onCreate(savedInstanceState)
 
-        enableEdgeToEdge()
-
-        WindowCompat.setDecorFitsSystemWindows(
-            window,
-            false
+        setContentView(
+            R.layout.activity_pago_yape
         )
 
-        setContentView(R.layout.activity_pago_yape)
-
-        ViewCompat.setOnApplyWindowInsetsListener(
-            findViewById(R.id.main)
-        ) { v, insets ->
-
-            val systemBars =
-                insets.getInsets(
-                    WindowInsetsCompat.Type.systemBars()
-                )
-
-            v.setPadding(
-                systemBars.left,
-                systemBars.top,
-                systemBars.right,
-                systemBars.bottom
-            )
-
-            insets
-        }
-
         initComponent()
-        initUI()
+
+        mostrarTotal()
+
+        configurarBoton()
     }
 
-    // ---------------------------------------------------------
-    // COMPONENTES
-    // ---------------------------------------------------------
+
+    // =========================================================
+    // INICIALIZAR COMPONENTES
+    // =========================================================
 
     private fun initComponent() {
 
         tvTotal =
-            findViewById(R.id.tvTotal)
-
-        btnYaPague =
-            findViewById(R.id.btnYaPague)
+            findViewById(
+                R.id.tvTotal
+            )
 
         etOperacion =
-            findViewById(R.id.etOperacion)
+            findViewById(
+                R.id.etOperacion
+            )
+
+        btnYaPague =
+            findViewById(
+                R.id.btnYaPague
+            )
     }
 
-    // ---------------------------------------------------------
-    // UI
-    // ---------------------------------------------------------
 
-    private fun initUI() {
+    // =========================================================
+    // MOSTRAR TOTAL
+    // =========================================================
 
-        // Por ahora mostramos un total provisional.
-        // Más adelante recibiremos el total real del pedido.
+    private fun mostrarTotal() {
+
+        val total =
+            PedidoManager.pedido.sumOf {
+
+                it.precio * it.cantidad
+            }
 
         tvTotal.text =
-            "Total: S/ 0.00"
+            "Total: S/ %.2f".format(
+                total
+            )
+    }
 
-        // -----------------------------------------------------
-        // BOTÓN YA REALICÉ EL PAGO
-        // -----------------------------------------------------
+
+    // =========================================================
+    // BOTÓN YA PAGUÉ
+    // =========================================================
+
+    private fun configurarBoton() {
 
         btnYaPague.setOnClickListener {
 
@@ -93,9 +99,10 @@ class ActivityPagoYape : AppCompatActivity() {
                     ?.trim()
                     ?: ""
 
-            // ---------------------------------------------
-            // VALIDAR NÚMERO DE OPERACIÓN
-            // ---------------------------------------------
+
+            // -------------------------------------------------
+            // VALIDAR OPERACIÓN
+            // -------------------------------------------------
 
             if (operacion.isEmpty()) {
 
@@ -107,13 +114,14 @@ class ActivityPagoYape : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // ---------------------------------------------
-            // PAGO REPORTADO
-            // ---------------------------------------------
+
+            // -------------------------------------------------
+            // POR AHORA
+            // -------------------------------------------------
 
             Toast.makeText(
                 this,
-                "Pago reportado correctamente.",
+                "Yape estará disponible muy pronto 🚀",
                 Toast.LENGTH_LONG
             ).show()
         }

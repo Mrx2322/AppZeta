@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -29,14 +28,14 @@ class ActivityPedido : AppCompatActivity() {
 
     private lateinit var pedidoAdapter: PedidoAdapter
 
-    private var procesandoOperacion = false
-
 
     // =========================================================
     // ON CREATE
     // =========================================================
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(
+        savedInstanceState: Bundle?
+    ) {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
@@ -92,19 +91,29 @@ class ActivityPedido : AppCompatActivity() {
     private fun initComponent() {
 
         rvPedido =
-            findViewById(R.id.rvPedido)
+            findViewById(
+                R.id.rvPedido
+            )
 
         tvTotalProductos =
-            findViewById(R.id.tvTotalProductos)
+            findViewById(
+                R.id.tvTotalProductos
+            )
 
         tvTotalPedido =
-            findViewById(R.id.tvTotalPedido)
+            findViewById(
+                R.id.tvTotalPedido
+            )
 
         tvMensajeVacio =
-            findViewById(R.id.tvMensajeVacio)
+            findViewById(
+                R.id.tvMensajeVacio
+            )
 
         btnContinuar =
-            findViewById(R.id.btnContinuar)
+            findViewById(
+                R.id.btnContinuar
+            )
     }
 
 
@@ -119,24 +128,15 @@ class ActivityPedido : AppCompatActivity() {
                 PedidoManager.pedido,
 
                 onAumentar = { item ->
-
-                    if (!procesandoOperacion) {
-                        aumentarProducto(item)
-                    }
+                    aumentarProducto(item)
                 },
 
                 onDisminuir = { item ->
-
-                    if (!procesandoOperacion) {
-                        disminuirProducto(item)
-                    }
+                    disminuirProducto(item)
                 },
 
                 onEliminar = { item ->
-
-                    if (!procesandoOperacion) {
-                        eliminarProducto(item)
-                    }
+                    eliminarProducto(item)
                 }
             )
 
@@ -154,9 +154,7 @@ class ActivityPedido : AppCompatActivity() {
 
         btnContinuar.setOnClickListener {
 
-            if (!procesandoOperacion) {
-                continuarCompra()
-            }
+            continuarCompra()
         }
     }
 
@@ -164,276 +162,67 @@ class ActivityPedido : AppCompatActivity() {
     // =========================================================
     // AUMENTAR PRODUCTO
     // =========================================================
+    //
+    // IMPORTANTE:
+    //
+    // Aquí NO se modifica Firestore.
+    // Solo se modifica el carrito.
+    //
+    // El stock se descontará al confirmar el pedido.
+    // =========================================================
 
     private fun aumentarProducto(
         item: PedidoItem
     ) {
 
-        // =====================================================
-        // EXTRA
-        // =====================================================
-
-        if (item.tipo == TipoPedido.EXTRA) {
-
-            PedidoManager.aumentarCantidad(
-                item.id,
-                item.tipo
-            )
-
-            actualizarPedido()
-
-            return
-        }
-
-
-        // =====================================================
-        // EVITAR DOBLE CLIC
-        // =====================================================
-
-        if (procesandoOperacion) {
-            return
-        }
-
-        procesandoOperacion = true
-
-        actualizarEstadoBotones()
-
-
-        // =====================================================
-        // DESCONTAR STOCK
-        // =====================================================
-
-        StockManager.descontarStock(
-            item = item,
-            cantidad = 1,
-
-            onSuccess = {
-
-                PedidoManager.aumentarCantidad(
-                    item.id,
-                    item.tipo
-                )
-
-                procesandoOperacion = false
-
-                actualizarEstadoBotones()
-                actualizarPedido()
-            },
-
-            onError = { exception ->
-
-                procesandoOperacion = false
-
-                actualizarEstadoBotones()
-
-                mostrarErrorStock(
-                    exception
-                )
-            }
+        PedidoManager.aumentarCantidad(
+            item.id,
+            item.tipo
         )
+
+        actualizarPedido()
     }
 
 
     // =========================================================
     // DISMINUIR PRODUCTO
     // =========================================================
+    //
+    // Aquí tampoco se devuelve stock.
+    // Solo se modifica el carrito.
+    // =========================================================
 
     private fun disminuirProducto(
         item: PedidoItem
     ) {
 
-        // =====================================================
-        // EXTRA
-        // =====================================================
-
-        if (item.tipo == TipoPedido.EXTRA) {
-
-            PedidoManager.disminuirCantidad(
-                item.id,
-                item.tipo
-            )
-
-            actualizarPedido()
-
-            return
-        }
-
-
-        // =====================================================
-        // EVITAR DOBLE CLIC
-        // =====================================================
-
-        if (procesandoOperacion) {
-            return
-        }
-
-        procesandoOperacion = true
-
-        actualizarEstadoBotones()
-
-
-        // =====================================================
-        // DEVOLVER STOCK
-        // =====================================================
-
-        StockManager.devolverStock(
-            item = item,
-            cantidad = 1,
-
-            onSuccess = {
-
-                PedidoManager.disminuirCantidad(
-                    item.id,
-                    item.tipo
-                )
-
-                procesandoOperacion = false
-
-                actualizarEstadoBotones()
-                actualizarPedido()
-            },
-
-            onError = { exception ->
-
-                procesandoOperacion = false
-
-                actualizarEstadoBotones()
-
-                mostrarErrorStock(
-                    exception
-                )
-            }
+        PedidoManager.disminuirCantidad(
+            item.id,
+            item.tipo
         )
+
+        actualizarPedido()
     }
 
 
     // =========================================================
     // ELIMINAR PRODUCTO
     // =========================================================
+    //
+    // Solo elimina del carrito.
+    // No modifica Firestore.
+    // =========================================================
 
     private fun eliminarProducto(
         item: PedidoItem
     ) {
 
-        // =====================================================
-        // EXTRA
-        // =====================================================
-
-        if (item.tipo == TipoPedido.EXTRA) {
-
-            PedidoManager.eliminarProducto(
-                item.id,
-                item.tipo
-            )
-
-            actualizarPedido()
-
-            return
-        }
-
-
-        // =====================================================
-        // EVITAR DOBLE CLIC
-        // =====================================================
-
-        if (procesandoOperacion) {
-            return
-        }
-
-        procesandoOperacion = true
-
-        actualizarEstadoBotones()
-
-
-        // =====================================================
-        // CANTIDAD A DEVOLVER
-        // =====================================================
-
-        val cantidadADevolver =
-            item.cantidad
-
-
-        // =====================================================
-        // DEVOLVER TODO EL STOCK
-        // =====================================================
-
-        StockManager.devolverStock(
-            item = item,
-            cantidad = cantidadADevolver,
-
-            onSuccess = {
-
-                PedidoManager.eliminarProducto(
-                    item.id,
-                    item.tipo
-                )
-
-                procesandoOperacion = false
-
-                actualizarEstadoBotones()
-                actualizarPedido()
-            },
-
-            onError = { exception ->
-
-                procesandoOperacion = false
-
-                actualizarEstadoBotones()
-
-                mostrarErrorStock(
-                    exception
-                )
-            }
+        PedidoManager.eliminarProducto(
+            item.id,
+            item.tipo
         )
-    }
 
-
-    // =========================================================
-    // ESTADO DE BOTONES
-    // =========================================================
-
-    private fun actualizarEstadoBotones() {
-
-        btnContinuar.isEnabled =
-            !procesandoOperacion &&
-                    PedidoManager.pedido.isNotEmpty()
-
-        btnContinuar.alpha =
-            if (btnContinuar.isEnabled) {
-                1f
-            } else {
-                0.5f
-            }
-    }
-
-
-    // =========================================================
-    // ERROR DE STOCK
-    // =========================================================
-
-    private fun mostrarErrorStock(
-        exception: Exception
-    ) {
-
-        val mensaje =
-            if (
-                exception is IllegalStateException &&
-                exception.message == "SIN_STOCK"
-            ) {
-
-                "Ya no hay stock disponible."
-
-            } else {
-
-                "No se pudo actualizar el stock."
-            }
-
-
-        Toast.makeText(
-            this,
-            mensaje,
-            Toast.LENGTH_SHORT
-        ).show()
+        actualizarPedido()
     }
 
 
@@ -443,7 +232,9 @@ class ActivityPedido : AppCompatActivity() {
 
     private fun continuarCompra() {
 
-        if (PedidoManager.pedido.isEmpty()) {
+        if (
+            PedidoManager.pedido.isEmpty()
+        ) {
             return
         }
 
@@ -475,8 +266,11 @@ class ActivityPedido : AppCompatActivity() {
 
         tvTotalProductos.text =
             if (cantidad == 1) {
+
                 "1 producto"
+
             } else {
+
                 "$cantidad productos"
             }
 
@@ -487,6 +281,7 @@ class ActivityPedido : AppCompatActivity() {
 
         val total =
             PedidoManager.pedido.sumOf {
+
                 it.precio * it.cantidad
             }
 
@@ -498,7 +293,9 @@ class ActivityPedido : AppCompatActivity() {
         // PEDIDO VACÍO
         // =====================================================
 
-        if (PedidoManager.pedido.isEmpty()) {
+        if (
+            PedidoManager.pedido.isEmpty()
+        ) {
 
             rvPedido.visibility =
                 View.GONE
@@ -521,14 +318,10 @@ class ActivityPedido : AppCompatActivity() {
                 View.GONE
 
             btnContinuar.isEnabled =
-                !procesandoOperacion
+                true
 
             btnContinuar.alpha =
-                if (procesandoOperacion) {
-                    0.5f
-                } else {
-                    1f
-                }
+                1f
         }
     }
 
@@ -538,6 +331,7 @@ class ActivityPedido : AppCompatActivity() {
     // =========================================================
 
     override fun onResume() {
+
         super.onResume()
 
         actualizarPedido()
