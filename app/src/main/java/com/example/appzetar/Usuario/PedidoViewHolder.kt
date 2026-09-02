@@ -52,7 +52,9 @@ class PedidoViewHolder(
 
     fun render(
         item: PedidoItem,
-        onPedidoActualizado: () -> Unit
+        onAumentar: (PedidoItem) -> Unit,
+        onDisminuir: (PedidoItem) -> Unit,
+        onEliminar: (PedidoItem) -> Unit
     ) {
 
         // =====================================================
@@ -72,7 +74,7 @@ class PedidoViewHolder(
 
 
         // =====================================================
-        // SUBTOTAL DEL PRODUCTO
+        // SUBTOTAL
         // =====================================================
 
         val subtotal =
@@ -90,12 +92,7 @@ class PedidoViewHolder(
 
         btnMas.setOnClickListener {
 
-            PedidoManager.aumentarCantidad(
-                item.id,
-                item.tipo
-            )
-
-            onPedidoActualizado()
+            onAumentar(item)
         }
 
 
@@ -105,12 +102,7 @@ class PedidoViewHolder(
 
         btnMenos.setOnClickListener {
 
-            PedidoManager.disminuirCantidad(
-                item.id,
-                item.tipo
-            )
-
-            onPedidoActualizado()
+            onDisminuir(item)
         }
 
 
@@ -120,12 +112,42 @@ class PedidoViewHolder(
 
         btnEliminar.setOnClickListener {
 
-            PedidoManager.eliminarProducto(
-                item.id,
-                item.tipo
-            )
-
-            onPedidoActualizado()
+            onEliminar(item)
         }
+    }
+
+
+    // =========================================================
+    // HABILITAR / DESHABILITAR BOTONES
+    // =========================================================
+
+    fun setBotonesHabilitados(
+        habilitado: Boolean
+    ) {
+
+        btnMas.isEnabled =
+            habilitado
+
+        btnMenos.isEnabled =
+            habilitado
+
+        btnEliminar.isEnabled =
+            habilitado
+
+        val alpha =
+            if (habilitado) {
+                1f
+            } else {
+                0.5f
+            }
+
+        btnMas.alpha =
+            alpha
+
+        btnMenos.alpha =
+            alpha
+
+        btnEliminar.alpha =
+            alpha
     }
 }

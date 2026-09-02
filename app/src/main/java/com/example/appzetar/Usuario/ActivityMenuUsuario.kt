@@ -674,26 +674,186 @@ class ActivityMenuUsuario : AppCompatActivity() {
         entrada: TaskEntradas
     ) {
 
-        PedidoManager.agregarProducto(
+        // =====================================================
+        // VERIFICACIÓN LOCAL
+        // =====================================================
 
-            PedidoItem(
-                id = entrada.id,
-                nombre = entrada.nombre,
-                precio = 0.0,
-                cantidad = 1,
-                tipo = TipoPedido.ENTRADA
-            )
-        )
+        if (
+            !entrada.disponible ||
+            entrada.stock <= 0
+        ) {
+
+            Toast.makeText(
+                this,
+                "Esta entrada está agotada",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
 
 
-        actualizarContadorCarrito()
+        // =====================================================
+        // BUSCAR EN FIRESTORE
+        // =====================================================
+
+        db.collection("entradas")
+            .whereEqualTo("id", entrada.id)
+            .get()
+            .addOnSuccessListener { resultado ->
+
+                if (resultado.isEmpty) {
+
+                    Log.e(
+                        "STOCK_ENTRADA",
+                        "No se encontró la entrada con id ${entrada.id}"
+                    )
+
+                    Toast.makeText(
+                        this,
+                        "No se pudo encontrar la entrada",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    return@addOnSuccessListener
+                }
 
 
-        Toast.makeText(
-            this,
-            "${entrada.nombre} agregado al pedido",
-            Toast.LENGTH_SHORT
-        ).show()
+                val documento =
+                    resultado.documents.first()
+
+
+                val referencia =
+                    documento.reference
+
+
+                // =================================================
+                // TRANSACCIÓN
+                // =================================================
+
+                db.runTransaction { transaction ->
+
+                    val snapshot =
+                        transaction.get(referencia)
+
+
+                    val disponibleActual =
+                        snapshot
+                            .getBoolean("disponible")
+                            ?: true
+
+
+                    val stockActual =
+                        snapshot
+                            .getLong("stock")
+                            ?.toInt()
+                            ?: 0
+
+
+                    if (
+                        !disponibleActual ||
+                        stockActual <= 0
+                    ) {
+
+                        throw IllegalStateException(
+                            "SIN_STOCK"
+                        )
+                    }
+
+
+                    val nuevoStock =
+                        stockActual - 1
+
+
+                    transaction.update(
+                        referencia,
+                        "stock",
+                        nuevoStock
+                    )
+
+
+                    nuevoStock
+                }
+                    .addOnSuccessListener { nuevoStock ->
+
+                        // =================================================
+                        // ACTUALIZAR OBJETO LOCAL
+                        // =================================================
+
+                        entrada.stock =
+                            nuevoStock
+
+
+                        entradasAdapter.notifyDataSetChanged()
+
+
+                        // =================================================
+                        // AGREGAR AL CARRITO
+                        // =================================================
+
+                        PedidoManager.agregarProducto(
+
+                            PedidoItem(
+                                id = entrada.id,
+                                nombre = entrada.nombre,
+                                precio = 0.0,
+                                cantidad = 1,
+                                tipo = TipoPedido.ENTRADA
+                            )
+                        )
+
+
+                        actualizarContadorCarrito()
+
+
+                        Toast.makeText(
+                            this,
+                            "${entrada.nombre} agregado al pedido",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    .addOnFailureListener { error ->
+
+                        Log.e(
+                            "STOCK_ENTRADA",
+                            "Error actualizando stock",
+                            error
+                        )
+
+
+                        val mensaje =
+                            if (
+                                error is IllegalStateException &&
+                                error.message == "SIN_STOCK"
+                            ) {
+                                "Esta entrada se agotó"
+                            } else {
+                                "No se pudo actualizar el stock"
+                            }
+
+
+                        Toast.makeText(
+                            this,
+                            mensaje,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+            .addOnFailureListener { error ->
+
+                Log.e(
+                    "STOCK_ENTRADA",
+                    "Error buscando la entrada",
+                    error
+                )
+
+
+                Toast.makeText(
+                    this,
+                    "No se pudo verificar el stock",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
     }
 
 
@@ -704,6 +864,22 @@ class ActivityMenuUsuario : AppCompatActivity() {
     private fun mostrarAlertaAgregar(
         plato: TaskMenu
     ) {
+
+        // =====================================================
+        // VERIFICACIÓN RÁPIDA
+        // =====================================================
+
+        if (plato.stock <= 0) {
+
+            Toast.makeText(
+                this,
+                "Este plato está agotado",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
+
 
         val dialogView =
             layoutInflater.inflate(
@@ -756,11 +932,45 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         btnAgregar.setOnClickListener {
 
-            agregarAlPedido(
-                plato
-            )
+            // =================================================
+            // VERIFICAR STOCK LOCAL
+            // =================================================
 
-            dialog.dismiss()
+            if (plato.stock <= 0) {
+
+                Toast.makeText(
+                    this,
+                    "Este plato ya está agotado",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                dialog.dismiss()
+
+                return@setOnClickListener
+            }
+
+
+            btnAgregar.isEnabled = false
+
+
+            agregarAlPedido(
+                plato,
+
+                onCompletado = {
+
+                    dialog.dismiss()
+                },
+
+                onError = {
+
+                    if (
+                        !isFinishing &&
+                        !isDestroyed
+                    ) {
+                        btnAgregar.isEnabled = true
+                    }
+                }
+            )
         }
     }
 
@@ -770,29 +980,199 @@ class ActivityMenuUsuario : AppCompatActivity() {
     // =========================================================
 
     private fun agregarAlPedido(
-        plato: TaskMenu
+        plato: TaskMenu,
+        onCompletado: () -> Unit,
+        onError: () -> Unit
     ) {
 
-        PedidoManager.agregarProducto(
+        if (plato.stock <= 0) {
 
-            PedidoItem(
-                id = plato.id,
-                nombre = plato.name,
-                precio = plato.precio,
-                cantidad = 1,
-                tipo = TipoPedido.MENU
-            )
-        )
+            Toast.makeText(
+                this,
+                "Este plato está agotado",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            onError()
+
+            return
+        }
 
 
-        actualizarContadorCarrito()
+        // =====================================================
+        // BUSCAR DOCUMENTO
+        // =====================================================
+
+        db.collection("menu")
+            .whereEqualTo("id", plato.id)
+            .get()
+            .addOnSuccessListener { resultado ->
+
+                if (resultado.isEmpty) {
+
+                    Log.e(
+                        "STOCK_MENU",
+                        "No se encontró el plato con id ${plato.id}"
+                    )
+
+                    Toast.makeText(
+                        this,
+                        "No se pudo encontrar el plato",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    onError()
+
+                    return@addOnSuccessListener
+                }
 
 
-        Toast.makeText(
-            this,
-            "${plato.name} agregado al pedido",
-            Toast.LENGTH_SHORT
-        ).show()
+                val documento =
+                    resultado.documents.first()
+
+
+                val referencia =
+                    documento.reference
+
+
+                // =================================================
+                // TRANSACCIÓN
+                // =================================================
+
+                db.runTransaction { transaction ->
+
+                    val snapshot =
+                        transaction.get(referencia)
+
+
+                    val stockActual =
+                        snapshot
+                            .getLong("stock")
+                            ?.toInt()
+                            ?: 0
+
+
+                    if (stockActual <= 0) {
+
+                        throw IllegalStateException(
+                            "SIN_STOCK"
+                        )
+                    }
+
+
+                    val nuevoStock =
+                        stockActual - 1
+
+
+                    transaction.update(
+                        referencia,
+                        "stock",
+                        nuevoStock
+                    )
+
+
+                    nuevoStock
+                }
+                    .addOnSuccessListener { nuevoStock ->
+
+                        // =================================================
+                        // ACTUALIZAR OBJETO LOCAL
+                        // =================================================
+
+                        plato.stock =
+                            nuevoStock
+
+
+                        val posicion =
+                            listaMenu.indexOfFirst {
+                                it.id == plato.id
+                            }
+
+
+                        if (posicion != -1) {
+
+                            menuAdapter.notifyItemChanged(
+                                posicion
+                            )
+                        }
+
+
+                        // =================================================
+                        // AGREGAR AL CARRITO
+                        // =================================================
+
+                        PedidoManager.agregarProducto(
+
+                            PedidoItem(
+                                id = plato.id,
+                                nombre = plato.name,
+                                precio = plato.precio,
+                                cantidad = 1,
+                                tipo = TipoPedido.MENU
+                            )
+                        )
+
+
+                        actualizarContadorCarrito()
+
+
+                        Toast.makeText(
+                            this,
+                            "${plato.name} agregado al pedido",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+
+                        onCompletado()
+                    }
+                    .addOnFailureListener { error ->
+
+                        Log.e(
+                            "STOCK_MENU",
+                            "Error actualizando stock",
+                            error
+                        )
+
+
+                        val mensaje =
+                            if (
+                                error is IllegalStateException &&
+                                error.message == "SIN_STOCK"
+                            ) {
+                                "Este plato se agotó"
+                            } else {
+                                "No se pudo actualizar el stock"
+                            }
+
+
+                        Toast.makeText(
+                            this,
+                            mensaje,
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+
+                        onError()
+                    }
+            }
+            .addOnFailureListener { error ->
+
+                Log.e(
+                    "STOCK_MENU",
+                    "Error buscando el plato",
+                    error
+                )
+
+
+                Toast.makeText(
+                    this,
+                    "No se pudo verificar el stock",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+
+                onError()
+            }
     }
 
 

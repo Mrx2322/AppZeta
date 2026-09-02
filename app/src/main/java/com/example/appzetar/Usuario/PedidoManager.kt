@@ -4,7 +4,6 @@ object PedidoManager {
 
     val pedido = mutableListOf<PedidoItem>()
 
-
     // =========================================================
     // AGREGAR PRODUCTO
     // =========================================================
@@ -12,21 +11,16 @@ object PedidoManager {
     fun agregarProducto(item: PedidoItem) {
 
         val existente = pedido.find {
-
             it.id == item.id &&
                     it.tipo == item.tipo
         }
 
         if (existente != null) {
-
             existente.cantidad += item.cantidad
-
         } else {
-
             pedido.add(item)
         }
     }
-
 
     // =========================================================
     // AUMENTAR CANTIDAD
@@ -38,13 +32,10 @@ object PedidoManager {
     ) {
 
         pedido.find {
-
             it.id == id &&
                     it.tipo == tipo
-
         }?.cantidad++
     }
-
 
     // =========================================================
     // DISMINUIR CANTIDAD
@@ -55,26 +46,20 @@ object PedidoManager {
         tipo: TipoPedido
     ) {
 
-        val producto =
-            pedido.find {
-
-                it.id == id &&
-                        it.tipo == tipo
-            }
+        val producto = pedido.find {
+            it.id == id &&
+                    it.tipo == tipo
+        }
 
         if (producto != null) {
 
             if (producto.cantidad > 1) {
-
                 producto.cantidad--
-
             } else {
-
                 pedido.remove(producto)
             }
         }
     }
-
 
     // =========================================================
     // ELIMINAR PRODUCTO
@@ -86,32 +71,26 @@ object PedidoManager {
     ) {
 
         pedido.removeAll {
-
             it.id == id &&
                     it.tipo == tipo
         }
     }
-
 
     // =========================================================
     // CANTIDAD TOTAL
     // =========================================================
 
     fun cantidadTotal(): Int {
-
         return pedido.sumOf {
-
             it.cantidad
         }
     }
 
-
     // =========================================================
-    // LIMPIAR
+    // LIMPIAR CARRITO
     // =========================================================
 
     fun limpiar() {
-
         pedido.clear()
     }
 }

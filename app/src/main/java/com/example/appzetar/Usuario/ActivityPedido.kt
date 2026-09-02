@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -27,6 +28,8 @@ class ActivityPedido : AppCompatActivity() {
     private lateinit var btnContinuar: MaterialButton
 
     private lateinit var pedidoAdapter: PedidoAdapter
+
+    private var procesandoOperacion = false
 
 
     // =========================================================
@@ -54,14 +57,14 @@ class ActivityPedido : AppCompatActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
-        ) { v, insets ->
+        ) { view, insets ->
 
             val systemBars =
                 insets.getInsets(
                     WindowInsetsCompat.Type.systemBars()
                 )
 
-            v.setPadding(
+            view.setPadding(
                 systemBars.left,
                 systemBars.top,
                 systemBars.right,
@@ -77,9 +80,7 @@ class ActivityPedido : AppCompatActivity() {
         // =====================================================
 
         initComponent()
-
         initUI()
-
         actualizarPedido()
     }
 
@@ -115,11 +116,29 @@ class ActivityPedido : AppCompatActivity() {
 
         pedidoAdapter =
             PedidoAdapter(
-                PedidoManager.pedido
-            ) {
+                PedidoManager.pedido,
 
-                actualizarPedido()
-            }
+                onAumentar = { item ->
+
+                    if (!procesandoOperacion) {
+                        aumentarProducto(item)
+                    }
+                },
+
+                onDisminuir = { item ->
+
+                    if (!procesandoOperacion) {
+                        disminuirProducto(item)
+                    }
+                },
+
+                onEliminar = { item ->
+
+                    if (!procesandoOperacion) {
+                        eliminarProducto(item)
+                    }
+                }
+            )
 
 
         rvPedido.layoutManager =
@@ -135,8 +154,286 @@ class ActivityPedido : AppCompatActivity() {
 
         btnContinuar.setOnClickListener {
 
-            continuarCompra()
+            if (!procesandoOperacion) {
+                continuarCompra()
+            }
         }
+    }
+
+
+    // =========================================================
+    // AUMENTAR PRODUCTO
+    // =========================================================
+
+    private fun aumentarProducto(
+        item: PedidoItem
+    ) {
+
+        // =====================================================
+        // EXTRA
+        // =====================================================
+
+        if (item.tipo == TipoPedido.EXTRA) {
+
+            PedidoManager.aumentarCantidad(
+                item.id,
+                item.tipo
+            )
+
+            actualizarPedido()
+
+            return
+        }
+
+
+        // =====================================================
+        // EVITAR DOBLE CLIC
+        // =====================================================
+
+        if (procesandoOperacion) {
+            return
+        }
+
+        procesandoOperacion = true
+
+        actualizarEstadoBotones()
+
+
+        // =====================================================
+        // DESCONTAR STOCK
+        // =====================================================
+
+        StockManager.descontarStock(
+            item = item,
+            cantidad = 1,
+
+            onSuccess = {
+
+                PedidoManager.aumentarCantidad(
+                    item.id,
+                    item.tipo
+                )
+
+                procesandoOperacion = false
+
+                actualizarEstadoBotones()
+                actualizarPedido()
+            },
+
+            onError = { exception ->
+
+                procesandoOperacion = false
+
+                actualizarEstadoBotones()
+
+                mostrarErrorStock(
+                    exception
+                )
+            }
+        )
+    }
+
+
+    // =========================================================
+    // DISMINUIR PRODUCTO
+    // =========================================================
+
+    private fun disminuirProducto(
+        item: PedidoItem
+    ) {
+
+        // =====================================================
+        // EXTRA
+        // =====================================================
+
+        if (item.tipo == TipoPedido.EXTRA) {
+
+            PedidoManager.disminuirCantidad(
+                item.id,
+                item.tipo
+            )
+
+            actualizarPedido()
+
+            return
+        }
+
+
+        // =====================================================
+        // EVITAR DOBLE CLIC
+        // =====================================================
+
+        if (procesandoOperacion) {
+            return
+        }
+
+        procesandoOperacion = true
+
+        actualizarEstadoBotones()
+
+
+        // =====================================================
+        // DEVOLVER STOCK
+        // =====================================================
+
+        StockManager.devolverStock(
+            item = item,
+            cantidad = 1,
+
+            onSuccess = {
+
+                PedidoManager.disminuirCantidad(
+                    item.id,
+                    item.tipo
+                )
+
+                procesandoOperacion = false
+
+                actualizarEstadoBotones()
+                actualizarPedido()
+            },
+
+            onError = { exception ->
+
+                procesandoOperacion = false
+
+                actualizarEstadoBotones()
+
+                mostrarErrorStock(
+                    exception
+                )
+            }
+        )
+    }
+
+
+    // =========================================================
+    // ELIMINAR PRODUCTO
+    // =========================================================
+
+    private fun eliminarProducto(
+        item: PedidoItem
+    ) {
+
+        // =====================================================
+        // EXTRA
+        // =====================================================
+
+        if (item.tipo == TipoPedido.EXTRA) {
+
+            PedidoManager.eliminarProducto(
+                item.id,
+                item.tipo
+            )
+
+            actualizarPedido()
+
+            return
+        }
+
+
+        // =====================================================
+        // EVITAR DOBLE CLIC
+        // =====================================================
+
+        if (procesandoOperacion) {
+            return
+        }
+
+        procesandoOperacion = true
+
+        actualizarEstadoBotones()
+
+
+        // =====================================================
+        // CANTIDAD A DEVOLVER
+        // =====================================================
+
+        val cantidadADevolver =
+            item.cantidad
+
+
+        // =====================================================
+        // DEVOLVER TODO EL STOCK
+        // =====================================================
+
+        StockManager.devolverStock(
+            item = item,
+            cantidad = cantidadADevolver,
+
+            onSuccess = {
+
+                PedidoManager.eliminarProducto(
+                    item.id,
+                    item.tipo
+                )
+
+                procesandoOperacion = false
+
+                actualizarEstadoBotones()
+                actualizarPedido()
+            },
+
+            onError = { exception ->
+
+                procesandoOperacion = false
+
+                actualizarEstadoBotones()
+
+                mostrarErrorStock(
+                    exception
+                )
+            }
+        )
+    }
+
+
+    // =========================================================
+    // ESTADO DE BOTONES
+    // =========================================================
+
+    private fun actualizarEstadoBotones() {
+
+        btnContinuar.isEnabled =
+            !procesandoOperacion &&
+                    PedidoManager.pedido.isNotEmpty()
+
+        btnContinuar.alpha =
+            if (btnContinuar.isEnabled) {
+                1f
+            } else {
+                0.5f
+            }
+    }
+
+
+    // =========================================================
+    // ERROR DE STOCK
+    // =========================================================
+
+    private fun mostrarErrorStock(
+        exception: Exception
+    ) {
+
+        val mensaje =
+            if (
+                exception is IllegalStateException &&
+                exception.message == "SIN_STOCK"
+            ) {
+
+                "Ya no hay stock disponible."
+
+            } else {
+
+                "No se pudo actualizar el stock."
+            }
+
+
+        Toast.makeText(
+            this,
+            mensaje,
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
 
@@ -146,26 +443,15 @@ class ActivityPedido : AppCompatActivity() {
 
     private fun continuarCompra() {
 
-        // =====================================================
-        // VERIFICAR SI EL PEDIDO ESTÁ VACÍO
-        // =====================================================
-
         if (PedidoManager.pedido.isEmpty()) {
-
             return
         }
-
-
-        // =====================================================
-        // IR A SELECCIONAR TIPO DE ENTREGA
-        // =====================================================
 
         val intent =
             Intent(
                 this,
                 ActivityEntrega::class.java
             )
-
 
         startActivity(intent)
     }
@@ -187,28 +473,22 @@ class ActivityPedido : AppCompatActivity() {
         val cantidad =
             PedidoManager.cantidadTotal()
 
-
         tvTotalProductos.text =
             if (cantidad == 1) {
-
                 "1 producto"
-
             } else {
-
                 "$cantidad productos"
             }
 
 
         // =====================================================
-        // CALCULAR TOTAL
+        // TOTAL
         // =====================================================
 
         val total =
             PedidoManager.pedido.sumOf {
-
                 it.precio * it.cantidad
             }
-
 
         tvTotalPedido.text =
             "S/ %.2f".format(total)
@@ -234,10 +514,6 @@ class ActivityPedido : AppCompatActivity() {
 
         } else {
 
-            // =================================================
-            // PEDIDO CON PRODUCTOS
-            // =================================================
-
             rvPedido.visibility =
                 View.VISIBLE
 
@@ -245,16 +521,20 @@ class ActivityPedido : AppCompatActivity() {
                 View.GONE
 
             btnContinuar.isEnabled =
-                true
+                !procesandoOperacion
 
             btnContinuar.alpha =
-                1f
+                if (procesandoOperacion) {
+                    0.5f
+                } else {
+                    1f
+                }
         }
     }
 
 
     // =========================================================
-    // AL REGRESAR A LA ACTIVIDAD
+    // AL REGRESAR
     // =========================================================
 
     override fun onResume() {
