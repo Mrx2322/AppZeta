@@ -1,67 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+
+    app:cardBackgroundColor="@android:color/white"
     app:cardCornerRadius="28dp"
     app:cardElevation="6dp"
-    app:strokeWidth="0dp"
-    app:cardBackgroundColor="@android:color/white">
+    app:strokeWidth="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="28dp">
 
-        <!-- Círculo con ícono -->
+        android:orientation="vertical"
+
+        android:paddingStart="28dp"
+        android:paddingTop="28dp"
+        android:paddingEnd="28dp"
+        android:paddingBottom="8dp">
+
+        <!-- CÍRCULO CON ÍCONO -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="56dp"
             android:layout_height="56dp"
+
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp"
+
+            app:cardBackgroundColor="#F3EDF7"
             app:cardCornerRadius="28dp"
             app:cardElevation="0dp"
-            app:strokeWidth="0dp"
-            app:cardBackgroundColor="#F3EDF7">
+            app:strokeWidth="0dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
                 android:layout_gravity="center"
+
                 android:text="✏️"
                 android:textSize="22sp" />
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Título -->
+        <!-- TÍTULO -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             android:text="Editar Menú"
             android:textAlignment="center"
+
             android:textColor="#1D1B20"
             android:textSize="22sp"
             android:textStyle="bold" />
 
-        <!-- Subtítulo -->
+        <!-- SUBTÍTULO -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             android:layout_marginTop="6dp"
-            android:text="Modifica el nombre y precio del plato"
+
+            android:text="Modifica nombre, precio y cantidad disponible"
             android:textAlignment="center"
+
             android:textColor="#49454F"
             android:textSize="14sp" />
 
         <!-- NOMBRE -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilNombrePlato"
+
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             android:layout_marginTop="20dp"
+
             app:boxCornerRadiusBottomEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
             app:boxCornerRadiusTopEnd="16dp"
@@ -69,11 +89,16 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etNombrePlato"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:hint="Nombre del plato"
+
                 android:inputType="textCapWords|textAutoCorrect"
+
                 android:maxLines="1"
+
                 android:textColor="#1D1B20"
                 android:textSize="16sp" />
 
@@ -82,23 +107,66 @@
         <!-- PRECIO -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilPrecioPlato"
+
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             android:layout_marginTop="12dp"
+
             app:boxCornerRadiusBottomEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusTopStart="16dp"
+
             app:prefixText="S/ ">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPrecioPlato"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:hint="Precio"
+
                 android:inputType="numberDecimal"
+
                 android:maxLines="1"
+
+                android:textColor="#1D1B20"
+                android:textSize="16sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- STOCK -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilStockPlato"
+
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="12dp"
+
+            app:boxCornerRadiusBottomEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusTopStart="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etStockPlato"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:hint="Cantidad disponible"
+
+                android:inputType="number"
+
+                android:maxLines="1"
+
                 android:textColor="#1D1B20"
                 android:textSize="16sp" />
 
