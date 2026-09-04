@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+
+    app:cardCornerRadius="18dp"
+    app:cardElevation="5dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="18dp">
+
+        <!-- ESTADO ACTUAL -->
+
+        <TextView
+            android:id="@+id/tvEstadoPedido"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:background="#FFF3E0"
+
+            android:paddingStart="12dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="6dp"
+
+            android:text="PENDIENTE"
+            android:textColor="#F57C00"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <!-- CLIENTE -->
+
+        <TextView
+            android:id="@+id/tvNombreUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="14dp"
+
+            android:text="👤 Cliente"
+            android:textColor="#222222"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <!-- TELEFONO -->
+
+        <TextView
+            android:id="@+id/tvTelefono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="6dp"
+
+            android:text="📞 987654321"
+            android:textColor="#555555"
+            android:textSize="15sp" />
+
+        <!-- LINEA -->
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
+
+            android:background="#EEEEEE" />
+
+        <!-- PRODUCTOS -->
+
+        <TextView
+            android:id="@+id/tvProductos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:text="🍽️ PRODUCTOS"
+            android:textColor="#333333"
+            android:textSize="15sp"
+            android:lineSpacingExtra="4dp" />
+
+        <!-- ENTREGA -->
+
+        <TextView
+            android:id="@+id/tvTipoEntrega"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="14dp"
+
+            android:text="🚚 Delivery"
+            android:textColor="#444444"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <!-- DIRECCION -->
+
+        <TextView
+            android:id="@+id/tvDireccion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="6dp"
+
+            android:text="📍 Dirección"
+            android:textColor="#555555"
+            android:textSize="15sp" />
+
+        <!-- REFERENCIA -->
+
+        <TextView
+            android:id="@+id/tvReferencia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="4dp"
+
+            android:text="Referencia"
+            android:textColor="#777777"
+            android:textSize="14sp" />
+
+        <!-- METODO DE PAGO -->
+
+        <TextView
+            android:id="@+id/tvMetodoPago"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="10dp"
+
+            android:text="💳 Contra entrega"
+            android:textColor="#555555"
+            android:textSize="15sp" />
+
+        <!-- TOTAL -->
+
+        <TextView
+            android:id="@+id/tvTotal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="16dp"
+
+            android:gravity="end"
+
+            android:text="💰 S/ 35.00"
+            android:textColor="#111111"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <!-- SEPARADOR -->
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="14dp"
+
+            android:background="#EEEEEE" />
+
+        <!-- TITULO CAMBIAR ESTADO -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Cambiar estado del pedido"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <!-- BOTONES DE ESTADO -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <!-- FILA 1 -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPendiente"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="5dp"
+                    android:text="Pendiente"
+                    android:textSize="13sp"
+                    android:textAllCaps="false"
+                    app:cornerRadius="12dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPreparando"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="5dp"
+                    android:text="Preparando"
+                    android:textSize="13sp"
+                    android:textAllCaps="false"
+                    app:cornerRadius="12dp" />
+
+            </LinearLayout>
+
+            <!-- FILA 2 -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEnCamino"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="5dp"
+                    android:text="En camino"
+                    android:textSize="13sp"
+                    android:textAllCaps="false"
+                    app:cornerRadius="12dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEntregado"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="5dp"
+                    android:text="Entregado"
+                    android:textSize="13sp"
+                    android:textAllCaps="false"
+                    app:cornerRadius="12dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

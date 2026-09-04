@@ -1,5 +1,6 @@
 package com.example.appzetar.Menu
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
@@ -86,6 +87,8 @@ class ActivityMenu : AppCompatActivity() {
     // =========================================================
 
     private lateinit var fabAgregarMenu: FloatingActionButton
+
+    private lateinit var fabPedidos: FloatingActionButton
 
 
     // =========================================================
@@ -177,6 +180,9 @@ class ActivityMenu : AppCompatActivity() {
 
         fabAgregarMenu =
             findViewById(R.id.fabAgregarMenu)
+
+        fabPedidos =
+            findViewById(R.id.fabPedidos)
     }
 
 
@@ -278,6 +284,22 @@ class ActivityMenu : AppCompatActivity() {
         fabAgregarMenu.setOnClickListener {
 
             mostrarDialogoSeleccionarTipo()
+        }
+
+
+        // =====================================================
+        // PEDIDOS
+        // =====================================================
+
+        fabPedidos.setOnClickListener {
+
+            val intent =
+                Intent(
+                    this,
+                    ActivityPedidosAdmin::class.java
+                )
+
+            startActivity(intent)
         }
     }
 
