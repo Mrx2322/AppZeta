@@ -14,9 +14,14 @@ class ExtraAdapter(
     private val onAgregarClick: (ExtraItem) -> Unit
 ) : RecyclerView.Adapter<ExtraAdapter.ExtraViewHolder>() {
 
-    // =========================================================
-    // VIEW HOLDER
-    // =========================================================
+    // Lista que realmente se muestra
+    private var extrasVisibles =
+        extras.toList()
+
+
+// =========================================================
+// VIEW HOLDER
+// =========================================================
 
     inner class ExtraViewHolder(
         itemView: View
@@ -49,42 +54,25 @@ class ExtraAdapter(
 
         fun bind(extra: ExtraItem) {
 
-            // =================================================
-            // IMAGEN SEGÚN CATEGORÍA
-            // =================================================
+            val imagen =
+                when (extra.categoriaId) {
 
-            val imagen = when (extra.categoriaId) {
+                    1 ->
+                        R.drawable.ic_gaseosa
 
-                // Gaseosas
-                1 ->
-                    R.drawable.ic_gaseosa
+                    2 ->
+                        R.drawable.ic_torta
 
-                // Tortas
-                2 ->
-                    R.drawable.ic_torta
-
-                // Cualquier categoría no válida
-                else ->
-                    R.drawable.ic_plato
-            }
-
+                    else ->
+                        R.drawable.ic_plato
+                }
 
             imgExtra.setImageResource(
                 imagen
             )
 
-
-            // =================================================
-            // NOMBRE
-            // =================================================
-
             tvNombreExtra.text =
                 extra.nombre
-
-
-            // =================================================
-            // PRECIO
-            // =================================================
 
             tvPrecioExtra.text =
                 String.format(
@@ -92,11 +80,6 @@ class ExtraAdapter(
                     "S/ %.2f",
                     extra.precio
                 )
-
-
-            // =================================================
-            // BOTÓN AGREGAR
-            // =================================================
 
             btnAgregarExtra.setOnClickListener {
 
@@ -108,9 +91,9 @@ class ExtraAdapter(
     }
 
 
-    // =========================================================
-    // CREAR VIEW HOLDER
-    // =========================================================
+// =========================================================
+// CREAR VIEW HOLDER
+// =========================================================
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -126,16 +109,15 @@ class ExtraAdapter(
                 false
             )
 
-
         return ExtraViewHolder(
             view
         )
     }
 
 
-    // =========================================================
-    // VINCULAR DATOS
-    // =========================================================
+// =========================================================
+// VINCULAR DATOS
+// =========================================================
 
     override fun onBindViewHolder(
         holder: ExtraViewHolder,
@@ -143,15 +125,41 @@ class ExtraAdapter(
     ) {
 
         holder.bind(
-            extras[position]
+            extrasVisibles[position]
         )
     }
 
 
-    // =========================================================
-    // CANTIDAD
-    // =========================================================
+// =========================================================
+// CANTIDAD
+// =========================================================
 
     override fun getItemCount(): Int =
-        extras.size
+        extrasVisibles.size
+
+
+// =========================================================
+// FILTRAR POR CATEGORÍA
+// =========================================================
+
+    fun filtrarPorCategoria(
+        categoriaId: Int
+    ) {
+
+        extrasVisibles =
+            if (categoriaId == 0) {
+
+                // 0 = TODOS
+                extras.toList()
+
+            } else {
+
+                extras.filter {
+                    it.categoriaId == categoriaId
+                }
+            }
+
+        notifyDataSetChanged()
+    }
+
 }

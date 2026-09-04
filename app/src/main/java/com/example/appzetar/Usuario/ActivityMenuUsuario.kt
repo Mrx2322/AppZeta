@@ -1,10 +1,12 @@
 package com.example.appzetar.Usuario
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -29,9 +31,10 @@ import kotlin.math.abs
 
 class ActivityMenuUsuario : AppCompatActivity() {
 
-    // =========================================================
-    // FIREBASE
-    // =========================================================
+
+// =========================================================
+// FIREBASE
+// =========================================================
 
     private val db =
         FirebaseFirestore.getInstance()
@@ -40,9 +43,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
         FirebaseAuth.getInstance()
 
 
-    // =========================================================
-    // CATEGORÍAS
-    // =========================================================
+// =========================================================
+// CATEGORÍAS
+// =========================================================
 
     private lateinit var rvCategorias: RecyclerView
 
@@ -54,9 +57,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
     private var categoriaSeleccionadaId = 0
 
 
-    // =========================================================
-    // EXTRAS
-    // =========================================================
+// =========================================================
+// EXTRAS
+// =========================================================
 
     private lateinit var rvExtras: RecyclerView
 
@@ -69,9 +72,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
         mutableListOf<ExtraItem>()
 
 
-    // =========================================================
-    // ENTRADAS
-    // =========================================================
+// =========================================================
+// ENTRADAS
+// =========================================================
 
     private val entradas =
         mutableListOf<TaskEntradas>()
@@ -81,9 +84,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
     private lateinit var entradasAdapter: EntradasUsuarioAdapter
 
 
-    // =========================================================
-    // MENÚ
-    // =========================================================
+// =========================================================
+// MENÚ
+// =========================================================
 
     private val listaMenu =
         mutableListOf<TaskMenu>()
@@ -93,22 +96,37 @@ class ActivityMenuUsuario : AppCompatActivity() {
     private lateinit var menuAdapter: MenuUsuarioAdapter
 
 
-    // =========================================================
-    // OTROS
-    // =========================================================
+// =========================================================
+// UI
+// =========================================================
 
     private lateinit var progressBarMenu: ProgressBar
 
     private lateinit var tvCantidadCarrito: TextView
 
+    /*
+     * Se mantiene porque el XML conserva este componente
+     * oculto para no romper la estructura existente.
+     */
     private lateinit var btnCarrito: FloatingActionButton
 
     private lateinit var tvSaludo: TextView
 
 
-    // =========================================================
-    // ON CREATE
-    // =========================================================
+// =========================================================
+// NAVEGACIÓN INFERIOR
+// =========================================================
+
+    private lateinit var navInicio: LinearLayout
+    private lateinit var navExtras: LinearLayout
+    private lateinit var navPedidos: LinearLayout
+    private lateinit var navCarrito: LinearLayout
+    private lateinit var navPerfil: LinearLayout
+
+
+// =========================================================
+// ON CREATE
+// =========================================================
 
     override fun onCreate(
         savedInstanceState: Bundle?
@@ -138,29 +156,21 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
 
 
-        // =====================================================
-        // LAYOUT
-        // =====================================================
-
         setContentView(
             R.layout.activity_menu_usuario
         )
 
 
-        // =====================================================
-        // INSETS
-        // =====================================================
-
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
-        ) { v, insets ->
+        ) { view, insets ->
 
             val systemBars =
                 insets.getInsets(
                     WindowInsetsCompat.Type.systemBars()
                 )
 
-            v.setPadding(
+            view.setPadding(
                 systemBars.left,
                 systemBars.top,
                 systemBars.right,
@@ -170,10 +180,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
             insets
         }
 
-
-        // =====================================================
-        // INICIALIZAR
-        // =====================================================
 
         initComponent()
 
@@ -187,9 +193,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
 
-    // =========================================================
-    // COMPONENTES
-    // =========================================================
+// =========================================================
+// COMPONENTES
+// =========================================================
 
     private fun initComponent() {
 
@@ -216,12 +222,32 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         tvSaludo =
             findViewById(R.id.tvSaludo)
+
+
+        // =====================================================
+        // NAVEGACIÓN
+        // =====================================================
+
+        navInicio =
+            findViewById(R.id.navInicio)
+
+        navExtras =
+            findViewById(R.id.navExtras)
+
+        navPedidos =
+            findViewById(R.id.navPedidos)
+
+        navCarrito =
+            findViewById(R.id.navCarrito)
+
+        navPerfil =
+            findViewById(R.id.navPerfil)
     }
 
 
-    // =========================================================
-    // CARGAR NOMBRE DEL USUARIO
-    // =========================================================
+// =========================================================
+// NOMBRE DEL USUARIO
+// =========================================================
 
     private fun cargarNombreUsuario() {
 
@@ -246,13 +272,17 @@ class ActivityMenuUsuario : AppCompatActivity() {
             .get()
             .addOnSuccessListener { documento ->
 
-                if (documento.exists()) {
+                if (
+                    documento.exists()
+                ) {
 
                     val nombre =
                         documento.getString("nombre")
 
 
-                    if (!nombre.isNullOrEmpty()) {
+                    if (
+                        !nombre.isNullOrEmpty()
+                    ) {
 
                         tvSaludo.text =
                             "¡Hola, $nombre!"
@@ -273,7 +303,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
                 Log.e(
                     "USUARIO_FIREBASE",
-                    "Error obteniendo nombre del usuario",
+                    "Error obteniendo nombre",
                     error
                 )
 
@@ -283,9 +313,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
 
-    // =========================================================
-    // UI
-    // =========================================================
+// =========================================================
+// UI
+// =========================================================
 
     private fun initUI() {
 
@@ -332,7 +362,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         configurarCarruselMenu()
 
-
         rvMenu.adapter =
             menuAdapter
 
@@ -360,17 +389,59 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
         // =====================================================
-        // CARRITO
+        // CARRITO ANTIGUO
         // =====================================================
 
         btnCarrito.setOnClickListener {
 
+            abrirCarrito()
+        }
+
+
+        // =====================================================
+        // NAVEGACIÓN INFERIOR
+        // =====================================================
+
+        navInicio.setOnClickListener {
+
+            // Ya estamos en Inicio.
+        }
+
+
+        navExtras.setOnClickListener {
+
             startActivity(
                 Intent(
                     this,
-                    ActivityPedido::class.java
+                    ActivityExtras::class.java
                 )
             )
+        }
+
+
+        navPedidos.setOnClickListener {
+
+            Toast.makeText(
+                this,
+                "Seguimiento de pedidos próximamente 🚀",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+
+        navCarrito.setOnClickListener {
+
+            abrirCarrito()
+        }
+
+
+        navPerfil.setOnClickListener {
+
+            Toast.makeText(
+                this,
+                "Perfil próximamente 👤",
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
 
@@ -378,9 +449,24 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
 
-    // =========================================================
-    // CARRUSEL PROFESIONAL DEL MENÚ
-    // =========================================================
+// =========================================================
+// ABRIR CARRITO
+// =========================================================
+
+    private fun abrirCarrito() {
+
+        startActivity(
+            Intent(
+                this,
+                ActivityPedido::class.java
+            )
+        )
+    }
+
+
+// =========================================================
+// CARRUSEL DEL MENÚ
+// =========================================================
 
     private fun configurarCarruselMenu() {
 
@@ -395,10 +481,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
         rvMenu.layoutManager =
             layoutManager
 
-
         rvMenu.clipToPadding =
             false
-
 
         rvMenu.setPadding(
             24,
@@ -407,10 +491,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
             0
         )
 
-
         rvMenu.overScrollMode =
             RecyclerView.OVER_SCROLL_NEVER
-
 
         rvMenu.itemAnimator =
             null
@@ -418,7 +500,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         val snapHelper =
             LinearSnapHelper()
-
 
         snapHelper.attachToRecyclerView(
             rvMenu
@@ -509,13 +590,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
                             alpha
 
 
-                        val translationY =
-                            normalizedDistance *
-                                    3f
-
-
                         child.translationY =
-                            translationY
+                            normalizedDistance * 3f
                     }
                 }
             }
@@ -523,9 +599,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
 
-    // =========================================================
-    // CATEGORÍAS
-    // =========================================================
+// =========================================================
+// CATEGORÍAS
+// =========================================================
 
     private fun cargarCategorias() {
 
@@ -540,7 +616,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
             )
         )
 
-
         categorias.add(
             CategoriaItem(
                 2,
@@ -548,7 +623,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 R.drawable.ic_torta
             )
         )
-
 
         categorias.add(
             CategoriaItem(
@@ -593,15 +667,14 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 false
             )
 
-
         rvCategorias.adapter =
             categoriaAdapter
     }
 
 
-    // =========================================================
-    // MOSTRAR EXTRAS POR CATEGORÍA
-    // =========================================================
+// =========================================================
+// FILTRAR EXTRAS
+// =========================================================
 
     private fun mostrarExtrasPorCategoria(
         categoriaId: Int
@@ -635,9 +708,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
 
-    // =========================================================
-    // AGREGAR EXTRA
-    // =========================================================
+// =========================================================
+// AGREGAR EXTRA
+// =========================================================
 
     private fun agregarExtraAlPedido(
         extra: ExtraItem
@@ -666,17 +739,13 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
 
-    // =========================================================
-    // AGREGAR ENTRADA AL CARRITO
-    // =========================================================
+// =========================================================
+// AGREGAR ENTRADA
+// =========================================================
 
     private fun agregarEntradaAlPedido(
         entrada: TaskEntradas
     ) {
-
-        // =====================================================
-        // VERIFICAR STOCK LOCAL
-        // =====================================================
 
         if (
             !entrada.disponible ||
@@ -692,15 +761,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
             return
         }
 
-
-        // =====================================================
-        // IMPORTANTE
-        //
-        // NO DESCONTAMOS STOCK DE FIREBASE AQUÍ.
-        //
-        // El stock se mantiene intacto mientras el producto
-        // solamente esté dentro del carrito.
-        // =====================================================
 
         PedidoManager.agregarProducto(
 
@@ -725,19 +785,17 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
 
-    // =========================================================
-    // ALERTA DEL MENÚ
-    // =========================================================
+// =========================================================
+// DIALOG AGREGAR PLATO
+// =========================================================
 
     private fun mostrarAlertaAgregar(
         plato: TaskMenu
     ) {
 
-        // =====================================================
-        // VERIFICAR STOCK LOCAL
-        // =====================================================
-
-        if (plato.stock <= 0) {
+        if (
+            plato.stock <= 0
+        ) {
 
             Toast.makeText(
                 this,
@@ -788,13 +846,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
         dialog.window?.setBackgroundDrawable(
-            android.graphics.Color.TRANSPARENT.toDrawable()
+            Color.TRANSPARENT.toDrawable()
         )
 
-
-        // =====================================================
-        // CANCELAR
-        // =====================================================
 
         btnCancelar.setOnClickListener {
 
@@ -802,17 +856,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
 
 
-        // =====================================================
-        // AGREGAR
-        // =====================================================
-
         btnAgregar.setOnClickListener {
 
-            // =================================================
-            // VERIFICAR STOCK LOCAL
-            // =================================================
-
-            if (plato.stock <= 0) {
+            if (
+                plato.stock <= 0
+            ) {
 
                 Toast.makeText(
                     this,
@@ -834,7 +882,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 plato,
 
                 onCompletado = {
-
                     dialog.dismiss()
                 },
 
@@ -854,9 +901,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
 
-    // =========================================================
-    // AGREGAR MENÚ AL CARRITO
-    // =========================================================
+// =========================================================
+// AGREGAR PLATO AL PEDIDO
+// =========================================================
 
     private fun agregarAlPedido(
         plato: TaskMenu,
@@ -864,11 +911,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
         onError: () -> Unit
     ) {
 
-        // =====================================================
-        // VERIFICAR STOCK LOCAL
-        // =====================================================
-
-        if (plato.stock <= 0) {
+        if (
+            plato.stock <= 0
+        ) {
 
             Toast.makeText(
                 this,
@@ -882,17 +927,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
 
 
-        // =====================================================
-        // IMPORTANTE
-        //
-        // NO CONSULTAMOS NI MODIFICAMOS FIREBASE AQUÍ.
-        //
-        // El producto solo se agrega al carrito.
-        //
-        // El stock real se comprobará y descontará cuando
-        // el usuario confirme definitivamente el pedido.
-        // =====================================================
-
         PedidoManager.agregarProducto(
 
             PedidoItem(
@@ -905,16 +939,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
         )
 
 
-        // =====================================================
-        // ACTUALIZAR CONTADOR
-        // =====================================================
-
         actualizarContadorCarrito()
 
-
-        // =====================================================
-        // MENSAJE
-        // =====================================================
 
         Toast.makeText(
             this,
@@ -923,17 +949,13 @@ class ActivityMenuUsuario : AppCompatActivity() {
         ).show()
 
 
-        // =====================================================
-        // FINALIZAR
-        // =====================================================
-
         onCompletado()
     }
 
 
-    // =========================================================
-    // CONTADOR CARRITO
-    // =========================================================
+// =========================================================
+// CONTADOR DEL CARRITO
+// =========================================================
 
     private fun actualizarContadorCarrito() {
 
@@ -946,7 +968,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
         tvCantidadCarrito.visibility =
-            if (cantidadTotal > 0) {
+            if (
+                cantidadTotal > 0
+            ) {
                 View.VISIBLE
             } else {
                 View.GONE
@@ -954,9 +978,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
 
-    // =========================================================
-    // CARGAR DATOS
-    // =========================================================
+// =========================================================
+// CARGAR DATOS
+// =========================================================
 
     private fun cargarDatosDesdeFirebase() {
 
@@ -984,16 +1008,18 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
 
-    // =========================================================
-    // EXTRAS - FIREBASE
-    // =========================================================
+// =========================================================
+// EXTRAS - FIREBASE
+// =========================================================
 
     private fun cargarExtrasDesdeFirebase() {
 
         db.collection("extras")
             .addSnapshotListener { resultado, error ->
 
-                if (error != null) {
+                if (
+                    error != null
+                ) {
 
                     Log.e(
                         "USUARIO_FIREBASE",
@@ -1005,7 +1031,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 }
 
 
-                if (resultado == null) {
+                if (
+                    resultado == null
+                ) {
                     return@addSnapshotListener
                 }
 
@@ -1013,7 +1041,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 todosLosExtras.clear()
 
 
-                for (documento in resultado) {
+                for (
+                documento in resultado
+                ) {
 
                     val id =
                         documento
@@ -1097,16 +1127,18 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
 
-    // =========================================================
-    // ENTRADAS - FIREBASE
-    // =========================================================
+// =========================================================
+// ENTRADAS - FIREBASE
+// =========================================================
 
     private fun cargarEntradas() {
 
         db.collection("entradas")
             .addSnapshotListener { resultado, error ->
 
-                if (error != null) {
+                if (
+                    error != null
+                ) {
 
                     Log.e(
                         "USUARIO_FIREBASE",
@@ -1118,7 +1150,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 }
 
 
-                if (resultado == null) {
+                if (
+                    resultado == null
+                ) {
                     return@addSnapshotListener
                 }
 
@@ -1126,7 +1160,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 entradas.clear()
 
 
-                for (documento in resultado) {
+                for (
+                documento in resultado
+                ) {
 
                     val id =
                         documento
@@ -1147,10 +1183,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
                             .getBoolean("disponible")
                             ?: true
 
-
-                    // =================================================
-                    // STOCK
-                    // =================================================
 
                     val stock =
                         documento
@@ -1211,16 +1243,18 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
 
-    // =========================================================
-    // MENÚ - FIREBASE
-    // =========================================================
+// =========================================================
+// MENÚ - FIREBASE
+// =========================================================
 
     private fun cargarMenu() {
 
         db.collection("menu")
             .addSnapshotListener { resultado, error ->
 
-                if (error != null) {
+                if (
+                    error != null
+                ) {
 
                     Log.e(
                         "USUARIO_FIREBASE",
@@ -1234,7 +1268,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 }
 
 
-                if (resultado == null) {
+                if (
+                    resultado == null
+                ) {
                     return@addSnapshotListener
                 }
 
@@ -1242,7 +1278,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 listaMenu.clear()
 
 
-                for (documento in resultado) {
+                for (
+                documento in resultado
+                ) {
 
                     val id =
                         documento
@@ -1263,10 +1301,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
                             .getDouble("precio")
                             ?: 0.0
 
-
-                    // =================================================
-                    // STOCK
-                    // =================================================
 
                     val stock =
                         documento
@@ -1295,7 +1329,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
                 menuAdapter.notifyDataSetChanged()
 
-
                 mostrarContenido()
 
 
@@ -1307,28 +1340,26 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
 
-    // =========================================================
-    // MOSTRAR CONTENIDO
-    // =========================================================
+// =========================================================
+// MOSTRAR CONTENIDO
+// =========================================================
 
     private fun mostrarContenido() {
 
         progressBarMenu.visibility =
             View.GONE
 
-
         rvEntradas.visibility =
             View.VISIBLE
-
 
         rvMenu.visibility =
             View.VISIBLE
     }
 
 
-    // =========================================================
-    // AL REGRESAR
-    // =========================================================
+// =========================================================
+// AL REGRESAR
+// =========================================================
 
     override fun onResume() {
 
@@ -1336,4 +1367,5 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         actualizarContadorCarrito()
     }
+
 }
