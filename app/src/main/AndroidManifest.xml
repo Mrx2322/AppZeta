@@ -72,6 +72,9 @@
         <activity
             android:name=".Usuario.ActivityExtras"
             android:exported="false" />
+        <activity
+            android:name=".Usuario.ActivityPedidosUsuario"
+            android:exported="false" />
     </application>
 
 </manifest>

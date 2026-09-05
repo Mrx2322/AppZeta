@@ -111,11 +111,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             R.layout.activity_confirmar_pedido
         )
 
-
-        // =====================================================
-        // INSETS
-        // =====================================================
-
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
         ) { v, insets ->
@@ -134,11 +129,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
             insets
         }
-
-
-        // =====================================================
-        // INICIALIZAR
-        // =====================================================
 
         initComponent()
 
@@ -163,64 +153,40 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     private fun initComponent() {
 
         tvNombreUsuario =
-            findViewById(
-                R.id.tvNombreUsuario
-            )
+            findViewById(R.id.tvNombreUsuario)
 
         tvCorreoUsuario =
-            findViewById(
-                R.id.tvCorreoUsuario
-            )
+            findViewById(R.id.tvCorreoUsuario)
 
         tvResumenProductos =
-            findViewById(
-                R.id.tvResumenProductos
-            )
+            findViewById(R.id.tvResumenProductos)
 
         tvTotalPedido =
-            findViewById(
-                R.id.tvTotalPedido
-            )
+            findViewById(R.id.tvTotalPedido)
 
         radioGroupEntrega =
-            findViewById(
-                R.id.radioGroupEntrega
-            )
+            findViewById(R.id.radioGroupEntrega)
 
         radioDelivery =
-            findViewById(
-                R.id.radioDelivery
-            )
+            findViewById(R.id.radioDelivery)
 
         radioRecojo =
-            findViewById(
-                R.id.radioRecojo
-            )
+            findViewById(R.id.radioRecojo)
 
         tvDireccion =
-            findViewById(
-                R.id.tvDireccion
-            )
+            findViewById(R.id.tvDireccion)
 
         tvReferencia =
-            findViewById(
-                R.id.tvReferencia
-            )
+            findViewById(R.id.tvReferencia)
 
         tvTelefono =
-            findViewById(
-                R.id.tvTelefono
-            )
+            findViewById(R.id.tvTelefono)
 
         tvMetodoPago =
-            findViewById(
-                R.id.tvMetodoPago
-            )
+            findViewById(R.id.tvMetodoPago)
 
         btnContinuarPago =
-            findViewById(
-                R.id.btnContinuarPago
-            )
+            findViewById(R.id.btnContinuarPago)
     }
 
 
@@ -231,37 +197,23 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     private fun recibirDatos() {
 
         tipoEntrega =
-            intent.getStringExtra(
-                "tipoEntrega"
-            )
+            intent.getStringExtra("tipoEntrega")
                 ?: "Delivery"
 
-
         metodoPago =
-            intent.getStringExtra(
-                "metodoPago"
-            )
+            intent.getStringExtra("metodoPago")
                 ?: "Contra entrega"
 
-
         direccion =
-            intent.getStringExtra(
-                "direccion"
-            )
+            intent.getStringExtra("direccion")
                 ?: ""
-
 
         referencia =
-            intent.getStringExtra(
-                "referencia"
-            )
+            intent.getStringExtra("referencia")
                 ?: ""
 
-
         telefono =
-            intent.getStringExtra(
-                "telefono"
-            )
+            intent.getStringExtra("telefono")
                 ?: ""
     }
 
@@ -274,7 +226,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
         val usuario =
             auth.currentUser
-
 
         if (usuario == null) {
 
@@ -289,40 +240,28 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             return
         }
 
-
         tvCorreoUsuario.text =
-            usuario.email
-                ?: "Sin correo"
-
+            usuario.email ?: "Sin correo"
 
         db.collection("usuarios")
             .document(usuario.uid)
             .get()
             .addOnSuccessListener { documento ->
 
-                if (documento.exists()) {
+                nombreUsuario =
+                    if (documento.exists()) {
 
-                    nombreUsuario =
-                        documento.getString(
-                            "nombre"
-                        )
+                        documento.getString("nombre")
                             ?: "Cliente"
 
-                } else {
+                    } else {
 
-                    nombreUsuario =
                         "Cliente"
+                    }
+
+                if (nombreUsuario.isBlank()) {
+                    nombreUsuario = "Cliente"
                 }
-
-
-                if (
-                    nombreUsuario.isBlank()
-                ) {
-
-                    nombreUsuario =
-                        "Cliente"
-                }
-
 
                 tvNombreUsuario.text =
                     nombreUsuario
@@ -347,7 +286,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         val pedido =
             PedidoManager.pedido
 
-
         if (pedido.isEmpty()) {
 
             Toast.makeText(
@@ -361,27 +299,20 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             return
         }
 
-
         val cantidad =
             PedidoManager.cantidadTotal()
 
-
         tvResumenProductos.text =
             if (cantidad == 1) {
-
                 "1 producto"
-
             } else {
-
                 "$cantidad productos"
             }
-
 
         val total =
             pedido.sumOf {
                 it.precio * it.cantidad
             }
-
 
         tvTotalPedido.text =
             "S/ %.2f".format(total)
@@ -404,42 +335,24 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             radioDelivery.isChecked =
                 true
 
-
             tvDireccion.text =
-                if (
-                    direccion.isNotEmpty()
-                ) {
-
+                if (direccion.isNotEmpty()) {
                     direccion
-
                 } else {
-
                     "No especificada"
                 }
 
-
             tvReferencia.text =
-                if (
-                    referencia.isNotEmpty()
-                ) {
-
+                if (referencia.isNotEmpty()) {
                     referencia
-
                 } else {
-
                     "Sin referencia"
                 }
 
-
             tvTelefono.text =
-                if (
-                    telefono.isNotEmpty()
-                ) {
-
+                if (telefono.isNotEmpty()) {
                     telefono
-
                 } else {
-
                     "No especificado"
                 }
 
@@ -448,7 +361,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             radioRecojo.isChecked =
                 true
 
-
             tvDireccion.text =
                 "Recojo en tienda"
 
@@ -456,18 +368,12 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 "No aplica"
 
             tvTelefono.text =
-                if (
-                    telefono.isNotEmpty()
-                ) {
-
+                if (telefono.isNotEmpty()) {
                     telefono
-
                 } else {
-
                     "No especificado"
                 }
         }
-
 
         tvMetodoPago.text =
             metodoPago
@@ -491,52 +397,32 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     tipoEntrega =
                         "Delivery"
 
-
                     tvDireccion.text =
-                        if (
-                            direccion.isNotEmpty()
-                        ) {
-
+                        if (direccion.isNotEmpty()) {
                             direccion
-
                         } else {
-
                             "No especificada"
                         }
 
-
                     tvReferencia.text =
-                        if (
-                            referencia.isNotEmpty()
-                        ) {
-
+                        if (referencia.isNotEmpty()) {
                             referencia
-
                         } else {
-
                             "Sin referencia"
                         }
 
-
                     tvTelefono.text =
-                        if (
-                            telefono.isNotEmpty()
-                        ) {
-
+                        if (telefono.isNotEmpty()) {
                             telefono
-
                         } else {
-
                             "No especificado"
                         }
                 }
-
 
                 R.id.radioRecojo -> {
 
                     tipoEntrega =
                         "Recojo en tienda"
-
 
                     tvDireccion.text =
                         "Recojo en tienda"
@@ -545,14 +431,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                         "No aplica"
 
                     tvTelefono.text =
-                        if (
-                            telefono.isNotEmpty()
-                        ) {
-
+                        if (telefono.isNotEmpty()) {
                             telefono
-
                         } else {
-
                             "No especificado"
                         }
                 }
@@ -570,7 +451,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         btnContinuarPago.setOnClickListener {
 
             if (!confirmandoPedido) {
-
                 confirmarPedido()
             }
         }
@@ -587,14 +467,8 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             return
         }
 
-
-        // -----------------------------------------------------
-        // USUARIO
-        // -----------------------------------------------------
-
         val usuario =
             auth.currentUser
-
 
         if (usuario == null) {
 
@@ -607,14 +481,8 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             return
         }
 
-
-        // -----------------------------------------------------
-        // CARRITO
-        // -----------------------------------------------------
-
         val pedido =
             PedidoManager.pedido
-
 
         if (pedido.isEmpty()) {
 
@@ -627,18 +495,10 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             return
         }
 
-
-        // -----------------------------------------------------
-        // ENTREGA
-        // -----------------------------------------------------
-
         val opcionSeleccionada =
             radioGroupEntrega.checkedRadioButtonId
 
-
-        if (
-            opcionSeleccionada == -1
-        ) {
+        if (opcionSeleccionada == -1) {
 
             Toast.makeText(
                 this,
@@ -648,7 +508,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
             return
         }
-
 
         tipoEntrega =
             when (opcionSeleccionada) {
@@ -663,14 +522,13 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     ""
             }
 
-
         metodoPago =
             "Contra entrega"
 
 
-        // -----------------------------------------------------
+        // =====================================================
         // VALIDAR DELIVERY
-        // -----------------------------------------------------
+        // =====================================================
 
         if (
             tipoEntrega.equals(
@@ -679,9 +537,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             )
         ) {
 
-            if (
-                direccion.isBlank()
-            ) {
+            if (direccion.isBlank()) {
 
                 Toast.makeText(
                     this,
@@ -692,10 +548,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 return
             }
 
-
-            if (
-                telefono.isBlank()
-            ) {
+            if (telefono.isBlank()) {
 
                 Toast.makeText(
                     this,
@@ -708,9 +561,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         }
 
 
-        // -----------------------------------------------------
+        // =====================================================
         // BLOQUEAR BOTÓN
-        // -----------------------------------------------------
+        // =====================================================
 
         confirmandoPedido =
             true
@@ -725,9 +578,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             "CONFIRMANDO..."
 
 
-        // -----------------------------------------------------
+        // =====================================================
         // PRODUCTOS
-        // -----------------------------------------------------
+        // =====================================================
 
         val productos =
             pedido.map { item ->
@@ -747,9 +600,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             }
 
 
-        // -----------------------------------------------------
+        // =====================================================
         // TOTAL
-        // -----------------------------------------------------
+        // =====================================================
 
         val total =
             pedido.sumOf {
@@ -757,9 +610,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             }
 
 
-        // -----------------------------------------------------
-        // BUSCAR REFERENCIAS
-        // -----------------------------------------------------
+        // =====================================================
+        // BUSCAR STOCK
+        // =====================================================
 
         buscarReferenciasStock(
             pedido = pedido,
@@ -786,7 +639,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
 
     // =========================================================
-    // BUSCAR DOCUMENTOS DE STOCK
+    // BUSCAR REFERENCIAS DE STOCK
     // =========================================================
 
     private fun buscarReferenciasStock(
@@ -803,7 +656,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     DocumentReference
                     >()
 
-
         val productosConStock =
             pedido.filter {
 
@@ -811,10 +663,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                         it.tipo == TipoPedido.ENTRADA
             }
 
-
-        if (
-            productosConStock.isEmpty()
-        ) {
+        if (productosConStock.isEmpty()) {
 
             onSuccess(
                 referencias
@@ -822,7 +671,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
             return
         }
-
 
         buscarReferenciaRecursiva(
             productos = productosConStock,
@@ -835,7 +683,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
 
     // =========================================================
-    // BUSCAR REFERENCIA
+    // BUSCAR REFERENCIA RECURSIVAMENTE
     // =========================================================
 
     private fun buscarReferenciaRecursiva(
@@ -851,9 +699,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         onError: (Exception) -> Unit
     ) {
 
-        if (
-            posicion >= productos.size
-        ) {
+        if (posicion >= productos.size) {
 
             onSuccess(
                 referencias
@@ -862,10 +708,8 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             return
         }
 
-
         val item =
             productos[posicion]
-
 
         val coleccion =
             when (item.tipo) {
@@ -880,10 +724,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     ""
             }
 
-
-        if (
-            coleccion.isEmpty()
-        ) {
+        if (coleccion.isEmpty()) {
 
             buscarReferenciaRecursiva(
                 productos = productos,
@@ -896,7 +737,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             return
         }
 
-
         db.collection(coleccion)
             .whereEqualTo(
                 "id",
@@ -906,27 +746,24 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             .get()
             .addOnSuccessListener { resultado ->
 
-                if (
-                    resultado.isEmpty
-                ) {
+                if (resultado.isEmpty) {
 
                     onError(
                         IllegalStateException(
-                            "No se encontró '${item.nombre}' en la colección '$coleccion' con id ${item.id}."
+                            "No se encontró '${item.nombre}' " +
+                                    "en la colección '$coleccion' " +
+                                    "con id ${item.id}."
                         )
                     )
 
                     return@addOnSuccessListener
                 }
 
-
                 val documento =
                     resultado.documents.first()
 
-
                 referencias[item] =
                     documento.reference
-
 
                 buscarReferenciaRecursiva(
                     productos = productos,
@@ -946,7 +783,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
 
     // =========================================================
-    // GUARDAR PEDIDO + DESCONTAR STOCK
+    // GUARDAR PEDIDO + STOCK + NÚMERO DE PEDIDO
     // =========================================================
 
     private fun guardarPedidoYDescontarStock(
@@ -964,12 +801,41 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             db.collection("pedidos")
                 .document()
 
+        val contadorReferencia =
+            db.collection("configuracion")
+                .document("contadorPedidos")
+
 
         db.runTransaction { transaction ->
 
-            // -------------------------------------------------
-            // STOCK ACTUAL
-            // -------------------------------------------------
+            // =================================================
+            // OBTENER CONTADOR
+            // =================================================
+
+            val contadorSnapshot =
+                transaction.get(
+                    contadorReferencia
+                )
+
+            val ultimoNumero =
+                if (contadorSnapshot.exists()) {
+
+                    contadorSnapshot.getLong(
+                        "ultimoNumero"
+                    ) ?: 0L
+
+                } else {
+
+                    0L
+                }
+
+            val numeroPedido =
+                ultimoNumero + 1
+
+
+            // =================================================
+            // LEER STOCK
+            // =================================================
 
             val stocksActuales =
                 mutableMapOf<
@@ -977,11 +843,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                         Long
                         >()
 
-
-            // -------------------------------------------------
-            // LEER STOCK DE TODOS LOS PRODUCTOS
-            // -------------------------------------------------
-
             for (
             entrada
             in referenciasStock.entries
@@ -992,72 +853,56 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
                 val referencia =
                     entrada.value
-
 
                 val snapshot =
                     transaction.get(
                         referencia
                     )
 
-
-                if (
-                    !snapshot.exists()
-                ) {
+                if (!snapshot.exists()) {
 
                     throw IllegalStateException(
                         "El producto '${item.nombre}' ya no existe."
                     )
                 }
 
-
                 val stockValue =
                     snapshot.getLong(
                         "stock"
                     )
 
-
-                if (
-                    stockValue == null
-                ) {
+                if (stockValue == null) {
 
                     throw IllegalStateException(
                         "El producto '${item.nombre}' no tiene un stock válido en Firebase."
                     )
                 }
 
-
                 val stock =
                     stockValue
 
-
-                if (
-                    stock < 0
-                ) {
+                if (stock < 0) {
 
                     throw IllegalStateException(
                         "El stock de '${item.nombre}' no es válido."
                     )
                 }
 
-
-                if (
-                    stock < item.cantidad
-                ) {
+                if (stock < item.cantidad) {
 
                     throw IllegalStateException(
                         "SIN_STOCK:${item.nombre}:$stock:${item.cantidad}"
                     )
                 }
 
-
                 stocksActuales[item] =
                     stock
             }
 
 
-            // -------------------------------------------------
+            // =================================================
             // DESCONTAR STOCK
-            // -------------------------------------------------
+            // =================================================
 
             for (
             entrada
@@ -1070,16 +915,13 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 val referencia =
                     entrada.value
 
-
                 val stockActual =
                     stocksActuales[item]
                         ?: 0L
 
-
                 val nuevoStock =
                     stockActual -
                             item.cantidad
-
 
                 transaction.update(
                     referencia,
@@ -1089,12 +931,14 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             }
 
 
-            // -------------------------------------------------
+            // =================================================
             // DATOS DEL PEDIDO
-            // -------------------------------------------------
+            // =================================================
 
             val datosPedido =
                 hashMapOf<String, Any>(
+
+                    "numeroPedido" to numeroPedido,
 
                     "usuarioId" to usuarioId,
 
@@ -1125,13 +969,25 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 )
 
 
-            // -------------------------------------------------
+            // =================================================
             // GUARDAR PEDIDO
-            // -------------------------------------------------
+            // =================================================
 
             transaction.set(
                 referenciaPedido,
                 datosPedido
+            )
+
+
+            // =================================================
+            // ACTUALIZAR CONTADOR
+            // =================================================
+
+            transaction.set(
+                contadorReferencia,
+                hashMapOf(
+                    "ultimoNumero" to numeroPedido
+                )
             )
 
         }
@@ -1154,12 +1010,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
     private fun pedidoConfirmado() {
 
-        // -----------------------------------------------------
-        // LIMPIAR CARRITO
-        // -----------------------------------------------------
-
         PedidoManager.limpiar()
-
 
         Toast.makeText(
             this,
@@ -1167,27 +1018,19 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             Toast.LENGTH_LONG
         ).show()
 
-
-        // -----------------------------------------------------
-        // VOLVER AL MENÚ
-        // -----------------------------------------------------
-
         val intent =
             Intent(
                 this,
                 ActivityMenuUsuario::class.java
             )
 
-
         intent.flags =
             Intent.FLAG_ACTIVITY_NEW_TASK or
                     Intent.FLAG_ACTIVITY_CLEAR_TASK
 
-
         startActivity(
             intent
         )
-
 
         finish()
     }
@@ -1226,28 +1069,22 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                         exception.message
                             ?.split(":")
 
-
                     val nombre =
-                        partes
-                            ?.getOrNull(1)
+                        partes?.getOrNull(1)
                             ?: "este producto"
 
-
                     val stockActual =
-                        partes
-                            ?.getOrNull(2)
+                        partes?.getOrNull(2)
                             ?: "0"
-
 
                     val cantidadSolicitada =
-                        partes
-                            ?.getOrNull(3)
+                        partes?.getOrNull(3)
                             ?: "0"
 
-
-                    "No hay stock suficiente de $nombre. Disponible: $stockActual. Solicitado: $cantidadSolicitada."
+                    "No hay stock suficiente de $nombre. " +
+                            "Disponible: $stockActual. " +
+                            "Solicitado: $cantidadSolicitada."
                 }
-
 
                 exception is IllegalStateException -> {
 
@@ -1255,10 +1092,10 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                         ?: "No se pudo confirmar el pedido."
                 }
 
-
                 else -> {
 
-                    "No se pudo confirmar el pedido. Inténtalo nuevamente."
+                    "No se pudo confirmar el pedido. " +
+                            "Inténtalo nuevamente."
                 }
             }
 

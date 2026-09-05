@@ -17,16 +17,43 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityPedidosAdmin : AppCompatActivity() {
 
-    private val db = FirebaseFirestore.getInstance()
+    // =========================================================
+    // FIREBASE
+    // =========================================================
+
+    private val db =
+        FirebaseFirestore.getInstance()
+
+
+    // =========================================================
+    // COMPONENTES
+    // =========================================================
 
     private lateinit var rvPedidos: RecyclerView
+
     private lateinit var tvSinPedidos: TextView
 
-    private val listaPedidos = mutableListOf<PedidoAdmin>()
 
-    private lateinit var adapter: PedidoAdminAdapter
+    // =========================================================
+    // LISTA DE PEDIDOS
+    // =========================================================
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    private val listaPedidos =
+        mutableListOf<PedidoAdmin>()
+
+
+    private lateinit var adapter:
+            PedidoAdminAdapter
+
+
+    // =========================================================
+    // ON CREATE
+    // =========================================================
+
+    override fun onCreate(
+        savedInstanceState: Bundle?
+    ) {
+
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
@@ -36,15 +63,18 @@ class ActivityPedidosAdmin : AppCompatActivity() {
             false
         )
 
-        setContentView(R.layout.activity_pedidos_admin)
+        setContentView(
+            R.layout.activity_pedidos_admin
+        )
 
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
         ) { view, insets ->
 
-            val systemBars = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars()
-            )
+            val systemBars =
+                insets.getInsets(
+                    WindowInsetsCompat.Type.systemBars()
+                )
 
             view.setPadding(
                 systemBars.left,
@@ -57,34 +87,59 @@ class ActivityPedidosAdmin : AppCompatActivity() {
         }
 
         initComponent()
+
         initUI()
+
         escucharPedidos()
     }
 
+
+    // =========================================================
+    // COMPONENTES
+    // =========================================================
+
     private fun initComponent() {
 
-        rvPedidos = findViewById(R.id.rvPedidos)
+        rvPedidos =
+            findViewById(
+                R.id.rvPedidos
+            )
 
-        tvSinPedidos = findViewById(R.id.tvSinPedidos)
+        tvSinPedidos =
+            findViewById(
+                R.id.tvSinPedidos
+            )
     }
+
+
+    // =========================================================
+    // CONFIGURAR UI
+    // =========================================================
 
     private fun initUI() {
 
-        adapter = PedidoAdminAdapter(
-            listaPedidos
-        ) { pedido, nuevoEstado ->
+        adapter =
+            PedidoAdminAdapter(
+                listaPedidos
+            ) { pedido, nuevoEstado ->
 
-            cambiarEstadoPedido(
-                pedido,
-                nuevoEstado
-            )
-        }
+                cambiarEstadoPedido(
+                    pedido,
+                    nuevoEstado
+                )
+            }
 
         rvPedidos.layoutManager =
             LinearLayoutManager(this)
 
-        rvPedidos.adapter = adapter
+        rvPedidos.adapter =
+            adapter
     }
+
+
+    // =========================================================
+    // ESCUCHAR PEDIDOS EN TIEMPO REAL
+    // =========================================================
 
     private fun escucharPedidos() {
 
@@ -112,87 +167,156 @@ class ActivityPedidosAdmin : AppCompatActivity() {
                     return@addSnapshotListener
                 }
 
+
                 listaPedidos.clear()
 
-                for (documento in resultado.documents) {
 
-                    val pedido = PedidoAdmin(
+                for (
+                documento
+                in resultado.documents
+                ) {
 
-                        id = documento.id,
+                    // =================================================
+                    // LEER ESTADO PRIMERO
+                    // =================================================
 
-                        nombreUsuario =
-                            documento.getString(
-                                "nombreUsuario"
-                            ) ?: "Cliente",
+                    val estadoPedido =
+                        documento.getString(
+                            "estadoPedido"
+                        ) ?: "Pendiente"
 
-                        correo =
-                            documento.getString(
-                                "correo"
-                            ) ?: "",
 
-                        total =
-                            documento.getDouble(
-                                "total"
-                            ) ?: 0.0,
+                    // =================================================
+                    // SI ESTÁ ENTREGADO, NO MOSTRARLO EN EL ADMIN
+                    // =================================================
 
-                        tipoEntrega =
-                            documento.getString(
-                                "tipoEntrega"
-                            ) ?: "Delivery",
+                    if (
+                        estadoPedido.equals(
+                            "Entregado",
+                            ignoreCase = true
+                        )
+                    ) {
 
-                        direccion =
-                            documento.getString(
-                                "direccion"
-                            ) ?: "",
+                        Log.d(
+                            "PEDIDOS_ADMIN",
+                            "Pedido ${documento.id} " +
+                                    "está Entregado. " +
+                                    "No se mostrará en la lista."
+                        )
 
-                        referencia =
-                            documento.getString(
-                                "referencia"
-                            ) ?: "",
+                        continue
+                    }
 
-                        telefono =
-                            documento.getString(
-                                "telefono"
-                            ) ?: "",
 
-                        metodoPago =
-                            documento.getString(
-                                "metodoPago"
-                            ) ?: "Contra entrega",
+                    // =================================================
+                    // CREAR PEDIDO
+                    // =================================================
 
-                        estadoPago =
-                            documento.getString(
-                                "estadoPago"
-                            ) ?: "Pendiente",
+                    val pedido =
+                        PedidoAdmin(
 
-                        estadoPedido =
-                            documento.getString(
-                                "estadoPedido"
-                            ) ?: "Pendiente",
+                            id =
+                                documento.id,
 
-                        productos =
-                            documento.get(
-                                "productos"
-                            ) as? List<Map<String, Any>>
-                                ?: emptyList()
+                            nombreUsuario =
+                                documento.getString(
+                                    "nombreUsuario"
+                                ) ?: "Cliente",
+
+                            correo =
+                                documento.getString(
+                                    "correo"
+                                ) ?: "",
+
+                            total =
+                                documento.getDouble(
+                                    "total"
+                                )
+                                    ?: documento.getLong(
+                                        "total"
+                                    )?.toDouble()
+                                    ?: 0.0,
+
+                            tipoEntrega =
+                                documento.getString(
+                                    "tipoEntrega"
+                                ) ?: "Delivery",
+
+                            direccion =
+                                documento.getString(
+                                    "direccion"
+                                ) ?: "",
+
+                            referencia =
+                                documento.getString(
+                                    "referencia"
+                                ) ?: "",
+
+                            telefono =
+                                documento.getString(
+                                    "telefono"
+                                ) ?: "",
+
+                            metodoPago =
+                                documento.getString(
+                                    "metodoPago"
+                                ) ?: "Contra entrega",
+
+                            estadoPago =
+                                documento.getString(
+                                    "estadoPago"
+                                ) ?: "Pendiente",
+
+                            estadoPedido =
+                                estadoPedido,
+
+                            productos =
+                                documento.get(
+                                    "productos"
+                                ) as? List<Map<String, Any>>
+                                    ?: emptyList()
+                        )
+
+
+                    listaPedidos.add(
+                        pedido
                     )
-
-                    listaPedidos.add(pedido)
                 }
 
-                // Los pedidos más recientes aparecen primero.
+
+                // =================================================
+                // MÁS RECIENTES PRIMERO
+                // =================================================
+
                 listaPedidos.reverse()
+
+
+                // =================================================
+                // ACTUALIZAR ADAPTER
+                // =================================================
 
                 adapter.notifyDataSetChanged()
 
+
+                // =================================================
+                // MOSTRAR / OCULTAR LISTA
+                // =================================================
+
                 actualizarEstadoVacio()
+
 
                 Log.d(
                     "PEDIDOS_ADMIN",
-                    "Pedidos recibidos: ${listaPedidos.size}"
+                    "Pedidos activos mostrados: " +
+                            listaPedidos.size
                 )
             }
     }
+
+
+    // =========================================================
+    // CAMBIAR ESTADO DEL PEDIDO
+    // =========================================================
 
     private fun cambiarEstadoPedido(
         pedido: PedidoAdmin,
@@ -200,7 +324,9 @@ class ActivityPedidosAdmin : AppCompatActivity() {
     ) {
 
         db.collection("pedidos")
-            .document(pedido.id)
+            .document(
+                pedido.id
+            )
             .update(
                 "estadoPedido",
                 nuevoEstado
@@ -215,7 +341,8 @@ class ActivityPedidosAdmin : AppCompatActivity() {
 
                 Log.d(
                     "PEDIDOS_ADMIN",
-                    "Pedido ${pedido.id} actualizado a $nuevoEstado"
+                    "Pedido ${pedido.id} " +
+                            "actualizado a $nuevoEstado"
                 )
             }
             .addOnFailureListener { error ->
@@ -234,19 +361,30 @@ class ActivityPedidosAdmin : AppCompatActivity() {
             }
     }
 
+
+    // =========================================================
+    // ESTADO VACÍO
+    // =========================================================
+
     private fun actualizarEstadoVacio() {
 
-        if (listaPedidos.isEmpty()) {
+        if (
+            listaPedidos.isEmpty()
+        ) {
 
-            rvPedidos.visibility = View.GONE
+            rvPedidos.visibility =
+                View.GONE
 
-            tvSinPedidos.visibility = View.VISIBLE
+            tvSinPedidos.visibility =
+                View.VISIBLE
 
         } else {
 
-            rvPedidos.visibility = View.VISIBLE
+            rvPedidos.visibility =
+                View.VISIBLE
 
-            tvSinPedidos.visibility = View.GONE
+            tvSinPedidos.visibility =
+                View.GONE
         }
     }
 }
