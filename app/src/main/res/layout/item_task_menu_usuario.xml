@@ -9,45 +9,53 @@
 
     android:layout_marginStart="8dp"
     android:layout_marginEnd="8dp"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="10dp"
 
     app:cardBackgroundColor="#FFFFFF"
     app:cardCornerRadius="20dp"
-    app:cardElevation="4dp">
+    app:cardElevation="7dp"
+    app:cardUseCompatPadding="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- ================================ -->
-        <!-- IMAGEN -->
-        <!-- ================================ -->
+        <!-- ================================================= -->
+        <!-- IMAGEN DEL PLATO -->
+        <!-- ================================================= -->
 
         <ImageView
             android:id="@+id/imgPlato"
             android:layout_width="match_parent"
             android:layout_height="125dp"
             android:background="#F2F2F2"
-            android:scaleType="centerCrop"
-            android:contentDescription="@string/txt_plato" />
+            android:contentDescription="@string/txt_plato"
+            android:scaleType="centerCrop" />
 
-        <!-- ================================ -->
+
+        <!-- ================================================= -->
         <!-- INFORMACIÓN -->
-        <!-- ================================ -->
+        <!-- ================================================= -->
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingStart="12dp"
-            android:paddingEnd="10dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
 
+            android:gravity="center_vertical"
+
+            android:orientation="horizontal"
+
+            android:paddingStart="14dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="10dp">
+
+
+            <!-- ============================================= -->
             <!-- INFORMACIÓN DEL PLATO -->
+            <!-- ============================================= -->
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -55,17 +63,21 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
+
                 <!-- NOMBRE -->
 
                 <TextView
                     android:id="@+id/tvMenuPlato"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
                     android:ellipsize="end"
                     android:maxLines="2"
+
                     android:textColor="#202020"
                     android:textSize="16sp"
                     android:textStyle="bold" />
+
 
                 <!-- PRECIO -->
 
@@ -73,10 +85,13 @@
                     android:id="@+id/tvPrecio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
+
+                    android:layout_marginTop="4dp"
+
                     android:textColor="#FF9800"
                     android:textSize="14sp"
                     android:textStyle="bold" />
+
 
                 <!-- STOCK -->
 
@@ -84,28 +99,37 @@
                     android:id="@+id/tvStockPlato"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+
                     android:layout_marginTop="3dp"
+
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
 
-            <!-- ================================ -->
-            <!-- BOTÓN -->
-            <!-- ================================ -->
+
+            <!-- ============================================= -->
+            <!-- BOTÓN AGREGAR -->
+            <!-- ============================================= -->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAgregar"
+
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:layout_marginStart="6dp"
+
+                android:layout_marginStart="8dp"
+
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+
+                android:padding="0dp"
+
                 android:text="+"
                 android:textColor="#FFFFFF"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                android:padding="0dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
+
                 app:backgroundTint="#FF9800"
                 app:cornerRadius="22dp" />
 

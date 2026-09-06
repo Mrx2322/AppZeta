@@ -18,6 +18,7 @@
     <!-- ===================================================== -->
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollMenuUsuario"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
@@ -28,6 +29,7 @@
         android:paddingBottom="105dp">
 
         <LinearLayout
+            android:id="@+id/contenidoMenuUsuario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
@@ -44,7 +46,6 @@
 
             <TextView
                 android:id="@+id/tvSaludo"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
@@ -57,6 +58,7 @@
 
 
             <TextView
+                android:id="@+id/tvSubtituloMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
@@ -72,6 +74,7 @@
             <!-- ================================================= -->
 
             <TextView
+                android:id="@+id/tvTituloEntradas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
@@ -85,7 +88,6 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvEntradas"
-
                 android:layout_width="match_parent"
                 android:layout_height="105dp"
 
@@ -96,7 +98,7 @@
                 android:paddingStart="2dp"
                 android:paddingEnd="2dp"
 
-                tools:listitem="@layout/item_task_entrada_usuario" />
+                android:overScrollMode="never" />
 
 
             <!-- ================================================= -->
@@ -104,6 +106,7 @@
             <!-- ================================================= -->
 
             <LinearLayout
+                android:id="@+id/layoutTituloMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
@@ -114,6 +117,7 @@
 
 
                 <TextView
+                    android:id="@+id/tvTituloMenu"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
 
@@ -126,8 +130,17 @@
 
 
                 <TextView
+                    android:id="@+id/tvVerTodo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+
+                    android:clickable="true"
+                    android:focusable="true"
+
+                    android:paddingStart="8dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="4dp"
+                    android:paddingBottom="5dp"
 
                     android:text="Ver todo"
                     android:textColor="#E87520"
@@ -137,9 +150,12 @@
             </LinearLayout>
 
 
+            <!-- ================================================= -->
+            <!-- CARRUSEL DEL MENÚ -->
+            <!-- ================================================= -->
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvMenu"
-
                 android:layout_width="match_parent"
                 android:layout_height="285dp"
 
@@ -150,7 +166,7 @@
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp"
 
-                tools:listitem="@layout/item_task_menu_usuario" />
+                android:overScrollMode="never" />
 
 
             <!-- ================================================= -->
@@ -159,7 +175,6 @@
 
             <TextView
                 android:id="@+id/tvTituloExtras"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
@@ -169,20 +184,22 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvCategorias"
-
                 android:layout_width="match_parent"
                 android:layout_height="82dp"
 
-                android:visibility="gone" />
+                android:visibility="gone"
+
+                android:overScrollMode="never" />
 
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvExtras"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:visibility="gone" />
+                android:visibility="gone"
+
+                android:overScrollMode="never" />
 
         </LinearLayout>
 
@@ -195,7 +212,6 @@
 
     <ProgressBar
         android:id="@+id/progressBarMenu"
-
         android:layout_width="45dp"
         android:layout_height="45dp"
 
@@ -209,6 +225,7 @@
     <!-- ===================================================== -->
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="76dp"
 
@@ -227,6 +244,7 @@
 
 
         <LinearLayout
+            android:id="@+id/layoutBottomNavigation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
 
@@ -243,7 +261,6 @@
 
             <LinearLayout
                 android:id="@+id/navInicio"
-
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
 
@@ -257,6 +274,7 @@
 
 
                 <ImageView
+                    android:id="@+id/imgNavInicio"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
 
@@ -266,6 +284,7 @@
 
 
                 <TextView
+                    android:id="@+id/tvNavInicio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
@@ -278,6 +297,7 @@
 
 
                 <View
+                    android:id="@+id/navIndicadorInicio"
                     android:layout_width="18dp"
                     android:layout_height="3dp"
 
@@ -294,7 +314,6 @@
 
             <LinearLayout
                 android:id="@+id/navExtras"
-
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
 
@@ -308,6 +327,7 @@
 
 
                 <ImageView
+                    android:id="@+id/imgNavExtras"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
 
@@ -317,6 +337,7 @@
 
 
                 <TextView
+                    android:id="@+id/tvNavExtras"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
@@ -335,7 +356,6 @@
 
             <LinearLayout
                 android:id="@+id/navPedidos"
-
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
 
@@ -349,6 +369,7 @@
 
 
                 <ImageView
+                    android:id="@+id/imgNavPedidos"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
 
@@ -358,6 +379,7 @@
 
 
                 <TextView
+                    android:id="@+id/tvNavPedidos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
@@ -376,7 +398,6 @@
 
             <LinearLayout
                 android:id="@+id/navCarrito"
-
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
 
@@ -390,11 +411,13 @@
 
 
                 <FrameLayout
+                    android:id="@+id/contenedorCarrito"
                     android:layout_width="28dp"
                     android:layout_height="28dp">
 
 
                     <ImageView
+                        android:id="@+id/imgNavCarrito"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
 
@@ -407,7 +430,6 @@
 
                     <TextView
                         android:id="@+id/tvCantidadCarrito"
-
                         android:layout_width="16dp"
                         android:layout_height="16dp"
 
@@ -426,6 +448,7 @@
 
 
                 <TextView
+                    android:id="@+id/tvNavCarrito"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
@@ -444,7 +467,6 @@
 
             <LinearLayout
                 android:id="@+id/navPerfil"
-
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
 
@@ -458,6 +480,7 @@
 
 
                 <ImageView
+                    android:id="@+id/imgNavPerfil"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
 
@@ -467,6 +490,7 @@
 
 
                 <TextView
+                    android:id="@+id/tvNavPerfil"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
@@ -489,7 +513,6 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnCarrito"
-
         android:layout_width="1dp"
         android:layout_height="1dp"
 
