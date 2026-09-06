@@ -312,6 +312,36 @@ class ActivityPedidosUsuario : AppCompatActivity() {
 
 
                         // -------------------------------------
+                        // NO MOSTRAR ENTREGADOS
+                        // -------------------------------------
+                        //
+                        // El pedido NO se elimina de Firestore.
+                        //
+                        // Simplemente deja de aparecer
+                        // en la pantalla del Usuario.
+                        //
+                        // El Admin seguirá conservándolo
+                        // en su Historial.
+                        // -------------------------------------
+
+                        if (
+                            estado.equals(
+                                "Entregado",
+                                ignoreCase = true
+                            )
+                        ) {
+
+                            Log.d(
+                                "PEDIDOS_USUARIO",
+                                "Pedido $id entregado. " +
+                                        "No se mostrará al usuario."
+                            )
+
+                            continue
+                        }
+
+
+                        // -------------------------------------
                         // TOTAL
                         // -------------------------------------
 
@@ -395,7 +425,7 @@ class ActivityPedidosUsuario : AppCompatActivity() {
 
                     Log.d(
                         "PEDIDOS_USUARIO",
-                        "Pedidos cargados: " +
+                        "Pedidos activos cargados: " +
                                 listaPedidos.size
                     )
                 }
