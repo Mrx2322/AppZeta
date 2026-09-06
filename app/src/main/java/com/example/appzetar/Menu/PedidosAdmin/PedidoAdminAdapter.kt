@@ -7,7 +7,8 @@ import com.example.appzetar.R
 
 class PedidoAdminAdapter(
     private val listaPedidos: MutableList<PedidoAdmin>,
-    private val onCambiarEstado: (PedidoAdmin, String) -> Unit
+    private val onCambiarEstado: (PedidoAdmin, String) -> Unit,
+    private val modoHistorial: Boolean = false
 ) : RecyclerView.Adapter<PedidoAdminViewHolder>() {
 
     override fun onCreateViewHolder(
@@ -15,13 +16,12 @@ class PedidoAdminAdapter(
         viewType: Int
     ): PedidoAdminViewHolder {
 
-        val view =
-            LayoutInflater.from(parent.context)
-                .inflate(
-                    R.layout.item_pedido_admin,
-                    parent,
-                    false
-                )
+        val view = LayoutInflater.from(parent.context)
+            .inflate(
+                R.layout.item_pedido_admin,
+                parent,
+                false
+            )
 
         return PedidoAdminViewHolder(view)
     }
@@ -32,8 +32,9 @@ class PedidoAdminAdapter(
     ) {
 
         holder.render(
-            listaPedidos[position],
-            onCambiarEstado
+            pedido = listaPedidos[position],
+            onCambiarEstado = onCambiarEstado,
+            modoHistorial = modoHistorial
         )
     }
 

@@ -1,14 +1,28 @@
 package com.example.appzetar.Menu
 
+import android.graphics.Color
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
 import com.google.android.material.button.MaterialButton
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class PedidoAdminViewHolder(
     itemView: View
 ) : RecyclerView.ViewHolder(itemView) {
+
+    private val tvNumeroPedido =
+        itemView.findViewById<TextView>(
+            R.id.tvNumeroPedido
+        )
+
+    private val tvFechaPedido =
+        itemView.findViewById<TextView>(
+            R.id.tvFechaPedido
+        )
 
     private val tvNombreUsuario =
         itemView.findViewById<TextView>(
@@ -55,6 +69,11 @@ class PedidoAdminViewHolder(
             R.id.tvEstadoPedido
         )
 
+    private val layoutCambiarEstado =
+        itemView.findViewById<View>(
+            R.id.layoutCambiarEstado
+        )
+
     private val btnPendiente =
         itemView.findViewById<MaterialButton>(
             R.id.btnPendiente
@@ -77,17 +96,88 @@ class PedidoAdminViewHolder(
 
     fun render(
         pedido: PedidoAdmin,
-        onCambiarEstado: (PedidoAdmin, String) -> Unit
+        onCambiarEstado: (PedidoAdmin, String) -> Unit,
+        modoHistorial: Boolean = false
     ) {
+
+        // =====================================================
+        // NÚMERO DE PEDIDO
+        // =====================================================
+
+        if (pedido.numeroPedido > 0L) {
+
+            tvNumeroPedido.text =
+                "📋 Pedido #${
+                    String.format(
+                        "%04d",
+                        pedido.numeroPedido
+                    )
+                }"
+
+        } else {
+
+            tvNumeroPedido.text =
+                "📋 Pedido sin número"
+        }
+
+
+        // =====================================================
+        // FECHA Y HORA
+        // =====================================================
+
+        if (pedido.fecha != null) {
+
+            val formato =
+                SimpleDateFormat(
+                    "dd/MM/yyyy • hh:mm a",
+                    Locale("es", "PE")
+                )
+
+            tvFechaPedido.text =
+                "📅 ${formato.format(
+                    pedido.fecha.toDate()
+                )}"
+
+            tvFechaPedido.visibility =
+                View.VISIBLE
+
+        } else {
+
+            tvFechaPedido.text =
+                "📅 Fecha no disponible"
+
+            tvFechaPedido.visibility =
+                View.VISIBLE
+        }
+
+
+        // =====================================================
+        // CLIENTE
+        // =====================================================
 
         tvNombreUsuario.text =
             "👤 ${pedido.nombreUsuario}"
 
+
+        // =====================================================
+        // TELÉFONO
+        // =====================================================
+
         tvTelefono.text =
             "📞 ${pedido.telefono}"
 
+
+        // =====================================================
+        // TIPO DE ENTREGA
+        // =====================================================
+
         tvTipoEntrega.text =
             "🚚 ${pedido.tipoEntrega}"
+
+
+        // =====================================================
+        // DIRECCIÓN
+        // =====================================================
 
         tvDireccion.text =
             if (pedido.direccion.isNotEmpty()) {
@@ -96,6 +186,11 @@ class PedidoAdminViewHolder(
                 "📍 Sin dirección"
             }
 
+
+        // =====================================================
+        // REFERENCIA
+        // =====================================================
+
         tvReferencia.text =
             if (pedido.referencia.isNotEmpty()) {
                 "Referencia: ${pedido.referencia}"
@@ -103,47 +198,117 @@ class PedidoAdminViewHolder(
                 "Sin referencia"
             }
 
+
+        // =====================================================
+        // MÉTODO DE PAGO
+        // =====================================================
+
         tvMetodoPago.text =
             "💳 ${pedido.metodoPago}"
+
+
+        // =====================================================
+        // TOTAL
+        // =====================================================
 
         tvTotal.text =
             "💰 S/ %.2f".format(
                 pedido.total
             )
 
+
+        // =====================================================
+        // ESTADO
+        // =====================================================
+
         tvEstadoPedido.text =
             pedido.estadoPedido.uppercase()
+
+        if (
+            pedido.estadoPedido.equals(
+                "Entregado",
+                ignoreCase = true
+            )
+        ) {
+
+            tvEstadoPedido.setBackgroundColor(
+                Color.parseColor(
+                    "#E8F5E9"
+                )
+            )
+
+            tvEstadoPedido.setTextColor(
+                Color.parseColor(
+                    "#2E7D32"
+                )
+            )
+
+        } else {
+
+            tvEstadoPedido.setBackgroundColor(
+                Color.parseColor(
+                    "#FFF3E0"
+                )
+            )
+
+            tvEstadoPedido.setTextColor(
+                Color.parseColor(
+                    "#F57C00"
+                )
+            )
+        }
+
+
+        // =====================================================
+        // PRODUCTOS
+        // =====================================================
 
         mostrarProductos(
             pedido.productos
         )
 
-        btnPendiente.setOnClickListener {
-            onCambiarEstado(
-                pedido,
-                "Pendiente"
-            )
-        }
 
-        btnPreparando.setOnClickListener {
-            onCambiarEstado(
-                pedido,
-                "Preparando"
-            )
-        }
+        // =====================================================
+        // CONTROLES DE ESTADO
+        // =====================================================
 
-        btnEnCamino.setOnClickListener {
-            onCambiarEstado(
-                pedido,
-                "En camino"
-            )
-        }
+        if (modoHistorial) {
 
-        btnEntregado.setOnClickListener {
-            onCambiarEstado(
-                pedido,
-                "Entregado"
-            )
+            layoutCambiarEstado.visibility =
+                View.GONE
+
+        } else {
+
+            layoutCambiarEstado.visibility =
+                View.VISIBLE
+
+            btnPendiente.setOnClickListener {
+                onCambiarEstado(
+                    pedido,
+                    "Pendiente"
+                )
+            }
+
+            btnPreparando.setOnClickListener {
+                onCambiarEstado(
+                    pedido,
+                    "Preparando"
+                )
+            }
+
+            btnEnCamino.setOnClickListener {
+                onCambiarEstado(
+                    pedido,
+                    "En camino"
+                )
+            }
+
+            btnEntregado.setOnClickListener {
+                onCambiarEstado(
+                    pedido,
+                    "Entregado"
+                )
+            }
         }
     }
 
@@ -162,7 +327,9 @@ class PedidoAdminViewHolder(
         val texto =
             StringBuilder()
 
-        texto.append("🍽️ PRODUCTOS\n")
+        texto.append(
+            "🍽️ PRODUCTOS\n"
+        )
 
         for (producto in productos) {
 

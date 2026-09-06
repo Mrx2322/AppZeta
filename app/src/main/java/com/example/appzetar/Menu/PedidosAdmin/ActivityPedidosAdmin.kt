@@ -1,5 +1,6 @@
 package com.example.appzetar.Menu
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -13,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityPedidosAdmin : AppCompatActivity() {
@@ -33,6 +35,8 @@ class ActivityPedidosAdmin : AppCompatActivity() {
 
     private lateinit var tvSinPedidos: TextView
 
+    private lateinit var btnHistorial: MaterialButton
+
 
     // =========================================================
     // LISTA DE PEDIDOS
@@ -41,9 +45,7 @@ class ActivityPedidosAdmin : AppCompatActivity() {
     private val listaPedidos =
         mutableListOf<PedidoAdmin>()
 
-
-    private lateinit var adapter:
-            PedidoAdminAdapter
+    private lateinit var adapter: PedidoAdminAdapter
 
 
     // =========================================================
@@ -95,7 +97,7 @@ class ActivityPedidosAdmin : AppCompatActivity() {
 
 
     // =========================================================
-    // COMPONENTES
+    // INICIALIZAR COMPONENTES
     // =========================================================
 
     private fun initComponent() {
@@ -109,6 +111,11 @@ class ActivityPedidosAdmin : AppCompatActivity() {
             findViewById(
                 R.id.tvSinPedidos
             )
+
+        btnHistorial =
+            findViewById(
+                R.id.btnHistorial
+            )
     }
 
 
@@ -118,22 +125,41 @@ class ActivityPedidosAdmin : AppCompatActivity() {
 
     private fun initUI() {
 
-        adapter =
-            PedidoAdminAdapter(
-                listaPedidos
-            ) { pedido, nuevoEstado ->
+        adapter = PedidoAdminAdapter(
+            listaPedidos = listaPedidos,
+
+            onCambiarEstado = { pedido, nuevoEstado ->
 
                 cambiarEstadoPedido(
                     pedido,
                     nuevoEstado
                 )
-            }
+            },
+
+            modoHistorial = false
+        )
 
         rvPedidos.layoutManager =
             LinearLayoutManager(this)
 
         rvPedidos.adapter =
             adapter
+
+
+        // =====================================================
+        // BOTÓN VER HISTORIAL
+        // =====================================================
+
+        btnHistorial.setOnClickListener {
+
+            val intent =
+                Intent(
+                    this,
+                    ActivityHistorialPedidosAdmin::class.java
+                )
+
+            startActivity(intent)
+        }
     }
 
 
@@ -171,13 +197,10 @@ class ActivityPedidosAdmin : AppCompatActivity() {
                 listaPedidos.clear()
 
 
-                for (
-                documento
-                in resultado.documents
-                ) {
+                for (documento in resultado.documents) {
 
                     // =================================================
-                    // LEER ESTADO PRIMERO
+                    // LEER ESTADO DEL PEDIDO
                     // =================================================
 
                     val estadoPedido =
@@ -187,7 +210,7 @@ class ActivityPedidosAdmin : AppCompatActivity() {
 
 
                     // =================================================
-                    // SI ESTÁ ENTREGADO, NO MOSTRARLO EN EL ADMIN
+                    // NO MOSTRAR PEDIDOS ENTREGADOS
                     // =================================================
 
                     if (
@@ -201,7 +224,7 @@ class ActivityPedidosAdmin : AppCompatActivity() {
                             "PEDIDOS_ADMIN",
                             "Pedido ${documento.id} " +
                                     "está Entregado. " +
-                                    "No se mostrará en la lista."
+                                    "No se mostrará en pedidos activos."
                         )
 
                         continue
@@ -209,7 +232,7 @@ class ActivityPedidosAdmin : AppCompatActivity() {
 
 
                     // =================================================
-                    // CREAR PEDIDO
+                    // CREAR OBJETO PEDIDO
                     // =================================================
 
                     val pedido =
@@ -299,7 +322,7 @@ class ActivityPedidosAdmin : AppCompatActivity() {
 
 
                 // =================================================
-                // MOSTRAR / OCULTAR LISTA
+                // ACTUALIZAR ESTADO VACÍO
                 // =================================================
 
                 actualizarEstadoVacio()
@@ -363,14 +386,12 @@ class ActivityPedidosAdmin : AppCompatActivity() {
 
 
     // =========================================================
-    // ESTADO VACÍO
+    // MOSTRAR / OCULTAR ESTADO VACÍO
     // =========================================================
 
     private fun actualizarEstadoVacio() {
 
-        if (
-            listaPedidos.isEmpty()
-        ) {
+        if (listaPedidos.isEmpty()) {
 
             rvPedidos.visibility =
                 View.GONE

@@ -16,35 +16,82 @@
     app:cardElevation="5dp"
     app:cardBackgroundColor="#FFFFFF">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:orientation="vertical"
+
         android:padding="18dp">
 
-        <!-- ESTADO ACTUAL -->
+
+        <!-- =====================================================
+             NÚMERO DE PEDIDO
+             ===================================================== -->
+
+        <TextView
+            android:id="@+id/tvNumeroPedido"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:text="📋 Pedido #0001"
+            android:textColor="#111111"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+
+        <!-- =====================================================
+             FECHA Y HORA
+             ===================================================== -->
+
+        <TextView
+            android:id="@+id/tvFechaPedido"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="4dp"
+
+            android:text="📅 06/09/2026 • 10:35 a. m."
+            android:textColor="#777777"
+            android:textSize="13sp" />
+
+
+        <!-- =====================================================
+             ESTADO DEL PEDIDO
+             ===================================================== -->
 
         <TextView
             android:id="@+id/tvEstadoPedido"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:background="#FFF3E0"
+            android:layout_marginTop="12dp"
+
+            android:background="#E8F5E9"
 
             android:paddingStart="12dp"
             android:paddingTop="6dp"
             android:paddingEnd="12dp"
             android:paddingBottom="6dp"
 
-            android:text="PENDIENTE"
-            android:textColor="#F57C00"
+            android:text="ENTREGADO"
+
+            android:textColor="#2E7D32"
             android:textSize="14sp"
             android:textStyle="bold" />
 
-        <!-- CLIENTE -->
+
+        <!-- =====================================================
+             CLIENTE
+             ===================================================== -->
 
         <TextView
             android:id="@+id/tvNombreUsuario"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
@@ -55,10 +102,14 @@
             android:textSize="19sp"
             android:textStyle="bold" />
 
-        <!-- TELEFONO -->
+
+        <!-- =====================================================
+             TELÉFONO
+             ===================================================== -->
 
         <TextView
             android:id="@+id/tvTelefono"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
@@ -68,7 +119,10 @@
             android:textColor="#555555"
             android:textSize="15sp" />
 
-        <!-- LINEA -->
+
+        <!-- =====================================================
+             SEPARADOR
+             ===================================================== -->
 
         <View
             android:layout_width="match_parent"
@@ -79,22 +133,31 @@
 
             android:background="#EEEEEE" />
 
-        <!-- PRODUCTOS -->
+
+        <!-- =====================================================
+             PRODUCTOS
+             ===================================================== -->
 
         <TextView
             android:id="@+id/tvProductos"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
             android:text="🍽️ PRODUCTOS"
             android:textColor="#333333"
             android:textSize="15sp"
+
             android:lineSpacingExtra="4dp" />
 
-        <!-- ENTREGA -->
+
+        <!-- =====================================================
+             TIPO DE ENTREGA
+             ===================================================== -->
 
         <TextView
             android:id="@+id/tvTipoEntrega"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
@@ -105,10 +168,14 @@
             android:textSize="15sp"
             android:textStyle="bold" />
 
-        <!-- DIRECCION -->
+
+        <!-- =====================================================
+             DIRECCIÓN
+             ===================================================== -->
 
         <TextView
             android:id="@+id/tvDireccion"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
@@ -118,10 +185,14 @@
             android:textColor="#555555"
             android:textSize="15sp" />
 
-        <!-- REFERENCIA -->
+
+        <!-- =====================================================
+             REFERENCIA
+             ===================================================== -->
 
         <TextView
             android:id="@+id/tvReferencia"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
@@ -131,10 +202,14 @@
             android:textColor="#777777"
             android:textSize="14sp" />
 
-        <!-- METODO DE PAGO -->
+
+        <!-- =====================================================
+             MÉTODO DE PAGO
+             ===================================================== -->
 
         <TextView
             android:id="@+id/tvMetodoPago"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
@@ -144,10 +219,14 @@
             android:textColor="#555555"
             android:textSize="15sp" />
 
-        <!-- TOTAL -->
+
+        <!-- =====================================================
+             TOTAL
+             ===================================================== -->
 
         <TextView
             android:id="@+id/tvTotal"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
@@ -160,98 +239,137 @@
             android:textSize="21sp"
             android:textStyle="bold" />
 
-        <!-- SEPARADOR -->
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="14dp"
-
-            android:background="#EEEEEE" />
-
-        <!-- TITULO CAMBIAR ESTADO -->
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:text="Cambiar estado del pedido"
-            android:textColor="#333333"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <!-- BOTONES DE ESTADO -->
+        <!-- =====================================================
+             CAMBIAR ESTADO
+             ===================================================== -->
 
         <LinearLayout
+            android:id="@+id/layoutCambiarEstado"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+
             android:orientation="vertical">
 
-            <!-- FILA 1 -->
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="14dp"
+
+                android:background="#EEEEEE" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="Cambiar estado del pedido"
+                android:textColor="#333333"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="2">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnPendiente"
-                    android:layout_width="0dp"
-                    android:layout_height="52dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="5dp"
-                    android:text="Pendiente"
-                    android:textSize="13sp"
-                    android:textAllCaps="false"
-                    app:cornerRadius="12dp" />
+                android:layout_marginTop="10dp"
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnPreparando"
-                    android:layout_width="0dp"
-                    android:layout_height="52dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="5dp"
-                    android:text="Preparando"
-                    android:textSize="13sp"
-                    android:textAllCaps="false"
-                    app:cornerRadius="12dp" />
+                android:orientation="vertical">
 
-            </LinearLayout>
 
-            <!-- FILA 2 -->
+                <!-- FILA 1 -->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal"
-                android:weightSum="2">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnEnCamino"
-                    android:layout_width="0dp"
-                    android:layout_height="52dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="5dp"
-                    android:text="En camino"
-                    android:textSize="13sp"
-                    android:textAllCaps="false"
-                    app:cornerRadius="12dp" />
+                    android:orientation="horizontal"
+                    android:weightSum="2">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnEntregado"
-                    android:layout_width="0dp"
-                    android:layout_height="52dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="5dp"
-                    android:text="Entregado"
-                    android:textSize="13sp"
-                    android:textAllCaps="false"
-                    app:cornerRadius="12dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnPendiente"
+
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+
+                        android:layout_weight="1"
+                        android:layout_marginEnd="5dp"
+
+                        android:text="Pendiente"
+                        android:textAllCaps="false"
+                        android:textSize="13sp"
+
+                        app:cornerRadius="12dp" />
+
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnPreparando"
+
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+
+                        android:layout_weight="1"
+                        android:layout_marginStart="5dp"
+
+                        android:text="Preparando"
+                        android:textAllCaps="false"
+                        android:textSize="13sp"
+
+                        app:cornerRadius="12dp" />
+
+                </LinearLayout>
+
+
+                <!-- FILA 2 -->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginTop="8dp"
+
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnEnCamino"
+
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+
+                        android:layout_weight="1"
+                        android:layout_marginEnd="5dp"
+
+                        android:text="En camino"
+                        android:textAllCaps="false"
+                        android:textSize="13sp"
+
+                        app:cornerRadius="12dp" />
+
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnEntregado"
+
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+
+                        android:layout_weight="1"
+                        android:layout_marginStart="5dp"
+
+                        android:text="Entregado"
+                        android:textAllCaps="false"
+                        android:textSize="13sp"
+
+                        app:cornerRadius="12dp" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

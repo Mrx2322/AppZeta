@@ -1,8 +1,14 @@
 package com.example.appzetar.Menu
 
+import com.google.firebase.Timestamp
+
 data class PedidoAdmin(
 
     val id: String,
+
+    val numeroPedido: Long = 0L,
+
+    val fecha: Timestamp? = null,
 
     val nombreUsuario: String,
 
