@@ -23,7 +23,7 @@ class ActivityPedido : AppCompatActivity() {
     private lateinit var rvPedido: RecyclerView
     private lateinit var tvTotalProductos: TextView
     private lateinit var tvTotalPedido: TextView
-    private lateinit var tvMensajeVacio: TextView
+    private lateinit var tvMensajeVacio: View
     private lateinit var btnContinuar: MaterialButton
 
     private lateinit var pedidoAdapter: PedidoAdapter
