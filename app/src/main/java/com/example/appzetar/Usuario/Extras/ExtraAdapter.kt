@@ -10,156 +10,64 @@ import com.example.appzetar.R
 import java.util.Locale
 
 class ExtraAdapter(
-    private val extras: List<ExtraItem>,
+    extrasIniciales: List<ExtraItem>,
     private val onAgregarClick: (ExtraItem) -> Unit
 ) : RecyclerView.Adapter<ExtraAdapter.ExtraViewHolder>() {
 
-    // Lista que realmente se muestra
-    private var extrasVisibles =
-        extras.toList()
+    private var todosLosExtras = extrasIniciales.toList()
+    private var extrasVisibles = todosLosExtras.toList()
+    private var categoriaActual = 0
 
+    inner class ExtraViewHolder(itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
 
-// =========================================================
-// VIEW HOLDER
-// =========================================================
-
-    inner class ExtraViewHolder(
-        itemView: View
-    ) : RecyclerView.ViewHolder(itemView) {
-
-        private val imgExtra =
-            itemView.findViewById<ImageView>(
-                R.id.imgExtra
-            )
-
-        private val tvNombreExtra =
-            itemView.findViewById<TextView>(
-                R.id.tvNombreExtra
-            )
-
-        private val tvPrecioExtra =
-            itemView.findViewById<TextView>(
-                R.id.tvPrecioExtra
-            )
-
-        private val btnAgregarExtra =
-            itemView.findViewById<View>(
-                R.id.btnAgregarExtra
-            )
-
-
-        // =====================================================
-        // BIND
-        // =====================================================
+        private val imgExtra = itemView.findViewById<ImageView>(R.id.imgExtra)
+        private val tvNombreExtra = itemView.findViewById<TextView>(R.id.tvNombreExtra)
+        private val tvPrecioExtra = itemView.findViewById<TextView>(R.id.tvPrecioExtra)
+        private val btnAgregarExtra = itemView.findViewById<View>(R.id.btnAgregarExtra)
 
         fun bind(extra: ExtraItem) {
-
-            val imagen =
-                when (extra.categoriaId) {
-
-                    1 ->
-                        R.drawable.ic_gaseosa
-
-                    2 ->
-                        R.drawable.ic_torta
-
-                    else ->
-                        R.drawable.ic_plato
-                }
-
-            imgExtra.setImageResource(
-                imagen
+            imgExtra.setImageResource(extra.icono)
+            tvNombreExtra.text = extra.nombre
+            tvPrecioExtra.text = String.format(
+                Locale.US,
+                "S/ %.2f",
+                extra.precio
             )
 
-            tvNombreExtra.text =
-                extra.nombre
-
-            tvPrecioExtra.text =
-                String.format(
-                    Locale.US,
-                    "S/ %.2f",
-                    extra.precio
-                )
-
             btnAgregarExtra.setOnClickListener {
-
-                onAgregarClick(
-                    extra
-                )
+                onAgregarClick(extra)
             }
         }
     }
 
-
-// =========================================================
-// CREAR VIEW HOLDER
-// =========================================================
-
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): ExtraViewHolder {
-
-        val view =
-            LayoutInflater.from(
-                parent.context
-            ).inflate(
-                R.layout.item_extra,
-                parent,
-                false
-            )
-
-        return ExtraViewHolder(
-            view
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExtraViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(
+            R.layout.item_extra,
+            parent,
+            false
         )
+        return ExtraViewHolder(view)
     }
 
-
-// =========================================================
-// VINCULAR DATOS
-// =========================================================
-
-    override fun onBindViewHolder(
-        holder: ExtraViewHolder,
-        position: Int
-    ) {
-
-        holder.bind(
-            extrasVisibles[position]
-        )
+    override fun onBindViewHolder(holder: ExtraViewHolder, position: Int) {
+        holder.bind(extrasVisibles[position])
     }
 
+    override fun getItemCount(): Int = extrasVisibles.size
 
-// =========================================================
-// CANTIDAD
-// =========================================================
+    fun actualizarExtras(nuevosExtras: List<ExtraItem>, categoriaId: Int = categoriaActual) {
+        todosLosExtras = nuevosExtras.toList()
+        filtrarPorCategoria(categoriaId)
+    }
 
-    override fun getItemCount(): Int =
-        extrasVisibles.size
-
-
-// =========================================================
-// FILTRAR POR CATEGORÍA
-// =========================================================
-
-    fun filtrarPorCategoria(
-        categoriaId: Int
-    ) {
-
-        extrasVisibles =
-            if (categoriaId == 0) {
-
-                // 0 = TODOS
-                extras.toList()
-
-            } else {
-
-                extras.filter {
-                    it.categoriaId == categoriaId
-                }
-            }
-
+    fun filtrarPorCategoria(categoriaId: Int) {
+        categoriaActual = categoriaId
+        extrasVisibles = if (categoriaId == 0) {
+            todosLosExtras.toList()
+        } else {
+            todosLosExtras.filter { it.categoriaId == categoriaId }
+        }
         notifyDataSetChanged()
     }
-
 }
