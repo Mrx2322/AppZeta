@@ -1,9 +1,11 @@
 package com.example.appzetar.Usuario
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -15,6 +17,10 @@ import com.example.appzetar.R
 
 class ActivityResumenPedido : AppCompatActivity() {
 
+    // =========================================================
+    // COMPONENTES
+    // =========================================================
+
     private lateinit var rvResumenPedido: RecyclerView
     private lateinit var tvNombreCliente: TextView
     private lateinit var tvTelefonoCliente: TextView
@@ -25,10 +31,18 @@ class ActivityResumenPedido : AppCompatActivity() {
 
     private lateinit var resumenAdapter: PedidoResumenAdapter
 
+    // =========================================================
+    // DATOS RECIBIDOS
+    // =========================================================
+
     private var nombre = ""
     private var telefono = ""
     private var direccion = ""
     private var observacion = ""
+
+    // =========================================================
+    // ON CREATE
+    // =========================================================
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,16 +56,27 @@ class ActivityResumenPedido : AppCompatActivity() {
 
         setContentView(R.layout.activity_resumen_pedido)
 
+        aplicarInsets()
+        obtenerDatos()
+        initComponent()
+        initUI()
+    }
+
+    // =========================================================
+    // BARRAS DEL SISTEMA
+    // =========================================================
+
+    private fun aplicarInsets() {
+
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
-        ) { v, insets ->
+        ) { view, insets ->
 
-            val systemBars =
-                insets.getInsets(
-                    WindowInsetsCompat.Type.systemBars()
-                )
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+            )
 
-            v.setPadding(
+            view.setPadding(
                 systemBars.left,
                 systemBars.top,
                 systemBars.right,
@@ -60,34 +85,38 @@ class ActivityResumenPedido : AppCompatActivity() {
 
             insets
         }
-
-        obtenerDatos()
-        initComponent()
-        initUI()
     }
 
-    // ---------------------------------------------------------
-    // DATOS RECIBIDOS
-    // ---------------------------------------------------------
+    // =========================================================
+    // OBTENER DATOS
+    // =========================================================
 
     private fun obtenerDatos() {
 
         nombre =
-            intent.getStringExtra("nombre") ?: ""
+            intent.getStringExtra("nombre")
+                ?.trim()
+                .orEmpty()
 
         telefono =
-            intent.getStringExtra("telefono") ?: ""
+            intent.getStringExtra("telefono")
+                ?.trim()
+                .orEmpty()
 
         direccion =
-            intent.getStringExtra("direccion") ?: ""
+            intent.getStringExtra("direccion")
+                ?.trim()
+                .orEmpty()
 
         observacion =
-            intent.getStringExtra("observacion") ?: ""
+            intent.getStringExtra("observacion")
+                ?.trim()
+                .orEmpty()
     }
 
-    // ---------------------------------------------------------
+    // =========================================================
     // COMPONENTES
-    // ---------------------------------------------------------
+    // =========================================================
 
     private fun initComponent() {
 
@@ -113,11 +142,23 @@ class ActivityResumenPedido : AppCompatActivity() {
             findViewById(R.id.btnConfirmarPedido)
     }
 
-    // ---------------------------------------------------------
-    // UI
-    // ---------------------------------------------------------
+    // =========================================================
+    // INTERFAZ
+    // =========================================================
 
     private fun initUI() {
+
+        mostrarDatosCliente()
+        configurarListaPedido()
+        mostrarCantidadProductos()
+        configurarBotonConfirmar()
+    }
+
+    // =========================================================
+    // MOSTRAR DATOS DEL CLIENTE
+    // =========================================================
+
+    private fun mostrarDatosCliente() {
 
         tvNombreCliente.text =
             nombre
@@ -128,7 +169,7 @@ class ActivityResumenPedido : AppCompatActivity() {
         tvDireccionCliente.text =
             direccion
 
-        if (observacion.isEmpty()) {
+        if (observacion.isBlank()) {
 
             tvObservacionCliente.visibility =
                 View.GONE
@@ -141,56 +182,91 @@ class ActivityResumenPedido : AppCompatActivity() {
             tvObservacionCliente.text =
                 observacion
         }
+    }
 
-        // -----------------------------------------------------
-        // LISTA DEL PEDIDO
-        // -----------------------------------------------------
+    // =========================================================
+    // LISTA DEL PEDIDO
+    // =========================================================
+
+    private fun configurarListaPedido() {
 
         resumenAdapter =
             PedidoResumenAdapter(
                 PedidoManager.pedido
             )
 
-        rvResumenPedido.layoutManager =
-            LinearLayoutManager(this)
+        rvResumenPedido.apply {
 
-        rvResumenPedido.adapter =
-            resumenAdapter
+            layoutManager =
+                LinearLayoutManager(
+                    this@ActivityResumenPedido
+                )
 
-        // -----------------------------------------------------
-        // TOTAL
-        // -----------------------------------------------------
+            adapter =
+                resumenAdapter
+        }
+    }
+
+    // =========================================================
+    // CANTIDAD TOTAL
+    // =========================================================
+
+    private fun mostrarCantidadProductos() {
 
         val cantidad =
             PedidoManager.cantidadTotal()
 
         tvTotalProductos.text =
-            "$cantidad productos"
+            if (cantidad == 1) {
+                "1 producto"
+            } else {
+                "$cantidad productos"
+            }
+    }
 
-        // -----------------------------------------------------
-        // CONFIRMAR
-        // -----------------------------------------------------
+    // =========================================================
+    // BOTÓN CONFIRMAR
+    // =========================================================
+
+    private fun configurarBotonConfirmar() {
 
         btnConfirmarPedido.setOnClickListener {
-
             confirmarPedido()
         }
     }
 
-    // ---------------------------------------------------------
-    // CONFIRMAR PEDIDO
-    // ---------------------------------------------------------
+    // =========================================================
+    // CONTINUAR A LA CONFIRMACIÓN FINAL
+    // =========================================================
 
     private fun confirmarPedido() {
 
         if (PedidoManager.pedido.isEmpty()) {
+
+            Toast.makeText(
+                this,
+                "El carrito está vacío",
+                Toast.LENGTH_SHORT
+            ).show()
+
             return
         }
 
-        android.widget.Toast.makeText(
+        val intent = Intent(
             this,
-            "Pedido listo para enviar",
-            android.widget.Toast.LENGTH_SHORT
-        ).show()
+            ActivityConfirmarPedido::class.java
+        ).apply {
+
+            putExtra("nombre", nombre)
+            putExtra("telefono", telefono)
+            putExtra("direccion", direccion)
+            putExtra("observacion", observacion)
+
+            // Opciones activas actualmente
+            putExtra("tipoEntrega", "Delivery")
+            putExtra("metodoPago", "Contra entrega")
+        }
+
+        startActivity(intent)
     }
 }

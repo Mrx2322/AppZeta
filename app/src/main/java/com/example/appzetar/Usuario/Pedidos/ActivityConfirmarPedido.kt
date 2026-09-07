@@ -30,14 +30,12 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     private val db =
         FirebaseFirestore.getInstance()
 
-
     // =========================================================
     // COMPONENTES
     // =========================================================
 
     private lateinit var tvNombreUsuario: TextView
     private lateinit var tvCorreoUsuario: TextView
-
     private lateinit var tvResumenProductos: TextView
     private lateinit var tvTotalPedido: TextView
 
@@ -48,15 +46,16 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     private lateinit var tvDireccion: TextView
     private lateinit var tvReferencia: TextView
     private lateinit var tvTelefono: TextView
-
     private lateinit var tvMetodoPago: TextView
 
     private lateinit var btnContinuarPago: MaterialButton
 
+    // =========================================================
+    // DATOS DEL PEDIDO
+    // =========================================================
 
-    // =========================================================
-    // DATOS RECIBIDOS
-    // =========================================================
+    private var nombreUsuario =
+        ""
 
     private var tipoEntrega =
         "Delivery"
@@ -73,31 +72,17 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     private var telefono =
         ""
 
-
-    // =========================================================
-    // DATOS DEL USUARIO
-    // =========================================================
-
-    private var nombreUsuario =
-        "Cliente"
-
-
-    // =========================================================
-    // CONTROL
-    // =========================================================
+    private var observacion =
+        ""
 
     private var confirmandoPedido =
         false
-
 
     // =========================================================
     // ON CREATE
     // =========================================================
 
-    override fun onCreate(
-        savedInstanceState: Bundle?
-    ) {
-
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
@@ -111,16 +96,31 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             R.layout.activity_confirmar_pedido
         )
 
+        aplicarInsets()
+        initComponent()
+        recibirDatos()
+        cargarDatosUsuario()
+        cargarResumenPedido()
+        mostrarDatosEntrega()
+        configurarEntrega()
+        configurarBoton()
+    }
+
+    // =========================================================
+    // INSETS
+    // =========================================================
+
+    private fun aplicarInsets() {
+
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
-        ) { v, insets ->
+        ) { view, insets ->
 
-            val systemBars =
-                insets.getInsets(
-                    WindowInsetsCompat.Type.systemBars()
-                )
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+            )
 
-            v.setPadding(
+            view.setPadding(
                 systemBars.left,
                 systemBars.top,
                 systemBars.right,
@@ -129,22 +129,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
             insets
         }
-
-        initComponent()
-
-        recibirDatos()
-
-        cargarDatosUsuario()
-
-        cargarResumenPedido()
-
-        mostrarDatosEntrega()
-
-        configurarEntrega()
-
-        configurarBoton()
     }
-
 
     // =========================================================
     // COMPONENTES
@@ -189,37 +174,52 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             findViewById(R.id.btnContinuarPago)
     }
 
-
     // =========================================================
     // RECIBIR DATOS
     // =========================================================
 
     private fun recibirDatos() {
 
-        tipoEntrega =
-            intent.getStringExtra("tipoEntrega")
-                ?: "Delivery"
-
-        metodoPago =
-            intent.getStringExtra("metodoPago")
-                ?: "Contra entrega"
-
-        direccion =
-            intent.getStringExtra("direccion")
-                ?: ""
-
-        referencia =
-            intent.getStringExtra("referencia")
-                ?: ""
+        nombreUsuario =
+            intent.getStringExtra("nombre")
+                ?.trim()
+                .orEmpty()
 
         telefono =
             intent.getStringExtra("telefono")
-                ?: ""
+                ?.trim()
+                .orEmpty()
+
+        direccion =
+            intent.getStringExtra("direccion")
+                ?.trim()
+                .orEmpty()
+
+        observacion =
+            intent.getStringExtra("observacion")
+                ?.trim()
+                .orEmpty()
+
+        referencia =
+            intent.getStringExtra("referencia")
+                ?.trim()
+                .orEmpty()
+
+        tipoEntrega =
+            intent.getStringExtra("tipoEntrega")
+                ?.trim()
+                .orEmpty()
+                .ifBlank {
+                    "Delivery"
+                }
+
+        // Único método habilitado actualmente
+        metodoPago =
+            "Contra entrega"
     }
 
-
     // =========================================================
-    // CARGAR USUARIO
+    // DATOS DEL USUARIO
     // =========================================================
 
     private fun cargarDatosUsuario() {
@@ -236,12 +236,19 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             ).show()
 
             finish()
-
             return
         }
 
         tvCorreoUsuario.text =
             usuario.email ?: "Sin correo"
+
+        if (nombreUsuario.isNotBlank()) {
+
+            tvNombreUsuario.text =
+                nombreUsuario
+
+            return
+        }
 
         db.collection("usuarios")
             .document(usuario.uid)
@@ -249,19 +256,12 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             .addOnSuccessListener { documento ->
 
                 nombreUsuario =
-                    if (documento.exists()) {
-
-                        documento.getString("nombre")
-                            ?: "Cliente"
-
-                    } else {
-
-                        "Cliente"
-                    }
-
-                if (nombreUsuario.isBlank()) {
-                    nombreUsuario = "Cliente"
-                }
+                    documento.getString("nombre")
+                        ?.trim()
+                        .orEmpty()
+                        .ifBlank {
+                            "Cliente"
+                        }
 
                 tvNombreUsuario.text =
                     nombreUsuario
@@ -272,13 +272,12 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     "Cliente"
 
                 tvNombreUsuario.text =
-                    "Cliente"
+                    nombreUsuario
             }
     }
 
-
     // =========================================================
-    // RESUMEN DEL PEDIDO
+    // RESUMEN
     // =========================================================
 
     private fun cargarResumenPedido() {
@@ -295,7 +294,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             ).show()
 
             finish()
-
             return
         }
 
@@ -310,78 +308,81 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             }
 
         val total =
-            pedido.sumOf {
-                it.precio * it.cantidad
+            pedido.sumOf { item ->
+                item.precio * item.cantidad
             }
 
         tvTotalPedido.text =
             "S/ %.2f".format(total)
     }
 
-
     // =========================================================
-    // MOSTRAR DATOS DE ENTREGA
+    // MOSTRAR ENTREGA
     // =========================================================
 
     private fun mostrarDatosEntrega() {
 
-        if (
-            tipoEntrega.equals(
-                "Delivery",
-                ignoreCase = true
-            )
-        ) {
+        if (tipoEntrega.equals("Delivery", ignoreCase = true)) {
 
             radioDelivery.isChecked =
                 true
 
-            tvDireccion.text =
-                if (direccion.isNotEmpty()) {
-                    direccion
-                } else {
-                    "No especificada"
-                }
-
-            tvReferencia.text =
-                if (referencia.isNotEmpty()) {
-                    referencia
-                } else {
-                    "Sin referencia"
-                }
-
-            tvTelefono.text =
-                if (telefono.isNotEmpty()) {
-                    telefono
-                } else {
-                    "No especificado"
-                }
+            mostrarDatosDelivery()
 
         } else {
 
             radioRecojo.isChecked =
                 true
 
-            tvDireccion.text =
-                "Recojo en tienda"
-
-            tvReferencia.text =
-                "No aplica"
-
-            tvTelefono.text =
-                if (telefono.isNotEmpty()) {
-                    telefono
-                } else {
-                    "No especificado"
-                }
+            mostrarDatosRecojo()
         }
 
         tvMetodoPago.text =
-            metodoPago
+            "Contra entrega"
     }
 
+    private fun mostrarDatosDelivery() {
+
+        tvDireccion.text =
+            direccion.ifBlank {
+                "No especificada"
+            }
+
+        /*
+         * Si todavía no tienes un campo separado para referencia,
+         * aquí se muestra la observación.
+         */
+        tvReferencia.text =
+            when {
+                referencia.isNotBlank() -> referencia
+                observacion.isNotBlank() -> observacion
+                else -> "Sin observaciones"
+            }
+
+        tvTelefono.text =
+            telefono.ifBlank {
+                "No especificado"
+            }
+    }
+
+    private fun mostrarDatosRecojo() {
+
+        tvDireccion.text =
+            "Recojo en tienda"
+
+        tvReferencia.text =
+            observacion.ifBlank {
+                "Sin observaciones"
+            }
+
+        tvTelefono.text =
+            telefono.ifBlank {
+                "No especificado"
+            }
+    }
 
     // =========================================================
-    // ENTREGA
+    // TIPO DE ENTREGA
     // =========================================================
 
     private fun configurarEntrega() {
@@ -397,26 +398,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     tipoEntrega =
                         "Delivery"
 
-                    tvDireccion.text =
-                        if (direccion.isNotEmpty()) {
-                            direccion
-                        } else {
-                            "No especificada"
-                        }
-
-                    tvReferencia.text =
-                        if (referencia.isNotEmpty()) {
-                            referencia
-                        } else {
-                            "Sin referencia"
-                        }
-
-                    tvTelefono.text =
-                        if (telefono.isNotEmpty()) {
-                            telefono
-                        } else {
-                            "No especificado"
-                        }
+                    mostrarDatosDelivery()
                 }
 
                 R.id.radioRecojo -> {
@@ -424,23 +406,11 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     tipoEntrega =
                         "Recojo en tienda"
 
-                    tvDireccion.text =
-                        "Recojo en tienda"
-
-                    tvReferencia.text =
-                        "No aplica"
-
-                    tvTelefono.text =
-                        if (telefono.isNotEmpty()) {
-                            telefono
-                        } else {
-                            "No especificado"
-                        }
+                    mostrarDatosRecojo()
                 }
             }
         }
     }
-
 
     // =========================================================
     // BOTÓN
@@ -450,12 +420,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
         btnContinuarPago.setOnClickListener {
 
-            if (!confirmandoPedido) {
-                confirmarPedido()
-            }
+            confirmarPedido()
         }
     }
-
 
     // =========================================================
     // CONFIRMAR PEDIDO
@@ -519,23 +486,10 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     "Recojo en tienda"
 
                 else ->
-                    ""
+                    return
             }
 
-        metodoPago =
-            "Contra entrega"
-
-
-        // =====================================================
-        // VALIDAR DELIVERY
-        // =====================================================
-
-        if (
-            tipoEntrega.equals(
-                "Delivery",
-                ignoreCase = true
-            )
-        ) {
+        if (tipoEntrega == "Delivery") {
 
             if (direccion.isBlank()) {
 
@@ -560,10 +514,51 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             }
         }
 
+        bloquearBoton()
 
-        // =====================================================
-        // BLOQUEAR BOTÓN
-        // =====================================================
+        val productos =
+            pedido.map { item ->
+
+                hashMapOf<String, Any>(
+                    "id" to item.id,
+                    "nombre" to item.nombre,
+                    "precio" to item.precio,
+                    "cantidad" to item.cantidad,
+                    "tipo" to item.tipo.name
+                )
+            }
+
+        val total =
+            pedido.sumOf { item ->
+                item.precio * item.cantidad
+            }
+
+        buscarReferenciasStock(
+            pedido = pedido,
+
+            onSuccess = { referencias ->
+
+                guardarPedidoYDescontarStock(
+                    usuarioId = usuario.uid,
+                    correo = usuario.email.orEmpty(),
+                    productos = productos,
+                    total = total,
+                    referenciasStock = referencias
+                )
+            },
+
+            onError = { exception ->
+
+                finalizarConError(exception)
+            }
+        )
+    }
+
+    // =========================================================
+    // BLOQUEAR BOTÓN
+    // =========================================================
+
+    private fun bloquearBoton() {
 
         confirmandoPedido =
             true
@@ -576,67 +571,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
         btnContinuarPago.text =
             "CONFIRMANDO..."
-
-
-        // =====================================================
-        // PRODUCTOS
-        // =====================================================
-
-        val productos =
-            pedido.map { item ->
-
-                hashMapOf<String, Any>(
-
-                    "id" to item.id,
-
-                    "nombre" to item.nombre,
-
-                    "precio" to item.precio,
-
-                    "cantidad" to item.cantidad,
-
-                    "tipo" to item.tipo.name
-                )
-            }
-
-
-        // =====================================================
-        // TOTAL
-        // =====================================================
-
-        val total =
-            pedido.sumOf {
-                it.precio * it.cantidad
-            }
-
-
-        // =====================================================
-        // BUSCAR STOCK
-        // =====================================================
-
-        buscarReferenciasStock(
-            pedido = pedido,
-
-            onSuccess = { referenciasStock ->
-
-                guardarPedidoYDescontarStock(
-                    usuarioId = usuario.uid,
-                    correo = usuario.email ?: "",
-                    productos = productos,
-                    total = total,
-                    referenciasStock = referenciasStock
-                )
-            },
-
-            onError = { exception ->
-
-                finalizarConError(
-                    exception
-                )
-            }
-        )
     }
-
 
     // =========================================================
     // BUSCAR REFERENCIAS DE STOCK
@@ -644,31 +579,23 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
     private fun buscarReferenciasStock(
         pedido: List<PedidoItem>,
-        onSuccess: (
-            Map<PedidoItem, DocumentReference>
-        ) -> Unit,
+        onSuccess: (Map<PedidoItem, DocumentReference>) -> Unit,
         onError: (Exception) -> Unit
     ) {
 
-        val referencias =
-            mutableMapOf<
-                    PedidoItem,
-                    DocumentReference
-                    >()
-
         val productosConStock =
-            pedido.filter {
+            pedido.filter { item ->
 
-                it.tipo == TipoPedido.MENU ||
-                        it.tipo == TipoPedido.ENTRADA
+                item.tipo == TipoPedido.MENU ||
+                        item.tipo == TipoPedido.ENTRADA
             }
+
+        val referencias =
+            mutableMapOf<PedidoItem, DocumentReference>()
 
         if (productosConStock.isEmpty()) {
 
-            onSuccess(
-                referencias
-            )
-
+            onSuccess(referencias)
             return
         }
 
@@ -681,30 +608,21 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         )
     }
 
-
     // =========================================================
-    // BUSCAR REFERENCIA RECURSIVAMENTE
+    // BÚSQUEDA RECURSIVA
     // =========================================================
 
     private fun buscarReferenciaRecursiva(
         productos: List<PedidoItem>,
         posicion: Int,
-        referencias: MutableMap<
-                PedidoItem,
-                DocumentReference
-                >,
-        onSuccess: (
-            Map<PedidoItem, DocumentReference>
-        ) -> Unit,
+        referencias: MutableMap<PedidoItem, DocumentReference>,
+        onSuccess: (Map<PedidoItem, DocumentReference>) -> Unit,
         onError: (Exception) -> Unit
     ) {
 
         if (posicion >= productos.size) {
 
-            onSuccess(
-                referencias
-            )
-
+            onSuccess(referencias)
             return
         }
 
@@ -724,7 +642,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     ""
             }
 
-        if (coleccion.isEmpty()) {
+        if (coleccion.isBlank()) {
 
             buscarReferenciaRecursiva(
                 productos = productos,
@@ -738,10 +656,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         }
 
         db.collection(coleccion)
-            .whereEqualTo(
-                "id",
-                item.id
-            )
+            .whereEqualTo("id", item.id)
             .limit(1)
             .get()
             .addOnSuccessListener { resultado ->
@@ -750,20 +665,17 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
                     onError(
                         IllegalStateException(
-                            "No se encontró '${item.nombre}' " +
-                                    "en la colección '$coleccion' " +
-                                    "con id ${item.id}."
+                            "No se encontró '${item.nombre}' en $coleccion."
                         )
                     )
 
                     return@addOnSuccessListener
                 }
 
-                val documento =
-                    resultado.documents.first()
-
                 referencias[item] =
-                    documento.reference
+                    resultado.documents
+                        .first()
+                        .reference
 
                 buscarReferenciaRecursiva(
                     productos = productos,
@@ -775,15 +687,12 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             }
             .addOnFailureListener { exception ->
 
-                onError(
-                    exception
-                )
+                onError(exception)
             }
     }
 
-
     // =========================================================
-    // GUARDAR PEDIDO + STOCK + NÚMERO DE PEDIDO
+    // GUARDAR PEDIDO Y DESCONTAR STOCK
     // =========================================================
 
     private fun guardarPedidoYDescontarStock(
@@ -791,10 +700,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         correo: String,
         productos: List<HashMap<String, Any>>,
         total: Double,
-        referenciasStock: Map<
-                PedidoItem,
-                DocumentReference
-                >
+        referenciasStock: Map<PedidoItem, DocumentReference>
     ) {
 
         val referenciaPedido =
@@ -805,59 +711,26 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             db.collection("configuracion")
                 .document("contadorPedidos")
 
-
         db.runTransaction { transaction ->
 
-            // =================================================
-            // OBTENER CONTADOR
-            // =================================================
-
             val contadorSnapshot =
-                transaction.get(
-                    contadorReferencia
-                )
+                transaction.get(contadorReferencia)
 
             val ultimoNumero =
-                if (contadorSnapshot.exists()) {
-
-                    contadorSnapshot.getLong(
-                        "ultimoNumero"
-                    ) ?: 0L
-
-                } else {
-
-                    0L
-                }
+                contadorSnapshot.getLong("ultimoNumero")
+                    ?: 0L
 
             val numeroPedido =
                 ultimoNumero + 1
 
-
-            // =================================================
-            // LEER STOCK
-            // =================================================
-
             val stocksActuales =
-                mutableMapOf<
-                        PedidoItem,
-                        Long
-                        >()
+                mutableMapOf<PedidoItem, Long>()
 
-            for (
-            entrada
-            in referenciasStock.entries
-            ) {
-
-                val item =
-                    entrada.key
-
-                val referencia =
-                    entrada.value
+            // Primero se realizan todas las lecturas.
+            for ((item, referenciaStock) in referenciasStock) {
 
                 val snapshot =
-                    transaction.get(
-                        referencia
-                    )
+                    transaction.get(referenciaStock)
 
                 if (!snapshot.exists()) {
 
@@ -866,27 +739,11 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     )
                 }
 
-                val stockValue =
-                    snapshot.getLong(
-                        "stock"
-                    )
-
-                if (stockValue == null) {
-
-                    throw IllegalStateException(
-                        "El producto '${item.nombre}' no tiene un stock válido en Firebase."
-                    )
-                }
-
                 val stock =
-                    stockValue
-
-                if (stock < 0) {
-
-                    throw IllegalStateException(
-                        "El stock de '${item.nombre}' no es válido."
-                    )
-                }
+                    snapshot.getLong("stock")
+                        ?: throw IllegalStateException(
+                            "El producto '${item.nombre}' no tiene un stock válido."
+                        )
 
                 if (stock < item.cantidad) {
 
@@ -899,89 +756,64 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     stock
             }
 
-
-            // =================================================
-            // DESCONTAR STOCK
-            // =================================================
-
-            for (
-            entrada
-            in referenciasStock.entries
-            ) {
-
-                val item =
-                    entrada.key
-
-                val referencia =
-                    entrada.value
+            // Después se realizan las escrituras.
+            for ((item, referenciaStock) in referenciasStock) {
 
                 val stockActual =
                     stocksActuales[item]
                         ?: 0L
 
                 val nuevoStock =
-                    stockActual -
-                            item.cantidad
+                    stockActual - item.cantidad
 
                 transaction.update(
-                    referencia,
+                    referenciaStock,
                     "stock",
                     nuevoStock
                 )
             }
 
-
-            // =================================================
-            // DATOS DEL PEDIDO
-            // =================================================
-
             val datosPedido =
                 hashMapOf<String, Any>(
 
                     "numeroPedido" to numeroPedido,
-
                     "usuarioId" to usuarioId,
 
-                    "nombreUsuario" to nombreUsuario,
+                    "nombreUsuario" to
+                            nombreUsuario.ifBlank {
+                                "Cliente"
+                            },
 
                     "correo" to correo,
-
                     "productos" to productos,
-
                     "total" to total,
 
                     "tipoEntrega" to tipoEntrega,
 
-                    "direccion" to direccion,
+                    "direccion" to
+                            if (tipoEntrega == "Delivery") {
+                                direccion
+                            } else {
+                                "Recojo en tienda"
+                            },
 
                     "referencia" to referencia,
-
                     "telefono" to telefono,
+                    "observacion" to observacion,
 
+                    // Único método disponible actualmente
                     "metodoPago" to "Contra entrega",
-
                     "estadoPago" to "Pendiente",
-
                     "estadoPedido" to "Pendiente",
 
                     "fecha" to
                             FieldValue.serverTimestamp()
                 )
 
-
-            // =================================================
-            // GUARDAR PEDIDO
-            // =================================================
-
             transaction.set(
                 referenciaPedido,
                 datosPedido
             )
-
-
-            // =================================================
-            // ACTUALIZAR CONTADOR
-            // =================================================
 
             transaction.set(
                 contadorReferencia,
@@ -989,7 +821,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     "ultimoNumero" to numeroPedido
                 )
             )
-
         }
             .addOnSuccessListener {
 
@@ -997,12 +828,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             }
             .addOnFailureListener { exception ->
 
-                finalizarConError(
-                    exception
-                )
+                finalizarConError(exception)
             }
     }
-
 
     // =========================================================
     // PEDIDO CONFIRMADO
@@ -1018,31 +846,25 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             Toast.LENGTH_LONG
         ).show()
 
-        val intent =
-            Intent(
-                this,
-                ActivityMenuUsuario::class.java
-            )
+        val intent = Intent(
+            this,
+            ActivityMenuUsuario::class.java
+        ).apply {
 
-        intent.flags =
-            Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK
+            flags =
+                Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
 
-        startActivity(
-            intent
-        )
-
+        startActivity(intent)
         finish()
     }
 
-
     // =========================================================
-    // ERROR
+    // MANEJO DE ERRORES
     // =========================================================
 
-    private fun finalizarConError(
-        exception: Exception
-    ) {
+    private fun finalizarConError(exception: Exception) {
 
         confirmandoPedido =
             false
@@ -1056,49 +878,37 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         btnContinuarPago.text =
             "CONFIRMAR PEDIDO"
 
-
         val mensaje =
-            when {
+            if (
+                exception.message
+                    ?.startsWith("SIN_STOCK:") == true
+            ) {
+
+                val partes =
+                    exception.message
+                        ?.split(":")
+
+                val producto =
+                    partes?.getOrNull(1)
+                        ?: "este producto"
+
+                val disponible =
+                    partes?.getOrNull(2)
+                        ?: "0"
+
+                val solicitado =
+                    partes?.getOrNull(3)
+                        ?: "0"
+
+                "No hay stock suficiente de $producto. " +
+                        "Disponible: $disponible. " +
+                        "Solicitado: $solicitado."
+
+            } else {
 
                 exception.message
-                    ?.startsWith(
-                        "SIN_STOCK:"
-                    ) == true -> {
-
-                    val partes =
-                        exception.message
-                            ?.split(":")
-
-                    val nombre =
-                        partes?.getOrNull(1)
-                            ?: "este producto"
-
-                    val stockActual =
-                        partes?.getOrNull(2)
-                            ?: "0"
-
-                    val cantidadSolicitada =
-                        partes?.getOrNull(3)
-                            ?: "0"
-
-                    "No hay stock suficiente de $nombre. " +
-                            "Disponible: $stockActual. " +
-                            "Solicitado: $cantidadSolicitada."
-                }
-
-                exception is IllegalStateException -> {
-
-                    exception.message
-                        ?: "No se pudo confirmar el pedido."
-                }
-
-                else -> {
-
-                    "No se pudo confirmar el pedido. " +
-                            "Inténtalo nuevamente."
-                }
+                    ?: "No se pudo confirmar el pedido. Inténtalo nuevamente."
             }
-
 
         Toast.makeText(
             this,
