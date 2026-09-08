@@ -1,6 +1,8 @@
 package com.example.appzetar.Usuario
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
@@ -28,6 +30,9 @@ class ActivityPedidosUsuario : AppCompatActivity() {
     private val auth =
         FirebaseAuth.getInstance()
 
+    private var pedidosListener:
+            ListenerRegistration? = null
+
     // =========================================================
     // COMPONENTES
     // =========================================================
@@ -41,17 +46,35 @@ class ActivityPedidosUsuario : AppCompatActivity() {
     // ADAPTER Y LISTA
     // =========================================================
 
-    private lateinit var pedidoAdapter: PedidoUsuarioAdapter
+    private lateinit var pedidoAdapter:
+            PedidoUsuarioAdapter
 
     private val listaPedidos =
         mutableListOf<PedidoUsuarioItem>()
 
     // =========================================================
-    // LISTENER
+    // CONTROL DE VISIBILIDAD
     // =========================================================
 
-    private var pedidosListener:
-            ListenerRegistration? = null
+    private val handler =
+        Handler(Looper.getMainLooper())
+
+    private val intervaloRevision =
+        60_000L
+
+    private val revisarPedidosRunnable =
+        object : Runnable {
+
+            override fun run() {
+
+                revisarPedidosVisibles()
+
+                handler.postDelayed(
+                    this,
+                    intervaloRevision
+                )
+            }
+        }
 
     // =========================================================
     // ON CREATE
@@ -192,6 +215,9 @@ class ActivityPedidosUsuario : AppCompatActivity() {
 
                     listaPedidos.clear()
 
+                    val ahora =
+                        System.currentTimeMillis()
+
                     for (documento in resultado.documents) {
 
                         val pedido =
@@ -199,25 +225,23 @@ class ActivityPedidosUsuario : AppCompatActivity() {
                                 documento
                             )
 
-                        listaPedidos.add(
-                            pedido
-                        )
+                        /*
+                         * Solo se agrega si todavía debe
+                         * aparecer en la pantalla del cliente.
+                         */
+                        if (pedido.debeMostrarse(ahora)) {
+
+                            listaPedidos.add(
+                                pedido
+                            )
+                        }
                     }
 
                     listaPedidos.sortByDescending { pedido ->
                         pedido.fecha
                     }
 
-                    pedidoAdapter.actualizarPedidos(
-                        listaPedidos
-                    )
-
-                    actualizarEstadoPantalla()
-
-                    Log.d(
-                        "PEDIDOS_USUARIO",
-                        "Pedidos cargados: ${listaPedidos.size}"
-                    )
+                    actualizarLista()
                 }
     }
 
@@ -256,7 +280,22 @@ class ActivityPedidosUsuario : AppCompatActivity() {
                 ?: 0.0
 
         val fecha =
-            obtenerFecha(documento)
+            obtenerTimestamp(
+                documento = documento,
+                campo = "fecha"
+            )
+
+        val fechaEntrega =
+            obtenerTimestamp(
+                documento = documento,
+                campo = "fechaEntrega"
+            )
+
+        val fechaActualizacion =
+            obtenerTimestamp(
+                documento = documento,
+                campo = "fechaActualizacion"
+            )
 
         Log.d(
             "PEDIDOS_USUARIO",
@@ -283,23 +322,75 @@ class ActivityPedidosUsuario : AppCompatActivity() {
                 total,
 
             fecha =
-                fecha
+                fecha,
+
+            fechaEntrega =
+                fechaEntrega,
+
+            fechaActualizacion =
+                fechaActualizacion
         )
     }
 
     // =========================================================
-    // OBTENER FECHA
+    // OBTENER TIMESTAMP
     // =========================================================
 
-    private fun obtenerFecha(
-        documento: DocumentSnapshot
+    private fun obtenerTimestamp(
+        documento: DocumentSnapshot,
+        campo: String
     ): Long {
 
         return documento
-            .getTimestamp("fecha")
+            .getTimestamp(campo)
             ?.toDate()
             ?.time
             ?: 0L
+    }
+
+    // =========================================================
+    // REVISIÓN AUTOMÁTICA
+    // =========================================================
+
+    private fun revisarPedidosVisibles() {
+
+        if (listaPedidos.isEmpty()) {
+            return
+        }
+
+        val ahora =
+            System.currentTimeMillis()
+
+        val seEliminoAlgunPedido =
+            listaPedidos.removeAll { pedido ->
+
+                !pedido.debeMostrarse(
+                    ahora
+                )
+            }
+
+        if (seEliminoAlgunPedido) {
+
+            actualizarLista()
+
+            Log.d(
+                "PEDIDOS_USUARIO",
+                "Se ocultaron pedidos vencidos"
+            )
+        }
+    }
+
+    // =========================================================
+    // ACTUALIZAR LISTA
+    // =========================================================
+
+    private fun actualizarLista() {
+
+        pedidoAdapter.actualizarPedidos(
+            listaPedidos
+        )
+
+        actualizarEstadoPantalla()
     }
 
     // =========================================================
@@ -319,6 +410,9 @@ class ActivityPedidosUsuario : AppCompatActivity() {
     }
 
     private fun actualizarEstadoPantalla() {
+
+        progressBarPedidos.visibility =
+            View.GONE
 
         if (listaPedidos.isEmpty()) {
 
@@ -363,6 +457,14 @@ class ActivityPedidosUsuario : AppCompatActivity() {
         super.onStart()
 
         escucharPedidos()
+
+        handler.removeCallbacks(
+            revisarPedidosRunnable
+        )
+
+        handler.post(
+            revisarPedidosRunnable
+        )
     }
 
     override fun onStop() {
@@ -371,6 +473,10 @@ class ActivityPedidosUsuario : AppCompatActivity() {
 
         pedidosListener =
             null
+
+        handler.removeCallbacks(
+            revisarPedidosRunnable
+        )
 
         super.onStop()
     }

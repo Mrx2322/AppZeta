@@ -12,9 +12,24 @@ data class PedidoUsuarioItem(
 
     val total: Double = 0.0,
 
-    val fecha: Long = 0L
+    val fecha: Long = 0L,
+
+    val fechaEntrega: Long = 0L,
+
+    val fechaActualizacion: Long = 0L
 
 ) {
+
+    companion object {
+
+        // Dos horas
+        private const val TIEMPO_VISIBLE_ENTREGADO =
+            2L * 60L * 60L * 1000L
+
+        // Una hora
+        private const val TIEMPO_VISIBLE_CANCELADO =
+            1L * 60L * 60L * 1000L
+    }
 
     // =========================================================
     // NÚMERO FORMATEADO
@@ -36,7 +51,7 @@ data class PedidoUsuarioItem(
     }
 
     // =========================================================
-    // VALIDAR TIPO DE ENTREGA
+    // TIPO DE ENTREGA
     // =========================================================
 
     fun esDelivery(): Boolean {
@@ -90,7 +105,7 @@ data class PedidoUsuarioItem(
     }
 
     // =========================================================
-    // POSICIÓN DEL PROGRESO
+    // POSICIÓN DEL ESTADO
     // =========================================================
 
     fun posicionEstado(): Int {
@@ -118,6 +133,62 @@ data class PedidoUsuarioItem(
 
             else ->
                 0
+        }
+    }
+
+    // =========================================================
+    // VISIBILIDAD PARA EL CLIENTE
+    // =========================================================
+
+    fun debeMostrarse(
+        ahora: Long = System.currentTimeMillis()
+    ): Boolean {
+
+        return when (estadoNormalizado()) {
+
+            "Entregado" -> {
+
+                /*
+                 * Los pedidos antiguos que no tengan
+                 * fechaEntrega no se mostrarán.
+                 */
+                if (fechaEntrega <= 0L) {
+
+                    false
+
+                } else {
+
+                    val tiempoTranscurrido =
+                        ahora - fechaEntrega
+
+                    tiempoTranscurrido <
+                            TIEMPO_VISIBLE_ENTREGADO
+                }
+            }
+
+            "Cancelado" -> {
+
+                if (fechaActualizacion <= 0L) {
+
+                    false
+
+                } else {
+
+                    val tiempoTranscurrido =
+                        ahora - fechaActualizacion
+
+                    tiempoTranscurrido <
+                            TIEMPO_VISIBLE_CANCELADO
+                }
+            }
+
+            else -> {
+
+                /*
+                 * Los pedidos activos siempre aparecen.
+                 */
+                true
+            }
         }
     }
 }
