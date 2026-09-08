@@ -240,139 +240,128 @@
             android:textStyle="bold" />
 
 
-        <!-- =====================================================
-             CAMBIAR ESTADO
-             ===================================================== -->
+        <!-- ===================================================== -->
+        <!-- CAMBIAR ESTADO DEL PEDIDO -->
+        <!-- ===================================================== -->
 
         <LinearLayout
             android:id="@+id/layoutCambiarEstado"
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:orientation="vertical">
-
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="14dp"
-
                 android:background="#EEEEEE" />
 
-
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
-                android:text="Cambiar estado del pedido"
+                android:text="Avance del pedido"
                 android:textColor="#333333"
-                android:textSize="14sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Solo puedes seleccionar el siguiente estado"
+                android:textColor="#888888"
+                android:textSize="12sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
-                android:layout_marginTop="10dp"
-
+                android:layout_marginTop="12dp"
                 android:orientation="vertical">
 
-
-                <!-- FILA 1 -->
+                <!-- ================================================= -->
+                <!-- PRIMERA FILA -->
+                <!-- ================================================= -->
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:orientation="horizontal"
                     android:weightSum="2">
 
-
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnPendiente"
-
+                        android:id="@+id/btnConfirmado"
                         android:layout_width="0dp"
                         android:layout_height="52dp"
-
-                        android:layout_weight="1"
                         android:layout_marginEnd="5dp"
-
-                        android:text="Pendiente"
+                        android:layout_weight="1"
+                        android:minHeight="48dp"
+                        android:text="Confirmado"
                         android:textAllCaps="false"
+                        android:textColor="#FFFFFF"
                         android:textSize="13sp"
-
-                        app:cornerRadius="12dp" />
-
+                        app:backgroundTint="#E87520"
+                        app:cornerRadius="14dp"
+                        app:rippleColor="#40FFFFFF" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnPreparando"
-
                         android:layout_width="0dp"
                         android:layout_height="52dp"
-
-                        android:layout_weight="1"
                         android:layout_marginStart="5dp"
-
-                        android:text="Preparando"
+                        android:layout_weight="1"
+                        android:minHeight="48dp"
+                        android:text="En preparación"
                         android:textAllCaps="false"
+                        android:textColor="#FFFFFF"
                         android:textSize="13sp"
-
-                        app:cornerRadius="12dp" />
-
+                        app:backgroundTint="#E87520"
+                        app:cornerRadius="14dp"
+                        app:rippleColor="#40FFFFFF" />
                 </LinearLayout>
 
-
-                <!-- FILA 2 -->
+                <!-- ================================================= -->
+                <!-- SEGUNDA FILA -->
+                <!-- ================================================= -->
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
-                    android:layout_marginTop="8dp"
-
+                    android:layout_marginTop="9dp"
                     android:orientation="horizontal"
                     android:weightSum="2">
 
-
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnEnCamino"
-
                         android:layout_width="0dp"
                         android:layout_height="52dp"
-
-                        android:layout_weight="1"
                         android:layout_marginEnd="5dp"
-
+                        android:layout_weight="1"
+                        android:minHeight="48dp"
                         android:text="En camino"
                         android:textAllCaps="false"
+                        android:textColor="#FFFFFF"
                         android:textSize="13sp"
-
-                        app:cornerRadius="12dp" />
-
+                        app:backgroundTint="#E87520"
+                        app:cornerRadius="14dp"
+                        app:rippleColor="#40FFFFFF" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnEntregado"
-
                         android:layout_width="0dp"
                         android:layout_height="52dp"
-
-                        android:layout_weight="1"
                         android:layout_marginStart="5dp"
-
+                        android:layout_weight="1"
+                        android:minHeight="48dp"
                         android:text="Entregado"
                         android:textAllCaps="false"
+                        android:textColor="#FFFFFF"
                         android:textSize="13sp"
-
-                        app:cornerRadius="12dp" />
-
+                        app:backgroundTint="#2E7D32"
+                        app:cornerRadius="14dp"
+                        app:rippleColor="#40FFFFFF" />
                 </LinearLayout>
-
             </LinearLayout>
-
         </LinearLayout>
 
     </LinearLayout>

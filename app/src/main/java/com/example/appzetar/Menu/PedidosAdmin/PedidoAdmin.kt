@@ -31,4 +31,14 @@ data class PedidoAdmin(
     val estadoPedido: String,
 
     val productos: List<Map<String, Any>>
-)
+
+) {
+
+    fun esDelivery(): Boolean {
+
+        return tipoEntrega.equals(
+            "Delivery",
+            ignoreCase = true
+        )
+    }
+}

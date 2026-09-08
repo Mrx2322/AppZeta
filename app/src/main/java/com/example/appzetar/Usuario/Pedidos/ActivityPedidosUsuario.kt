@@ -28,7 +28,6 @@ class ActivityPedidosUsuario : AppCompatActivity() {
     private val auth =
         FirebaseAuth.getInstance()
 
-
     // =========================================================
     // COMPONENTES
     // =========================================================
@@ -38,83 +37,56 @@ class ActivityPedidosUsuario : AppCompatActivity() {
     private lateinit var layoutSinPedidos: LinearLayout
     private lateinit var btnVolver: ImageButton
 
-
     // =========================================================
-    // ADAPTER
+    // ADAPTER Y LISTA
     // =========================================================
 
     private lateinit var pedidoAdapter: PedidoUsuarioAdapter
 
-
-    // =========================================================
-    // LISTA
-    // =========================================================
-
     private val listaPedidos =
         mutableListOf<PedidoUsuarioItem>()
 
-
     // =========================================================
-    // LISTENER FIRESTORE
+    // LISTENER
     // =========================================================
 
     private var pedidosListener:
             ListenerRegistration? = null
 
-
     // =========================================================
     // ON CREATE
     // =========================================================
 
-    override fun onCreate(
-        savedInstanceState: Bundle?
-    ) {
-
-        super.onCreate(
-            savedInstanceState
-        )
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         setContentView(
             R.layout.activity_pedidos_usuario
         )
 
         inicializarComponentes()
-
         configurarRecyclerView()
-
         configurarBotonVolver()
-
-        escucharPedidos()
     }
 
-
     // =========================================================
-    // INICIALIZAR COMPONENTES
+    // COMPONENTES
     // =========================================================
 
     private fun inicializarComponentes() {
 
         rvPedidos =
-            findViewById(
-                R.id.rvPedidos
-            )
+            findViewById(R.id.rvPedidos)
 
         progressBarPedidos =
-            findViewById(
-                R.id.progressBarPedidos
-            )
+            findViewById(R.id.progressBarPedidos)
 
         layoutSinPedidos =
-            findViewById(
-                R.id.layoutSinPedidos
-            )
+            findViewById(R.id.layoutSinPedidos)
 
         btnVolver =
-            findViewById(
-                R.id.btnVolver
-            )
+            findViewById(R.id.btnVolver)
     }
-
 
     // =========================================================
     // RECYCLERVIEW
@@ -125,18 +97,22 @@ class ActivityPedidosUsuario : AppCompatActivity() {
         pedidoAdapter =
             PedidoUsuarioAdapter()
 
-        rvPedidos.layoutManager =
-            LinearLayoutManager(this)
+        rvPedidos.apply {
 
-        rvPedidos.adapter =
-            pedidoAdapter
+            layoutManager =
+                LinearLayoutManager(
+                    this@ActivityPedidosUsuario
+                )
 
-        rvPedidos.setHasFixedSize(true)
+            adapter =
+                pedidoAdapter
 
-        rvPedidos.itemAnimator =
-            null
+            setHasFixedSize(false)
+
+            itemAnimator =
+                null
+        }
     }
-
 
     // =========================================================
     // BOTÓN VOLVER
@@ -150,7 +126,6 @@ class ActivityPedidosUsuario : AppCompatActivity() {
         }
     }
 
-
     // =========================================================
     // ESCUCHAR PEDIDOS
     // =========================================================
@@ -159,11 +134,6 @@ class ActivityPedidosUsuario : AppCompatActivity() {
 
         val usuarioActual =
             auth.currentUser
-
-
-        // -----------------------------------------------------
-        // VALIDAR SESIÓN
-        // -----------------------------------------------------
 
         if (usuarioActual == null) {
 
@@ -174,57 +144,23 @@ class ActivityPedidosUsuario : AppCompatActivity() {
             ).show()
 
             finish()
-
             return
         }
 
-
-        val usuarioId =
-            usuarioActual.uid
-
-
-        // -----------------------------------------------------
-        // MOSTRAR CARGANDO
-        // -----------------------------------------------------
-
-        progressBarPedidos.visibility =
-            View.VISIBLE
-
-        rvPedidos.visibility =
-            View.GONE
-
-        layoutSinPedidos.visibility =
-            View.GONE
-
-
-        // -----------------------------------------------------
-        // ELIMINAR LISTENER ANTERIOR
-        // -----------------------------------------------------
+        mostrarCargando()
 
         pedidosListener?.remove()
-
-
-        // -----------------------------------------------------
-        // LISTENER EN TIEMPO REAL
-        // -----------------------------------------------------
 
         pedidosListener =
             db.collection("pedidos")
                 .whereEqualTo(
                     "usuarioId",
-                    usuarioId
+                    usuarioActual.uid
                 )
-                .addSnapshotListener {
-                        resultado,
-                        error ->
+                .addSnapshotListener { resultado, error ->
 
                     progressBarPedidos.visibility =
                         View.GONE
-
-
-                    // =========================================
-                    // ERROR
-                    // =========================================
 
                     if (error != null) {
 
@@ -234,12 +170,7 @@ class ActivityPedidosUsuario : AppCompatActivity() {
                             error
                         )
 
-                        listaPedidos.clear()
-
-                        pedidoAdapter.actualizarPedidos(
-                            emptyList()
-                        )
-
+                        limpiarPedidos()
                         mostrarSinPedidos()
 
                         Toast.makeText(
@@ -251,186 +182,110 @@ class ActivityPedidosUsuario : AppCompatActivity() {
                         return@addSnapshotListener
                     }
 
-
-                    // =========================================
-                    // RESULTADO NULO
-                    // =========================================
-
                     if (resultado == null) {
 
-                        listaPedidos.clear()
-
-                        pedidoAdapter.actualizarPedidos(
-                            emptyList()
-                        )
-
+                        limpiarPedidos()
                         mostrarSinPedidos()
 
                         return@addSnapshotListener
                     }
 
-
-                    // =========================================
-                    // LIMPIAR LISTA
-                    // =========================================
-
                     listaPedidos.clear()
 
+                    for (documento in resultado.documents) {
 
-                    // =========================================
-                    // RECORRER PEDIDOS
-                    // =========================================
-
-                    for (
-                    documento
-                    in resultado.documents
-                    ) {
-
-                        val id =
-                            documento.id
-
-
-                        // -------------------------------------
-                        // NÚMERO DEL PEDIDO
-                        // -------------------------------------
-
-                        val numeroPedido =
-                            documento.getLong(
-                                "numeroPedido"
-                            ) ?: 0L
-
-
-                        // -------------------------------------
-                        // ESTADO
-                        // -------------------------------------
-
-                        val estado =
-                            documento.getString(
-                                "estadoPedido"
-                            )
-                                ?: "Pendiente"
-
-
-                        // -------------------------------------
-                        // NO MOSTRAR ENTREGADOS
-                        // -------------------------------------
-                        //
-                        // El pedido NO se elimina de Firestore.
-                        //
-                        // Simplemente deja de aparecer
-                        // en la pantalla del Usuario.
-                        //
-                        // El Admin seguirá conservándolo
-                        // en su Historial.
-                        // -------------------------------------
-
-                        if (
-                            estado.equals(
-                                "Entregado",
-                                ignoreCase = true
-                            )
-                        ) {
-
-                            Log.d(
-                                "PEDIDOS_USUARIO",
-                                "Pedido $id entregado. " +
-                                        "No se mostrará al usuario."
-                            )
-
-                            continue
-                        }
-
-
-                        // -------------------------------------
-                        // TOTAL
-                        // -------------------------------------
-
-                        val total =
-                            documento.getDouble(
-                                "total"
-                            )
-                                ?: documento.getLong(
-                                    "total"
-                                )?.toDouble()
-                                ?: 0.0
-
-
-                        // -------------------------------------
-                        // FECHA
-                        // -------------------------------------
-
-                        val fecha =
-                            obtenerFecha(
+                        val pedido =
+                            convertirDocumentoEnPedido(
                                 documento
                             )
 
-
-                        // -------------------------------------
-                        // AGREGAR PEDIDO
-                        // -------------------------------------
-
                         listaPedidos.add(
-
-                            PedidoUsuarioItem(
-
-                                id = id,
-
-                                numeroPedido =
-                                    numeroPedido,
-
-                                estado = estado,
-
-                                total = total,
-
-                                fecha = fecha
-                            )
-                        )
-
-
-                        Log.d(
-                            "PEDIDOS_USUARIO",
-                            "Pedido encontrado: " +
-                                    "ID=$id | " +
-                                    "Numero=$numeroPedido | " +
-                                    "Estado=$estado | " +
-                                    "Total=$total"
+                            pedido
                         )
                     }
 
-
-                    // =========================================
-                    // ORDENAR MÁS RECIENTE PRIMERO
-                    // =========================================
-
-                    listaPedidos.sortByDescending {
-                        it.fecha
+                    listaPedidos.sortByDescending { pedido ->
+                        pedido.fecha
                     }
-
-
-                    // =========================================
-                    // ACTUALIZAR ADAPTER
-                    // =========================================
 
                     pedidoAdapter.actualizarPedidos(
                         listaPedidos
                     )
 
-
-                    // =========================================
-                    // ACTUALIZAR PANTALLA
-                    // =========================================
-
                     actualizarEstadoPantalla()
-
 
                     Log.d(
                         "PEDIDOS_USUARIO",
-                        "Pedidos activos cargados: " +
-                                listaPedidos.size
+                        "Pedidos cargados: ${listaPedidos.size}"
                     )
                 }
     }
 
+    // =========================================================
+    // CONVERTIR DOCUMENTO
+    // =========================================================
+
+    private fun convertirDocumentoEnPedido(
+        documento: DocumentSnapshot
+    ): PedidoUsuarioItem {
+
+        val numeroPedido =
+            documento.getLong("numeroPedido")
+                ?: 0L
+
+        val estado =
+            documento.getString("estadoPedido")
+                ?.trim()
+                .orEmpty()
+                .ifBlank {
+                    "Pendiente"
+                }
+
+        val tipoEntrega =
+            documento.getString("tipoEntrega")
+                ?.trim()
+                .orEmpty()
+                .ifBlank {
+                    "Delivery"
+                }
+
+        val total =
+            documento.getDouble("total")
+                ?: documento.getLong("total")
+                    ?.toDouble()
+                ?: 0.0
+
+        val fecha =
+            obtenerFecha(documento)
+
+        Log.d(
+            "PEDIDOS_USUARIO",
+            "Pedido=${documento.id} | " +
+                    "Estado=$estado | " +
+                    "Entrega=$tipoEntrega"
+        )
+
+        return PedidoUsuarioItem(
+
+            id =
+                documento.id,
+
+            numeroPedido =
+                numeroPedido,
+
+            estado =
+                estado,
+
+            tipoEntrega =
+                tipoEntrega,
+
+            total =
+                total,
+
+            fecha =
+                fecha
+        )
+    }
 
     // =========================================================
     // OBTENER FECHA
@@ -440,27 +295,32 @@ class ActivityPedidosUsuario : AppCompatActivity() {
         documento: DocumentSnapshot
     ): Long {
 
-        val timestamp =
-            documento.getTimestamp(
-                "fecha"
-            )
-
-        return timestamp
+        return documento
+            .getTimestamp("fecha")
             ?.toDate()
             ?.time
             ?: 0L
     }
 
+    // =========================================================
+    // PANTALLA
+    // =========================================================
 
-    // =========================================================
-    // ESTADO DE LA PANTALLA
-    // =========================================================
+    private fun mostrarCargando() {
+
+        progressBarPedidos.visibility =
+            View.VISIBLE
+
+        rvPedidos.visibility =
+            View.GONE
+
+        layoutSinPedidos.visibility =
+            View.GONE
+    }
 
     private fun actualizarEstadoPantalla() {
 
-        if (
-            listaPedidos.isEmpty()
-        ) {
+        if (listaPedidos.isEmpty()) {
 
             mostrarSinPedidos()
 
@@ -474,12 +334,10 @@ class ActivityPedidosUsuario : AppCompatActivity() {
         }
     }
 
-
-    // =========================================================
-    // SIN PEDIDOS
-    // =========================================================
-
     private fun mostrarSinPedidos() {
+
+        progressBarPedidos.visibility =
+            View.GONE
 
         rvPedidos.visibility =
             View.GONE
@@ -488,18 +346,32 @@ class ActivityPedidosUsuario : AppCompatActivity() {
             View.VISIBLE
     }
 
+    private fun limpiarPedidos() {
+
+        listaPedidos.clear()
+
+        pedidoAdapter.actualizarPedidos(
+            emptyList()
+        )
+    }
 
     // =========================================================
-    // DESTRUIR
+    // CICLO DE VIDA
     // =========================================================
 
-    override fun onDestroy() {
+    override fun onStart() {
+        super.onStart()
+
+        escucharPedidos()
+    }
+
+    override fun onStop() {
 
         pedidosListener?.remove()
 
         pedidosListener =
             null
 
-        super.onDestroy()
+        super.onStop()
     }
 }

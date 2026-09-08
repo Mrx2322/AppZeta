@@ -15,7 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
 import com.google.android.material.button.MaterialButton
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
+import java.util.Locale
 
 class ActivityPedidosAdmin : AppCompatActivity() {
 
@@ -26,36 +29,32 @@ class ActivityPedidosAdmin : AppCompatActivity() {
     private val db =
         FirebaseFirestore.getInstance()
 
+    private var pedidosListener:
+            ListenerRegistration? = null
 
     // =========================================================
     // COMPONENTES
     // =========================================================
 
     private lateinit var rvPedidos: RecyclerView
-
     private lateinit var tvSinPedidos: TextView
-
     private lateinit var btnHistorial: MaterialButton
 
-
     // =========================================================
-    // LISTA DE PEDIDOS
+    // LISTA Y ADAPTER
     // =========================================================
 
     private val listaPedidos =
         mutableListOf<PedidoAdmin>()
 
-    private lateinit var adapter: PedidoAdminAdapter
-
+    private lateinit var adapter:
+            PedidoAdminAdapter
 
     // =========================================================
     // ON CREATE
     // =========================================================
 
-    override fun onCreate(
-        savedInstanceState: Bundle?
-    ) {
-
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
@@ -68,6 +67,17 @@ class ActivityPedidosAdmin : AppCompatActivity() {
         setContentView(
             R.layout.activity_pedidos_admin
         )
+
+        aplicarInsets()
+        initComponent()
+        initUI()
+    }
+
+    // =========================================================
+    // INSETS
+    // =========================================================
+
+    private fun aplicarInsets() {
 
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
@@ -87,258 +97,225 @@ class ActivityPedidosAdmin : AppCompatActivity() {
 
             insets
         }
-
-        initComponent()
-
-        initUI()
-
-        escucharPedidos()
     }
 
-
     // =========================================================
-    // INICIALIZAR COMPONENTES
+    // COMPONENTES
     // =========================================================
 
     private fun initComponent() {
 
         rvPedidos =
-            findViewById(
-                R.id.rvPedidos
-            )
+            findViewById(R.id.rvPedidos)
 
         tvSinPedidos =
-            findViewById(
-                R.id.tvSinPedidos
-            )
+            findViewById(R.id.tvSinPedidos)
 
         btnHistorial =
-            findViewById(
-                R.id.btnHistorial
-            )
+            findViewById(R.id.btnHistorial)
     }
 
-
     // =========================================================
-    // CONFIGURAR UI
+    // INTERFAZ
     // =========================================================
 
     private fun initUI() {
 
-        adapter = PedidoAdminAdapter(
-            listaPedidos = listaPedidos,
+        adapter =
+            PedidoAdminAdapter(
 
-            onCambiarEstado = { pedido, nuevoEstado ->
+                listaPedidos =
+                    listaPedidos,
 
-                cambiarEstadoPedido(
-                    pedido,
-                    nuevoEstado
+                onCambiarEstado = { pedido, nuevoEstado ->
+
+                    cambiarEstadoPedido(
+                        pedido = pedido,
+                        nuevoEstado = nuevoEstado
+                    )
+                },
+
+                modoHistorial =
+                    false
+            )
+
+        rvPedidos.apply {
+
+            layoutManager =
+                LinearLayoutManager(
+                    this@ActivityPedidosAdmin
                 )
-            },
 
-            modoHistorial = false
-        )
+            adapter =
+                this@ActivityPedidosAdmin.adapter
 
-        rvPedidos.layoutManager =
-            LinearLayoutManager(this)
-
-        rvPedidos.adapter =
-            adapter
-
-
-        // =====================================================
-        // BOTÓN VER HISTORIAL
-        // =====================================================
+            setHasFixedSize(
+                false
+            )
+        }
 
         btnHistorial.setOnClickListener {
 
-            val intent =
-                Intent(
-                    this,
-                    ActivityHistorialPedidosAdmin::class.java
-                )
+            val intent = Intent(
+                this,
+                ActivityHistorialPedidosAdmin::class.java
+            )
 
             startActivity(intent)
         }
     }
 
-
     // =========================================================
-    // ESCUCHAR PEDIDOS EN TIEMPO REAL
+    // ESCUCHAR PEDIDOS
     // =========================================================
 
     private fun escucharPedidos() {
 
-        db.collection("pedidos")
-            .addSnapshotListener { resultado, error ->
+        pedidosListener?.remove()
 
-                if (error != null) {
+        pedidosListener =
+            db.collection("pedidos")
+                .addSnapshotListener { resultado, error ->
 
-                    Log.e(
-                        "PEDIDOS_ADMIN",
-                        "Error escuchando pedidos",
-                        error
-                    )
+                    if (error != null) {
 
-                    Toast.makeText(
-                        this,
-                        "Error al cargar pedidos",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    return@addSnapshotListener
-                }
-
-                if (resultado == null) {
-                    return@addSnapshotListener
-                }
-
-
-                listaPedidos.clear()
-
-
-                for (documento in resultado.documents) {
-
-                    // =================================================
-                    // LEER ESTADO DEL PEDIDO
-                    // =================================================
-
-                    val estadoPedido =
-                        documento.getString(
-                            "estadoPedido"
-                        ) ?: "Pendiente"
-
-
-                    // =================================================
-                    // NO MOSTRAR PEDIDOS ENTREGADOS
-                    // =================================================
-
-                    if (
-                        estadoPedido.equals(
-                            "Entregado",
-                            ignoreCase = true
-                        )
-                    ) {
-
-                        Log.d(
+                        Log.e(
                             "PEDIDOS_ADMIN",
-                            "Pedido ${documento.id} " +
-                                    "está Entregado. " +
-                                    "No se mostrará en pedidos activos."
+                            "Error cargando pedidos",
+                            error
                         )
 
-                        continue
+                        Toast.makeText(
+                            this,
+                            "Error al cargar pedidos",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        return@addSnapshotListener
                     }
 
+                    if (resultado == null) {
+                        return@addSnapshotListener
+                    }
 
-                    // =================================================
-                    // CREAR OBJETO PEDIDO
-                    // =================================================
+                    listaPedidos.clear()
 
-                    val pedido =
-                        PedidoAdmin(
+                    for (documento in resultado.documents) {
 
-                            id =
-                                documento.id,
+                        val estadoPedido =
+                            documento.getString("estadoPedido")
+                                ?.trim()
+                                .orEmpty()
+                                .ifBlank {
+                                    "Pendiente"
+                                }
 
-                            nombreUsuario =
-                                documento.getString(
-                                    "nombreUsuario"
-                                ) ?: "Cliente",
+                        /*
+                         * Los pedidos entregados permanecen
+                         * guardados en Firestore, pero aparecen
+                         * únicamente en el historial.
+                         */
+                        if (
+                            estadoPedido.equals(
+                                "Entregado",
+                                ignoreCase = true
+                            )
+                        ) {
+                            continue
+                        }
 
-                            correo =
-                                documento.getString(
-                                    "correo"
-                                ) ?: "",
+                        val pedido =
+                            PedidoAdmin(
 
-                            total =
-                                documento.getDouble(
-                                    "total"
-                                )
-                                    ?: documento.getLong(
-                                        "total"
-                                    )?.toDouble()
-                                    ?: 0.0,
+                                id =
+                                    documento.id,
 
-                            tipoEntrega =
-                                documento.getString(
-                                    "tipoEntrega"
-                                ) ?: "Delivery",
+                                numeroPedido =
+                                    documento.getLong(
+                                        "numeroPedido"
+                                    ) ?: 0L,
 
-                            direccion =
-                                documento.getString(
-                                    "direccion"
-                                ) ?: "",
+                                fecha =
+                                    documento.getTimestamp(
+                                        "fecha"
+                                    ),
 
-                            referencia =
-                                documento.getString(
-                                    "referencia"
-                                ) ?: "",
+                                nombreUsuario =
+                                    documento.getString(
+                                        "nombreUsuario"
+                                    ) ?: "Cliente",
 
-                            telefono =
-                                documento.getString(
-                                    "telefono"
-                                ) ?: "",
+                                correo =
+                                    documento.getString(
+                                        "correo"
+                                    ).orEmpty(),
 
-                            metodoPago =
-                                documento.getString(
-                                    "metodoPago"
-                                ) ?: "Contra entrega",
+                                total =
+                                    documento.getDouble("total")
+                                        ?: documento.getLong("total")
+                                            ?.toDouble()
+                                        ?: 0.0,
 
-                            estadoPago =
-                                documento.getString(
-                                    "estadoPago"
-                                ) ?: "Pendiente",
+                                tipoEntrega =
+                                    documento.getString(
+                                        "tipoEntrega"
+                                    ) ?: "Delivery",
 
-                            estadoPedido =
-                                estadoPedido,
+                                direccion =
+                                    documento.getString(
+                                        "direccion"
+                                    ).orEmpty(),
 
-                            productos =
-                                documento.get(
-                                    "productos"
-                                ) as? List<Map<String, Any>>
-                                    ?: emptyList()
+                                referencia =
+                                    documento.getString(
+                                        "referencia"
+                                    ).orEmpty(),
+
+                                telefono =
+                                    documento.getString(
+                                        "telefono"
+                                    ).orEmpty(),
+
+                                metodoPago =
+                                    documento.getString(
+                                        "metodoPago"
+                                    ) ?: "Contra entrega",
+
+                                estadoPago =
+                                    documento.getString(
+                                        "estadoPago"
+                                    ) ?: "Pendiente",
+
+                                estadoPedido =
+                                    estadoPedido,
+
+                                productos =
+                                    documento.get("productos")
+                                            as? List<Map<String, Any>>
+                                        ?: emptyList()
+                            )
+
+                        listaPedidos.add(
+                            pedido
                         )
+                    }
 
+                    listaPedidos.sortByDescending { pedido ->
 
-                    listaPedidos.add(
-                        pedido
-                    )
+                        pedido.fecha
+                            ?.toDate()
+                            ?.time
+                            ?: 0L
+                    }
+
+                    adapter.notifyDataSetChanged()
+
+                    actualizarEstadoVacio()
                 }
-
-
-                // =================================================
-                // MÁS RECIENTES PRIMERO
-                // =================================================
-
-                listaPedidos.reverse()
-
-
-                // =================================================
-                // ACTUALIZAR ADAPTER
-                // =================================================
-
-                adapter.notifyDataSetChanged()
-
-
-                // =================================================
-                // ACTUALIZAR ESTADO VACÍO
-                // =================================================
-
-                actualizarEstadoVacio()
-
-
-                Log.d(
-                    "PEDIDOS_ADMIN",
-                    "Pedidos activos mostrados: " +
-                            listaPedidos.size
-                )
-            }
     }
 
-
     // =========================================================
-    // CAMBIAR ESTADO DEL PEDIDO
+    // CAMBIAR ESTADO
     // =========================================================
 
     private fun cambiarEstadoPedido(
@@ -346,14 +323,89 @@ class ActivityPedidosAdmin : AppCompatActivity() {
         nuevoEstado: String
     ) {
 
-        db.collection("pedidos")
-            .document(
-                pedido.id
+        val referenciaPedido =
+            db.collection("pedidos")
+                .document(pedido.id)
+
+        db.runTransaction { transaction ->
+
+            val snapshot =
+                transaction.get(
+                    referenciaPedido
+                )
+
+            if (!snapshot.exists()) {
+
+                throw IllegalStateException(
+                    "El pedido ya no existe"
+                )
+            }
+
+            val estadoActual =
+                normalizarEstado(
+                    snapshot.getString("estadoPedido")
+                        ?: "Pendiente"
+                )
+
+            val tipoEntrega =
+                snapshot.getString("tipoEntrega")
+                    ?: pedido.tipoEntrega
+
+            val metodoPago =
+                snapshot.getString("metodoPago")
+                    ?: pedido.metodoPago
+
+            val siguienteEstado =
+                obtenerSiguienteEstado(
+                    estadoActual = estadoActual,
+                    tipoEntrega = tipoEntrega
+                )
+
+            if (nuevoEstado != siguienteEstado) {
+
+                throw IllegalStateException(
+                    "Primero debes cambiar el pedido a $siguienteEstado"
+                )
+            }
+
+            val actualizaciones =
+                hashMapOf<String, Any>(
+
+                    "estadoPedido" to
+                            nuevoEstado,
+
+                    "fechaActualizacion" to
+                            FieldValue.serverTimestamp()
+                )
+
+            /*
+             * Contra entrega se considera pagado
+             * únicamente cuando el pedido se entrega.
+             */
+            if (nuevoEstado == "Entregado") {
+
+                if (
+                    metodoPago.equals(
+                        "Contra entrega",
+                        ignoreCase = true
+                    )
+                ) {
+
+                    actualizaciones["estadoPago"] =
+                        "Pagado"
+                }
+
+                actualizaciones["fechaEntrega"] =
+                    FieldValue.serverTimestamp()
+            }
+
+            transaction.update(
+                referenciaPedido,
+                actualizaciones
             )
-            .update(
-                "estadoPedido",
-                nuevoEstado
-            )
+
+            null
+        }
             .addOnSuccessListener {
 
                 Toast.makeText(
@@ -361,32 +413,110 @@ class ActivityPedidosAdmin : AppCompatActivity() {
                     "Pedido actualizado: $nuevoEstado",
                     Toast.LENGTH_SHORT
                 ).show()
-
-                Log.d(
-                    "PEDIDOS_ADMIN",
-                    "Pedido ${pedido.id} " +
-                            "actualizado a $nuevoEstado"
-                )
             }
             .addOnFailureListener { error ->
 
                 Log.e(
                     "PEDIDOS_ADMIN",
-                    "Error actualizando estado",
+                    "Error actualizando el pedido",
                     error
                 )
 
                 Toast.makeText(
                     this,
-                    "No se pudo actualizar el pedido",
-                    Toast.LENGTH_SHORT
+                    error.message
+                        ?: "No se pudo actualizar el pedido",
+                    Toast.LENGTH_LONG
                 ).show()
             }
     }
 
+    // =========================================================
+    // SIGUIENTE ESTADO
+    // =========================================================
+
+    private fun obtenerSiguienteEstado(
+        estadoActual: String,
+        tipoEntrega: String
+    ): String {
+
+        return when (estadoActual) {
+
+            "Pendiente" ->
+                "Confirmado"
+
+            "Confirmado" ->
+                "En preparación"
+
+            "En preparación" -> {
+
+                if (
+                    tipoEntrega.equals(
+                        "Delivery",
+                        ignoreCase = true
+                    )
+                ) {
+                    "En camino"
+                } else {
+                    "Listo para recoger"
+                }
+            }
+
+            "En camino",
+            "Listo para recoger" ->
+                "Entregado"
+
+            "Entregado" ->
+                "Entregado"
+
+            else ->
+                "Confirmado"
+        }
+    }
 
     // =========================================================
-    // MOSTRAR / OCULTAR ESTADO VACÍO
+    // NORMALIZAR ESTADOS ANTIGUOS
+    // =========================================================
+
+    private fun normalizarEstado(
+        estado: String
+    ): String {
+
+        return when (
+            estado.trim().lowercase(
+                Locale.getDefault()
+            )
+        ) {
+
+            "pendiente",
+            "pedido recibido" ->
+                "Pendiente"
+
+            "confirmado" ->
+                "Confirmado"
+
+            "preparando",
+            "en preparación",
+            "en preparacion" ->
+                "En preparación"
+
+            "en camino" ->
+                "En camino"
+
+            "listo para recoger",
+            "listo para recojo" ->
+                "Listo para recoger"
+
+            "entregado" ->
+                "Entregado"
+
+            else ->
+                "Pendiente"
+        }
+    }
+
+    // =========================================================
+    // ESTADO VACÍO
     // =========================================================
 
     private fun actualizarEstadoVacio() {
@@ -407,5 +537,25 @@ class ActivityPedidosAdmin : AppCompatActivity() {
             tvSinPedidos.visibility =
                 View.GONE
         }
+    }
+
+    // =========================================================
+    // CICLO DE VIDA
+    // =========================================================
+
+    override fun onStart() {
+        super.onStart()
+
+        escucharPedidos()
+    }
+
+    override fun onStop() {
+
+        pedidosListener?.remove()
+
+        pedidosListener =
+            null
+
+        super.onStop()
     }
 }
