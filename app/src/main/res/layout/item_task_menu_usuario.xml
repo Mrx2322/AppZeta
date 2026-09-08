@@ -120,23 +120,26 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAgregar"
 
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-
-                android:minWidth="48dp"
-                android:minHeight="48dp"
+                android:layout_width="88dp"
+                android:layout_height="42dp"
 
                 android:layout_marginStart="8dp"
 
-                android:padding="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
 
-                android:text="+"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+
+                android:text="Agregar"
+                android:textAllCaps="false"
                 android:textColor="#FFFFFF"
-                android:textSize="22sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
 
-                app:backgroundTint="#FF9800"
-                app:cornerRadius="24dp" />
+                app:backgroundTint="#E87520"
+                app:cornerRadius="14dp"
+                app:elevation="0dp" />
 
         </LinearLayout>
 

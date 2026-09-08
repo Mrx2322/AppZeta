@@ -726,11 +726,12 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         navPerfil.setOnClickListener {
 
-            Toast.makeText(
-                this,
-                "Perfil próximamente 👤",
-                Toast.LENGTH_SHORT
-            ).show()
+            startActivity(
+                Intent(
+                    this,
+                    ActivityPerfilUsuario::class.java
+                )
+            )
         }
 
         actualizarContadorCarrito()

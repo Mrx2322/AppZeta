@@ -78,6 +78,9 @@
         <activity
             android:name=".Menu.ActivityHistorialPedidosAdmin"
             android:exported="false" />
+        <activity
+            android:name=".Usuario.ActivityPerfilUsuario"
+            android:exported="false" />
     </application>
 
 </manifest>
