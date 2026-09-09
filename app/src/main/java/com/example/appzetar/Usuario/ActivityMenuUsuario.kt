@@ -621,12 +621,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
         entradasAdapter =
             EntradasUsuarioAdapter(
                 entradas
-            ) { entrada ->
-
-                agregarEntradaAlPedido(
-                    entrada
-                )
-            }
+            )
 
         rvEntradas.layoutManager =
             LinearLayoutManager(
@@ -1198,50 +1193,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
     // =========================================================
-    // AGREGAR ENTRADA
-    // =========================================================
-
-    private fun agregarEntradaAlPedido(
-        entrada: TaskEntradas
-    ) {
-
-        if (
-            !entrada.disponible ||
-            entrada.stock <= 0
-        ) {
-
-            Toast.makeText(
-                this,
-                "Esta entrada está agotada",
-                Toast.LENGTH_SHORT
-            ).show()
-
-            return
-        }
-
-
-        PedidoManager.agregarProducto(
-
-            PedidoItem(
-                id = entrada.id,
-                nombre = entrada.nombre,
-                precio = 0.0,
-                cantidad = 1,
-                tipo = TipoPedido.ENTRADA
-            )
-        )
-
-        actualizarContadorCarrito()
-
-        Toast.makeText(
-            this,
-            "${entrada.nombre} agregado al pedido",
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
-
-    // =========================================================
     // DIALOG AGREGAR PLATO
     // =========================================================
 
@@ -1249,17 +1200,51 @@ class ActivityMenuUsuario : AppCompatActivity() {
         plato: TaskMenu
     ) {
 
-        if (plato.stock <= 0) {
+        val cantidadMenuEnCarrito =
+            PedidoManager.cantidadMenuEnPedido(
+                plato.id
+            )
+
+        if (
+            plato.stock <= 0 ||
+            cantidadMenuEnCarrito >= plato.stock
+        ) {
 
             Toast.makeText(
                 this,
-                "Este plato está agotado",
+                "Ya no puedes agregar más unidades de este plato",
                 Toast.LENGTH_SHORT
             ).show()
 
             return
         }
 
+        val seleccionActual =
+            entradasAdapter
+                .obtenerEntradasSeleccionadas()
+
+        val cantidadEntradas =
+            seleccionActual.sumOf { entrada ->
+                entrada.cantidad
+            }
+
+        val precioSinEntrada =
+            ReglasPrecioPedido.calcularPrecioMenu(
+                precioMenuConEntrada = plato.precio,
+                cantidadEntradas = 0
+            )
+
+        val precioConEntrada =
+            ReglasPrecioPedido.calcularPrecioMenu(
+                precioMenuConEntrada = plato.precio,
+                cantidadEntradas = 1
+            )
+
+        val precioFinal =
+            ReglasPrecioPedido.calcularPrecioMenu(
+                precioMenuConEntrada = plato.precio,
+                cantidadEntradas = cantidadEntradas
+            )
 
         val dialogView =
             layoutInflater.inflate(
@@ -1271,6 +1256,36 @@ class ActivityMenuUsuario : AppCompatActivity() {
         val tvNombrePlato =
             dialogView.findViewById<TextView>(
                 R.id.tvNombrePlato
+            )
+
+        val tvPrecioSinEntrada =
+            dialogView.findViewById<TextView>(
+                R.id.tvPrecioSinEntrada
+            )
+
+        val tvPrecioConEntrada =
+            dialogView.findViewById<TextView>(
+                R.id.tvPrecioConEntrada
+            )
+
+        val tvPrecioEntradaAdicional =
+            dialogView.findViewById<TextView>(
+                R.id.tvPrecioEntradaAdicional
+            )
+
+        val tvEntradasSeleccionadas =
+            dialogView.findViewById<TextView>(
+                R.id.tvEntradasSeleccionadas
+            )
+
+        val tvTotalSeleccion =
+            dialogView.findViewById<TextView>(
+                R.id.tvTotalSeleccion
+            )
+
+        val tvAyudaSeleccion =
+            dialogView.findViewById<TextView>(
+                R.id.tvAyudaSeleccion
             )
 
         val btnCancelar =
@@ -1286,6 +1301,48 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         tvNombrePlato.text =
             plato.name
+
+        tvPrecioSinEntrada.text =
+            "S/ %.2f".format(
+                precioSinEntrada
+            )
+
+        tvPrecioConEntrada.text =
+            "S/ %.2f".format(
+                precioConEntrada
+            )
+
+        tvPrecioEntradaAdicional.text =
+            "Entradas adicionales: +S/ %.2f cada una".format(
+                ReglasPrecioPedido.PRECIO_ENTRADA
+            )
+
+        tvEntradasSeleccionadas.text =
+            descripcionSeleccionEntradas(
+                seleccionActual
+            )
+
+        tvTotalSeleccion.text =
+            "S/ %.2f".format(
+                precioFinal
+            )
+
+        tvAyudaSeleccion.text =
+            when (cantidadEntradas) {
+
+                0 ->
+                    "Sin entrada, este menú te costará S/ %.2f.".format(
+                        precioFinal
+                    )
+
+                1 ->
+                    "Con una entrada, este menú te costará S/ %.2f.".format(
+                        precioFinal
+                    )
+
+                else ->
+                    "Elegiste $cantidadEntradas entradas para este menú."
+            }
 
 
         val dialog =
@@ -1309,11 +1366,19 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         btnAgregar.setOnClickListener {
 
-            if (plato.stock <= 0) {
+            val cantidadActualEnCarrito =
+                PedidoManager.cantidadMenuEnPedido(
+                    plato.id
+                )
+
+            if (
+                plato.stock <= 0 ||
+                cantidadActualEnCarrito >= plato.stock
+            ) {
 
                 Toast.makeText(
                     this,
-                    "Este plato ya está agotado",
+                    "Ya no puedes agregar más unidades de este plato",
                     Toast.LENGTH_SHORT
                 ).show()
 
@@ -1329,7 +1394,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
             agregarAlPedido(
 
-                plato,
+                plato = plato,
+                seleccionEntradas = seleccionActual,
+                precioFinal = precioFinal,
 
                 onCompletado = {
                     dialog.dismiss()
@@ -1357,15 +1424,25 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
     private fun agregarAlPedido(
         plato: TaskMenu,
+        seleccionEntradas: List<EntradaPedido>,
+        precioFinal: Double,
         onCompletado: () -> Unit,
         onError: () -> Unit
     ) {
 
-        if (plato.stock <= 0) {
+        val cantidadMenuEnCarrito =
+            PedidoManager.cantidadMenuEnPedido(
+                plato.id
+            )
+
+        if (
+            plato.stock <= 0 ||
+            cantidadMenuEnCarrito >= plato.stock
+        ) {
 
             Toast.makeText(
                 this,
-                "Este plato está agotado",
+                "Ya no puedes agregar más unidades de este plato",
                 Toast.LENGTH_SHORT
             ).show()
 
@@ -1374,30 +1451,106 @@ class ActivityMenuUsuario : AppCompatActivity() {
             return
         }
 
+        for (entradaSeleccionada in seleccionEntradas) {
+
+            val entradaActual =
+                entradas.find { entrada ->
+                    entrada.id == entradaSeleccionada.id
+                }
+
+            val cantidadEnCarrito =
+                PedidoManager.cantidadEntradaEnPedido(
+                    entradaSeleccionada.id
+                )
+
+            val cantidadNecesaria =
+                cantidadEnCarrito +
+                        entradaSeleccionada.cantidad
+
+            if (
+                entradaActual == null ||
+                !entradaActual.disponible ||
+                cantidadNecesaria > entradaActual.stock
+            ) {
+
+                Toast.makeText(
+                    this,
+                    "No hay stock suficiente de ${entradaSeleccionada.nombre}",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                entradasAdapter.notifyDataSetChanged()
+                onError()
+
+                return
+            }
+        }
 
         PedidoManager.agregarProducto(
 
             PedidoItem(
                 id = plato.id,
                 nombre = plato.name,
-                precio = plato.precio,
+                precio = precioFinal,
                 cantidad = 1,
-                tipo = TipoPedido.MENU
+                tipo = TipoPedido.MENU,
+                precioBaseMenu = plato.precio,
+                entradas = seleccionEntradas
             )
         )
 
+        entradasAdapter.limpiarSeleccion()
 
         actualizarContadorCarrito()
 
 
         Toast.makeText(
             this,
-            "${plato.name} agregado al pedido",
+            "${plato.name} agregado por S/ %.2f".format(
+                precioFinal
+            ),
             Toast.LENGTH_SHORT
         ).show()
 
 
         onCompletado()
+    }
+
+
+    // =========================================================
+    // DESCRIPCIÓN DE LAS ENTRADAS SELECCIONADAS
+    // =========================================================
+
+    private fun descripcionSeleccionEntradas(
+        seleccionEntradas: List<EntradaPedido>
+    ): String {
+
+        if (seleccionEntradas.isEmpty()) {
+            return "Sin entrada"
+        }
+
+        val detalle =
+            seleccionEntradas.joinToString(
+                separator = ", "
+            ) { entrada ->
+
+                if (entrada.cantidad > 1) {
+                    "${entrada.cantidad} x ${entrada.nombre}"
+                } else {
+                    entrada.nombre
+                }
+            }
+
+        val cantidadTotal =
+            seleccionEntradas.sumOf { entrada ->
+                entrada.cantidad
+            }
+
+        return if (cantidadTotal == 1) {
+            "Con entrada: $detalle"
+        } else {
+            "Con $cantidadTotal entradas: $detalle"
+        }
     }
 
 

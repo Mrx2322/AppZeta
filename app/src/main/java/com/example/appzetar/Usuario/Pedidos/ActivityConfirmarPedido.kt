@@ -20,6 +20,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityConfirmarPedido : AppCompatActivity() {
 
+    private data class SolicitudStock(
+        val coleccion: String,
+        val idProducto: Int,
+        val nombre: String,
+        val cantidad: Int
+    )
+
     // =========================================================
     // FIREBASE
     // =========================================================
@@ -307,10 +314,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 "$cantidad productos"
             }
 
-        val total =
-            pedido.sumOf { item ->
-                item.precio * item.cantidad
-            }
+        val total = PedidoManager.totalPedido()
 
         tvTotalPedido.text =
             "S/ %.2f".format(total)
@@ -516,22 +520,26 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
         bloquearBoton()
 
-        val productos =
-            pedido.map { item ->
+        val productos = pedido.map { item ->
+            hashMapOf<String, Any>(
+                "id" to item.id,
+                "nombre" to item.nombre,
+                "precio" to item.precio,
+                "cantidad" to item.cantidad,
+                "tipo" to item.tipo.name,
+                "precioBaseMenu" to (item.precioBaseMenu ?: 0.0),
+                "entradas" to item.entradas.map { entrada ->
+                    hashMapOf<String, Any>(
+                        "id" to entrada.id,
+                        "nombre" to entrada.nombre,
+                        "cantidad" to entrada.cantidad,
+                        "precioUnitario" to entrada.precioUnitario
+                    )
+                }
+            )
+        }
 
-                hashMapOf<String, Any>(
-                    "id" to item.id,
-                    "nombre" to item.nombre,
-                    "precio" to item.precio,
-                    "cantidad" to item.cantidad,
-                    "tipo" to item.tipo.name
-                )
-            }
-
-        val total =
-            pedido.sumOf { item ->
-                item.precio * item.cantidad
-            }
+        val total = PedidoManager.totalPedido()
 
         buscarReferenciasStock(
             pedido = pedido,
@@ -579,19 +587,57 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
     private fun buscarReferenciasStock(
         pedido: List<PedidoItem>,
-        onSuccess: (Map<PedidoItem, DocumentReference>) -> Unit,
+        onSuccess: (Map<SolicitudStock, DocumentReference>) -> Unit,
         onError: (Exception) -> Unit
     ) {
 
-        val productosConStock =
-            pedido.filter { item ->
+        val solicitudesAgrupadas =
+            mutableMapOf<Pair<String, Int>, SolicitudStock>()
 
-                item.tipo == TipoPedido.MENU ||
-                        item.tipo == TipoPedido.ENTRADA
+        fun agregarSolicitud(
+            coleccion: String,
+            id: Int,
+            nombre: String,
+            cantidad: Int
+        ) {
+            if (cantidad <= 0) return
+
+            val clave = coleccion to id
+            val existente = solicitudesAgrupadas[clave]
+
+            solicitudesAgrupadas[clave] = SolicitudStock(
+                coleccion = coleccion,
+                idProducto = id,
+                nombre = nombre,
+                cantidad = (existente?.cantidad ?: 0) + cantidad
+            )
+        }
+
+        pedido.forEach { item ->
+            when (item.tipo) {
+                TipoPedido.MENU -> {
+                    agregarSolicitud("menu", item.id, item.nombre, item.cantidad)
+
+                    item.entradas.forEach { entrada ->
+                        agregarSolicitud(
+                            coleccion = "entradas",
+                            id = entrada.id,
+                            nombre = entrada.nombre,
+                            cantidad = entrada.cantidad * item.cantidad
+                        )
+                    }
+                }
+
+                // Compatibilidad temporal con entradas antiguas independientes.
+                TipoPedido.ENTRADA ->
+                    agregarSolicitud("entradas", item.id, item.nombre, item.cantidad)
+
+                TipoPedido.EXTRA -> Unit
             }
+        }
 
-        val referencias =
-            mutableMapOf<PedidoItem, DocumentReference>()
+        val productosConStock = solicitudesAgrupadas.values.toList()
+        val referencias = mutableMapOf<SolicitudStock, DocumentReference>()
 
         if (productosConStock.isEmpty()) {
 
@@ -613,10 +659,10 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     // =========================================================
 
     private fun buscarReferenciaRecursiva(
-        productos: List<PedidoItem>,
+        productos: List<SolicitudStock>,
         posicion: Int,
-        referencias: MutableMap<PedidoItem, DocumentReference>,
-        onSuccess: (Map<PedidoItem, DocumentReference>) -> Unit,
+        referencias: MutableMap<SolicitudStock, DocumentReference>,
+        onSuccess: (Map<SolicitudStock, DocumentReference>) -> Unit,
         onError: (Exception) -> Unit
     ) {
 
@@ -629,34 +675,8 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         val item =
             productos[posicion]
 
-        val coleccion =
-            when (item.tipo) {
-
-                TipoPedido.MENU ->
-                    "menu"
-
-                TipoPedido.ENTRADA ->
-                    "entradas"
-
-                TipoPedido.EXTRA ->
-                    ""
-            }
-
-        if (coleccion.isBlank()) {
-
-            buscarReferenciaRecursiva(
-                productos = productos,
-                posicion = posicion + 1,
-                referencias = referencias,
-                onSuccess = onSuccess,
-                onError = onError
-            )
-
-            return
-        }
-
-        db.collection(coleccion)
-            .whereEqualTo("id", item.id)
+        db.collection(item.coleccion)
+            .whereEqualTo("id", item.idProducto)
             .limit(1)
             .get()
             .addOnSuccessListener { resultado ->
@@ -665,7 +685,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
                     onError(
                         IllegalStateException(
-                            "No se encontró '${item.nombre}' en $coleccion."
+                            "No se encontró '${item.nombre}' en ${item.coleccion}."
                         )
                     )
 
@@ -700,7 +720,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         correo: String,
         productos: List<HashMap<String, Any>>,
         total: Double,
-        referenciasStock: Map<PedidoItem, DocumentReference>
+        referenciasStock: Map<SolicitudStock, DocumentReference>
     ) {
 
         val referenciaPedido =
@@ -723,8 +743,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             val numeroPedido =
                 ultimoNumero + 1
 
-            val stocksActuales =
-                mutableMapOf<PedidoItem, Long>()
+            val stocksActuales = mutableMapOf<SolicitudStock, Long>()
 
             // Primero se realizan todas las lecturas.
             for ((item, referenciaStock) in referenciasStock) {

@@ -76,7 +76,7 @@
 
             android:layout_marginTop="6dp"
 
-            android:text="Ingresa nombre, precio y cantidad disponible"
+            android:text="Ingresa el precio normal del menú con una entrada"
             android:textAlignment="center"
 
             android:textColor="#49454F"
@@ -139,7 +139,7 @@
             app:boxCornerRadiusBottomStart="16dp"
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusTopStart="16dp"
-
+            app:helperText="Sin entrada, el cliente pagará S/ 1.00 menos"
             app:prefixText="S/ ">
 
 
@@ -149,7 +149,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:hint="Precio"
+                android:hint="Precio con una entrada"
 
                 android:inputType="numberDecimal"
 

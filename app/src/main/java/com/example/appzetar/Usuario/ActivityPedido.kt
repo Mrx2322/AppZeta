@@ -176,8 +176,7 @@ class ActivityPedido : AppCompatActivity() {
     ) {
 
         PedidoManager.aumentarCantidad(
-            item.id,
-            item.tipo
+            item
         )
 
         actualizarPedido()
@@ -197,8 +196,7 @@ class ActivityPedido : AppCompatActivity() {
     ) {
 
         PedidoManager.disminuirCantidad(
-            item.id,
-            item.tipo
+            item
         )
 
         actualizarPedido()
@@ -218,8 +216,7 @@ class ActivityPedido : AppCompatActivity() {
     ) {
 
         PedidoManager.eliminarProducto(
-            item.id,
-            item.tipo
+            item
         )
 
         actualizarPedido()
@@ -280,10 +277,7 @@ class ActivityPedido : AppCompatActivity() {
         // =====================================================
 
         val total =
-            PedidoManager.pedido.sumOf {
-
-                it.precio * it.cantidad
-            }
+            PedidoManager.totalPedido()
 
         tvTotalPedido.text =
             "S/ %.2f".format(total)

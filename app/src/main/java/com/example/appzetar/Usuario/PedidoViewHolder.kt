@@ -20,6 +20,11 @@ class PedidoViewHolder(
             R.id.tvPrecioProducto
         )
 
+    private val tvDetalleProducto =
+        view.findViewById<TextView>(
+            R.id.tvDetalleProducto
+        )
+
     private val tvCantidad =
         view.findViewById<TextView>(
             R.id.tvCantidad
@@ -64,6 +69,37 @@ class PedidoViewHolder(
         tvNombre.text =
             item.nombre
 
+        if (item.tipo == TipoPedido.MENU) {
+
+            tvDetalleProducto.visibility =
+                View.VISIBLE
+
+            tvDetalleProducto.text =
+                if (item.entradas.isEmpty()) {
+
+                    "Sin entrada"
+
+                } else {
+
+                    val etiqueta =
+                        if (item.cantidadEntradas() == 1) {
+                            "Entrada"
+                        } else {
+                            "Entradas"
+                        }
+
+                    "$etiqueta: ${item.descripcionEntradas()}"
+                }
+
+        } else {
+
+            tvDetalleProducto.visibility =
+                View.GONE
+
+            tvDetalleProducto.text =
+                ""
+        }
+
         tvPrecio.text =
             "S/ %.2f c/u".format(
                 item.precio
@@ -78,7 +114,7 @@ class PedidoViewHolder(
         // =====================================================
 
         val subtotal =
-            item.precio * item.cantidad
+            item.subtotal()
 
         tvSubtotal.text =
             "S/ %.2f".format(

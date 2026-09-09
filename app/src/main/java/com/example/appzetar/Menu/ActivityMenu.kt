@@ -438,11 +438,11 @@ class ActivityMenu : AppCompatActivity() {
 
             if (
                 precio == null ||
-                precio <= 0
+                precio <= 1
             ) {
 
                 etPrecio.error =
-                    "Ingresa un precio válido"
+                    "Ingresa el precio con una entrada (mayor a S/ 1)"
 
                 return@setOnClickListener
             }
@@ -636,11 +636,11 @@ class ActivityMenu : AppCompatActivity() {
 
             if (
                 precio == null ||
-                precio <= 0
+                precio <= 1
             ) {
 
                 etPrecio.error =
-                    "Precio inválido"
+                    "Ingresa el precio con una entrada (mayor a S/ 1)"
 
                 return@setOnClickListener
             }

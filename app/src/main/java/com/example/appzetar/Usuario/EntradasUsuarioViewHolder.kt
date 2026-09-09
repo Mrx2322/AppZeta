@@ -7,10 +7,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.Menu.TaskEntradas
 import com.example.appzetar.R
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
 
 class EntradasUsuarioViewHolder(
     view: View
 ) : RecyclerView.ViewHolder(view) {
+
+    private val cardEntrada: MaterialCardView =
+        view.findViewById(R.id.cardEntrada)
 
     private val tvEntradasName: TextView =
         view.findViewById(R.id.tvNombrePlato)
@@ -23,27 +27,34 @@ class EntradasUsuarioViewHolder(
 
     fun render(
         taskEntradas: TaskEntradas,
-        onAgregarClick: (TaskEntradas) -> Unit
+        cantidadSeleccionada: Int,
+        maximoSeleccionable: Int,
+        onSumarClick: () -> Unit,
+        onRestarClick: () -> Unit
     ) {
 
-        // Nombre
         tvEntradasName.text = taskEntradas.nombre
+
+        mostrarEstadoSeleccion(
+            cantidadSeleccionada
+        )
+
+        val agotada =
+            !taskEntradas.disponible ||
+                    taskEntradas.stock <= 0
 
         // ==============================
         // ESTADO DEL STOCK
         // ==============================
 
         when {
-            !taskEntradas.disponible || taskEntradas.stock <= 0 -> {
+            agotada -> {
 
                 tvStockEntrada.text = "Agotado"
                 tvStockEntrada.setTextColor(
                     Color.parseColor("#D32F2F")
                 )
 
-                btnAgregarEntrada.isEnabled = false
-                btnAgregarEntrada.alpha = 0.45f
-                btnAgregarEntrada.setOnClickListener(null)
             }
 
             taskEntradas.stock <= 3 -> {
@@ -57,12 +68,6 @@ class EntradasUsuarioViewHolder(
                     Color.parseColor("#E65100")
                 )
 
-                btnAgregarEntrada.isEnabled = true
-                btnAgregarEntrada.alpha = 1f
-
-                btnAgregarEntrada.setOnClickListener {
-                    onAgregarClick(taskEntradas)
-                }
             }
 
             else -> {
@@ -73,16 +78,68 @@ class EntradasUsuarioViewHolder(
                     Color.parseColor("#757575")
                 )
 
-                btnAgregarEntrada.isEnabled = true
-                btnAgregarEntrada.alpha = 1f
-
-                btnAgregarEntrada.setOnClickListener {
-                    onAgregarClick(taskEntradas)
-                }
             }
         }
 
-        // La tarjeta no realiza ninguna acción
+        val puedeSumar =
+            !agotada &&
+                    cantidadSeleccionada < maximoSeleccionable
+
+        btnAgregarEntrada.isEnabled =
+            puedeSumar
+
+        btnAgregarEntrada.alpha =
+            if (puedeSumar) 1f else 0.45f
+
+        btnAgregarEntrada.setOnClickListener {
+            onSumarClick()
+        }
+
         itemView.setOnClickListener(null)
+    }
+
+    private fun mostrarEstadoSeleccion(
+        cantidadSeleccionada: Int
+    ) {
+
+        val seleccionada =
+            cantidadSeleccionada > 0
+
+        // El botón siempre se mantiene visible. Cada toque suma una
+        // entrada internamente, sin mostrar controles de cantidad.
+        btnAgregarEntrada.visibility = View.VISIBLE
+
+        cardEntrada.setCardBackgroundColor(
+            Color.parseColor(
+                if (seleccionada) {
+                    "#FFF3E8"
+                } else {
+                    "#FFFFFF"
+                }
+            )
+        )
+
+        cardEntrada.strokeColor =
+            Color.parseColor(
+                if (seleccionada) {
+                    "#E87520"
+                } else {
+                    "#EEEEEE"
+                }
+            )
+
+        cardEntrada.strokeWidth =
+            if (seleccionada) {
+                dpToPx(2)
+            } else {
+                dpToPx(1)
+            }
+    }
+
+    private fun dpToPx(dp: Int): Int {
+        return (
+                dp * itemView.resources
+                    .displayMetrics.density
+                ).toInt()
     }
 }

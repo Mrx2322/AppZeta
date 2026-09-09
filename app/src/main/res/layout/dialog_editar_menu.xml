@@ -65,7 +65,7 @@
 
             android:layout_marginTop="6dp"
 
-            android:text="Modifica nombre, precio y cantidad disponible"
+            android:text="El precio registrado corresponde al menú con una entrada"
             android:textAlignment="center"
 
             android:textColor="#49454F"
@@ -119,7 +119,7 @@
             app:boxCornerRadiusBottomStart="16dp"
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusTopStart="16dp"
-
+            app:helperText="Sin entrada, el cliente pagará S/ 1.00 menos"
             app:prefixText="S/ ">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -128,7 +128,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:hint="Precio"
+                android:hint="Precio con una entrada"
 
                 android:inputType="numberDecimal"
 

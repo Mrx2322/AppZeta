@@ -43,8 +43,18 @@ class MenuUsuarioViewHolder(
             R.drawable.fondo_menu
         )
 
-        // Precio
-        tvPrecio.text = "S/ %.2f".format(taskMenu.precio)
+        // Precio final mínimo visible para el cliente.
+        // El precio base interno del menú no se muestra.
+        val precioSinEntrada =
+            ReglasPrecioPedido.calcularPrecioMenu(
+                precioMenuConEntrada = taskMenu.precio,
+                cantidadEntradas = 0
+            )
+
+        tvPrecio.text =
+            "S/ %.2f sin entrada".format(
+                precioSinEntrada
+            )
 
         // ==============================
         // ESTADO DEL STOCK

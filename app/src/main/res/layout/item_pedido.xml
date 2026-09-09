@@ -58,6 +58,18 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tvDetalleProducto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="Sin entrada"
+                    android:textColor="#6F625A"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+
+                <TextView
                     android:id="@+id/tvPrecioProducto"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
