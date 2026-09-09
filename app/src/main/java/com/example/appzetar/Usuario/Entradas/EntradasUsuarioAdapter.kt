@@ -33,41 +33,25 @@ class EntradasUsuarioAdapter(
         holder: EntradasUsuarioViewHolder,
         position: Int
     ) {
-
         val entrada = entradas[position]
 
         val cantidadEnCarrito =
-            PedidoManager.cantidadEntradaEnPedido(
-                entrada.id
-            )
+            PedidoManager.cantidadEntradaEnPedido(entrada.id)
 
         val maximoSeleccionable =
             (entrada.stock - cantidadEnCarrito)
                 .coerceAtLeast(0)
 
-        val cantidadActual =
-            cantidadesSeleccionadas[entrada.id]
-                ?.coerceAtMost(maximoSeleccionable)
-                ?: 0
-
-        if (cantidadActual > 0) {
-            cantidadesSeleccionadas[entrada.id] =
-                cantidadActual
-        } else {
-            cantidadesSeleccionadas.remove(entrada.id)
-        }
+        val cantidadSeleccionada =
+            cantidadesSeleccionadas[entrada.id] ?: 0
 
         holder.render(
             taskEntradas = entrada,
-            cantidadSeleccionada = cantidadActual,
+            cantidadSeleccionada = cantidadSeleccionada,
             maximoSeleccionable = maximoSeleccionable,
 
-            onSumarClick = {
-                sumarEntrada(entrada)
-            },
-
-            onRestarClick = {
-                restarEntrada(entrada)
+            onAlternarClick = {
+                alternarEntrada(entrada)
             }
         )
     }
@@ -75,12 +59,10 @@ class EntradasUsuarioAdapter(
     override fun getItemCount(): Int = entradas.size
 
     fun obtenerEntradasSeleccionadas(): List<EntradaPedido> {
-
         return entradas.mapNotNull { entrada ->
 
             val cantidad =
-                cantidadesSeleccionadas[entrada.id]
-                    ?: 0
+                cantidadesSeleccionadas[entrada.id] ?: 0
 
             if (cantidad <= 0) {
                 null
@@ -95,7 +77,6 @@ class EntradasUsuarioAdapter(
     }
 
     fun limpiarSeleccion() {
-
         if (cantidadesSeleccionadas.isEmpty()) {
             return
         }
@@ -104,64 +85,43 @@ class EntradasUsuarioAdapter(
         notifyDataSetChanged()
     }
 
-    private fun sumarEntrada(
+    private fun alternarEntrada(
         entrada: TaskEntradas
     ) {
+        val cantidadActual =
+            cantidadesSeleccionadas[entrada.id] ?: 0
+
+        // Si ya fue elegida, el segundo toque la desmarca.
+        if (cantidadActual > 0) {
+            cantidadesSeleccionadas.remove(entrada.id)
+
+            notificarEntradaCambiada(entrada.id)
+            return
+        }
 
         val cantidadEnCarrito =
-            PedidoManager.cantidadEntradaEnPedido(
-                entrada.id
-            )
+            PedidoManager.cantidadEntradaEnPedido(entrada.id)
 
         val maximoSeleccionable =
             (entrada.stock - cantidadEnCarrito)
                 .coerceAtLeast(0)
 
-        val cantidadActual =
-            cantidadesSeleccionadas[entrada.id]
-                ?: 0
-
         if (
             !entrada.disponible ||
-            cantidadActual >= maximoSeleccionable
+            maximoSeleccionable <= 0
         ) {
             return
         }
 
-        cantidadesSeleccionadas[entrada.id] =
-            cantidadActual + 1
+        // Solo se selecciona una unidad por toque.
+        cantidadesSeleccionadas[entrada.id] = 1
 
-        notificarEntradaCambiada(
-            entrada.id
-        )
-    }
-
-    private fun restarEntrada(
-        entrada: TaskEntradas
-    ) {
-
-        val cantidadActual =
-            cantidadesSeleccionadas[entrada.id]
-                ?: 0
-
-        if (cantidadActual <= 1) {
-            cantidadesSeleccionadas.remove(
-                entrada.id
-            )
-        } else {
-            cantidadesSeleccionadas[entrada.id] =
-                cantidadActual - 1
-        }
-
-        notificarEntradaCambiada(
-            entrada.id
-        )
+        notificarEntradaCambiada(entrada.id)
     }
 
     private fun notificarEntradaCambiada(
         entradaId: Int
     ) {
-
         val posicion = entradas.indexOfFirst { entrada ->
             entrada.id == entradaId
         }

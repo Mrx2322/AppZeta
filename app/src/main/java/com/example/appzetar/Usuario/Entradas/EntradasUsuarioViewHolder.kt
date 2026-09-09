@@ -1,5 +1,6 @@
 package com.example.appzetar.Usuario.Entradas
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.View
 import android.widget.TextView
@@ -29,36 +30,27 @@ class EntradasUsuarioViewHolder(
         taskEntradas: TaskEntradas,
         cantidadSeleccionada: Int,
         maximoSeleccionable: Int,
-        onSumarClick: () -> Unit,
-        onRestarClick: () -> Unit
+        onAlternarClick: () -> Unit
     ) {
-
         tvEntradasName.text = taskEntradas.nombre
 
-        mostrarEstadoSeleccion(
-            cantidadSeleccionada
-        )
+        val seleccionada = cantidadSeleccionada > 0
+
+        mostrarEstadoSeleccion(seleccionada)
 
         val agotada =
             !taskEntradas.disponible ||
                     taskEntradas.stock <= 0
 
-        // ==============================
-        // ESTADO DEL STOCK
-        // ==============================
-
         when {
             agotada -> {
-
                 tvStockEntrada.text = "Agotado"
                 tvStockEntrada.setTextColor(
                     Color.parseColor("#D32F2F")
                 )
-
             }
 
             taskEntradas.stock <= 3 -> {
-
                 tvStockEntrada.text = when (taskEntradas.stock) {
                     1 -> "¡Última unidad!"
                     else -> "¡Últimas ${taskEntradas.stock} unidades!"
@@ -67,79 +59,80 @@ class EntradasUsuarioViewHolder(
                 tvStockEntrada.setTextColor(
                     Color.parseColor("#E65100")
                 )
-
             }
 
             else -> {
-
                 tvStockEntrada.text = "Disponible"
 
                 tvStockEntrada.setTextColor(
                     Color.parseColor("#757575")
                 )
-
             }
         }
 
-        val puedeSumar =
-            !agotada &&
-                    cantidadSeleccionada < maximoSeleccionable
+        // Si ya está seleccionada, siempre permitimos quitarla.
+        val puedeInteractuar =
+            seleccionada ||
+                    (!agotada && maximoSeleccionable > 0)
 
-        btnAgregarEntrada.isEnabled =
-            puedeSumar
-
+        btnAgregarEntrada.isEnabled = puedeInteractuar
         btnAgregarEntrada.alpha =
-            if (puedeSumar) 1f else 0.45f
+            if (puedeInteractuar) 1f else 0.45f
 
         btnAgregarEntrada.setOnClickListener {
-            onSumarClick()
+            onAlternarClick()
         }
 
         itemView.setOnClickListener(null)
     }
 
     private fun mostrarEstadoSeleccion(
-        cantidadSeleccionada: Int
+        seleccionada: Boolean
     ) {
-
-        val seleccionada =
-            cantidadSeleccionada > 0
-
-        // El botón siempre se mantiene visible. Cada toque suma una
-        // entrada internamente, sin mostrar controles de cantidad.
-        btnAgregarEntrada.visibility = View.VISIBLE
-
-        cardEntrada.setCardBackgroundColor(
-            Color.parseColor(
-                if (seleccionada) {
-                    "#FFF3E8"
-                } else {
-                    "#FFFFFF"
-                }
-            )
-        )
-
-        cardEntrada.strokeColor =
-            Color.parseColor(
-                if (seleccionada) {
-                    "#E87520"
-                } else {
-                    "#EEEEEE"
-                }
+        if (seleccionada) {
+            cardEntrada.setCardBackgroundColor(
+                Color.parseColor("#FFF3E8")
             )
 
-        cardEntrada.strokeWidth =
-            if (seleccionada) {
-                dpToPx(2)
-            } else {
-                dpToPx(1)
-            }
+            cardEntrada.strokeColor =
+                Color.parseColor("#E87520")
+
+            cardEntrada.strokeWidth = dpToPx(2)
+
+            btnAgregarEntrada.text = "Quitar"
+            btnAgregarEntrada.setTextColor(
+                Color.parseColor("#E87520")
+            )
+
+            btnAgregarEntrada.backgroundTintList =
+                ColorStateList.valueOf(
+                    Color.parseColor("#FFE0C2")
+                )
+        } else {
+            cardEntrada.setCardBackgroundColor(
+                Color.parseColor("#FFFFFF")
+            )
+
+            cardEntrada.strokeColor =
+                Color.parseColor("#EEEEEE")
+
+            cardEntrada.strokeWidth = dpToPx(1)
+
+            btnAgregarEntrada.text = "Agregar"
+            btnAgregarEntrada.setTextColor(
+                Color.parseColor("#FFFFFF")
+            )
+
+            btnAgregarEntrada.backgroundTintList =
+                ColorStateList.valueOf(
+                    Color.parseColor("#E87520")
+                )
+        }
     }
 
     private fun dpToPx(dp: Int): Int {
         return (
-                dp * itemView.resources
-                    .displayMetrics.density
+                dp * itemView.resources.displayMetrics.density
                 ).toInt()
     }
 }
