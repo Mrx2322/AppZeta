@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.MotionEvent
 import android.view.animation.DecelerateInterpolator
 import android.widget.Button
 import android.widget.LinearLayout
@@ -729,7 +730,71 @@ class ActivityMenuUsuario : AppCompatActivity() {
             )
         }
 
+        configurarAnimacionesBarra()
+        marcarInicioActivo()
+
         actualizarContadorCarrito()
+    }
+
+    // =========================================================
+    // ANIMACIÓN DE LA BARRA INFERIOR
+    // =========================================================
+
+    private fun configurarAnimacionesBarra() {
+
+        listOf(
+            navInicio,
+            navExtras,
+            navPedidos,
+            navCarrito,
+            navPerfil
+        ).forEach { item ->
+
+            item.setOnTouchListener { vista, evento ->
+
+                when (evento.actionMasked) {
+
+                    MotionEvent.ACTION_DOWN -> {
+
+                        vista.animate()
+                            .scaleX(1.12f)
+                            .scaleY(1.12f)
+                            .translationY(-9f)
+                            .setDuration(150)
+                            .setInterpolator(DecelerateInterpolator())
+                            .start()
+                    }
+
+                    MotionEvent.ACTION_UP,
+                    MotionEvent.ACTION_CANCEL -> {
+
+                        vista.animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .translationY(0f)
+                            .setDuration(180)
+                            .setInterpolator(DecelerateInterpolator())
+                            .start()
+                    }
+                }
+
+                false
+            }
+        }
+    }
+
+    private fun marcarInicioActivo() {
+
+        navInicio.post {
+
+            navInicio.animate()
+                .scaleX(1.08f)
+                .scaleY(1.08f)
+                .translationY(-5f)
+                .setDuration(280)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+        }
     }
 
 

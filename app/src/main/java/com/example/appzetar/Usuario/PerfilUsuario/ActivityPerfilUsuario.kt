@@ -4,6 +4,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
@@ -23,37 +24,27 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityPerfilUsuario : AppCompatActivity() {
 
-    // =========================================================
-    // FIREBASE
-    // =========================================================
-
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
-
-    // =========================================================
-    // UI
-    // =========================================================
 
     private lateinit var tvInicialPerfil: TextView
     private lateinit var tvNombrePerfil: TextView
     private lateinit var tvCorreoPerfil: TextView
+    private lateinit var tvCantidadCarrito: TextView
 
     private lateinit var opcionEditarPerfil: LinearLayout
     private lateinit var opcionPedidosPerfil: LinearLayout
-
     private lateinit var btnCerrarSesion: MaterialButton
 
-    // =========================================================
-    // DATOS
-    // =========================================================
+    private lateinit var navInicio: LinearLayout
+    private lateinit var navExtras: LinearLayout
+    private lateinit var navPedidos: LinearLayout
+    private lateinit var navCarrito: LinearLayout
+    private lateinit var navPerfil: LinearLayout
 
     private var nombreActual = ""
     private var correoActual = ""
     private var animacionInicialEjecutada = false
-
-    // =========================================================
-    // ON CREATE
-    // =========================================================
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,28 +82,29 @@ class ActivityPerfilUsuario : AppCompatActivity() {
         cargarDatosUsuario()
     }
 
-    // =========================================================
-    // COMPONENTES
-    // =========================================================
+    override fun onResume() {
+        super.onResume()
+        actualizarContadorCarrito()
+    }
 
     private fun initComponent() {
-
         tvInicialPerfil = findViewById(R.id.tvInicialPerfil)
         tvNombrePerfil = findViewById(R.id.tvNombrePerfil)
         tvCorreoPerfil = findViewById(R.id.tvCorreoPerfil)
+        tvCantidadCarrito = findViewById(R.id.tvCantidadCarrito)
 
         opcionEditarPerfil = findViewById(R.id.opcionEditarPerfil)
         opcionPedidosPerfil = findViewById(R.id.opcionPedidosPerfil)
-
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion)
+
+        navInicio = findViewById(R.id.navInicio)
+        navExtras = findViewById(R.id.navExtras)
+        navPedidos = findViewById(R.id.navPedidos)
+        navCarrito = findViewById(R.id.navCarrito)
+        navPerfil = findViewById(R.id.navPerfil)
     }
 
-    // =========================================================
-    // UI
-    // =========================================================
-
     private fun initUI() {
-
         opcionEditarPerfil.setOnClickListener {
             mostrarDialogEditarNombre()
         }
@@ -129,14 +121,109 @@ class ActivityPerfilUsuario : AppCompatActivity() {
         btnCerrarSesion.setOnClickListener {
             mostrarConfirmacionCerrarSesion()
         }
+
+        configurarNavegacion()
+        configurarAnimacionesBarra()
+        marcarPerfilActivo()
+        actualizarContadorCarrito()
     }
 
-    // =========================================================
-    // PREPARAR ANIMACIONES
-    // =========================================================
+    private fun configurarNavegacion() {
+        navInicio.setOnClickListener {
+            startActivity(
+                Intent(this, ActivityMenuUsuario::class.java).apply {
+                    flags =
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                                Intent.FLAG_ACTIVITY_SINGLE_TOP
+                }
+            )
+        }
+
+        navExtras.setOnClickListener {
+            startActivity(
+                Intent(this, ActivityExtras::class.java)
+            )
+        }
+
+        navPedidos.setOnClickListener {
+            startActivity(
+                Intent(this, ActivityPedidosUsuario::class.java)
+            )
+        }
+
+        navCarrito.setOnClickListener {
+            startActivity(
+                Intent(this, ActivityPedido::class.java)
+            )
+        }
+
+        navPerfil.setOnClickListener {
+            // Ya estás en Perfil.
+        }
+    }
+
+    private fun configurarAnimacionesBarra() {
+        val opciones = listOf(
+            navInicio,
+            navExtras,
+            navPedidos,
+            navCarrito,
+            navPerfil
+        )
+
+        opciones.forEach { opcion ->
+            opcion.setOnTouchListener { vista, evento ->
+
+                when (evento.actionMasked) {
+                    MotionEvent.ACTION_DOWN -> {
+                        vista.animate()
+                            .scaleX(1.12f)
+                            .scaleY(1.12f)
+                            .translationY(-9f)
+                            .setDuration(150)
+                            .setInterpolator(DecelerateInterpolator())
+                            .start()
+                    }
+
+                    MotionEvent.ACTION_UP,
+                    MotionEvent.ACTION_CANCEL -> {
+                        vista.animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .translationY(0f)
+                            .setDuration(180)
+                            .setInterpolator(DecelerateInterpolator())
+                            .start()
+                    }
+                }
+
+                false
+            }
+        }
+    }
+
+    private fun marcarPerfilActivo() {
+        navPerfil.post {
+            navPerfil.animate()
+                .scaleX(1.08f)
+                .scaleY(1.08f)
+                .translationY(-5f)
+                .setDuration(280)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+        }
+    }
+
+    private fun actualizarContadorCarrito() {
+        val cantidad = PedidoManager.cantidadTotal()
+
+        tvCantidadCarrito.text = cantidad.toString()
+
+        tvCantidadCarrito.visibility =
+            if (cantidad > 0) View.VISIBLE else View.GONE
+    }
 
     private fun prepararAnimaciones() {
-
         tvInicialPerfil.alpha = 0f
         tvInicialPerfil.scaleX = 0.85f
         tvInicialPerfil.scaleY = 0.85f
@@ -157,19 +244,14 @@ class ActivityPerfilUsuario : AppCompatActivity() {
         btnCerrarSesion.translationY = 25f
     }
 
-    // =========================================================
-    // ANIMACIÓN DE ENTRADA
-    // =========================================================
-
     private fun ejecutarAnimacionInicial() {
-
-        if (animacionInicialEjecutada) return
+        if (animacionInicialEjecutada) {
+            return
+        }
 
         animacionInicialEjecutada = true
 
-        // Avatar: aparición y escala suave.
         AnimatorSet().apply {
-
             playTogether(
                 ObjectAnimator.ofFloat(
                     tvInicialPerfil,
@@ -198,29 +280,18 @@ class ActivityPerfilUsuario : AppCompatActivity() {
             start()
         }
 
-        // Nombre y correo.
         animarEntrada(tvNombrePerfil, 160)
         animarEntrada(tvCorreoPerfil, 230)
-
-        // Opciones.
         animarEntrada(opcionEditarPerfil, 320)
         animarEntrada(opcionPedidosPerfil, 400)
-
-        // Cerrar sesión.
         animarEntrada(btnCerrarSesion, 480)
     }
-
-    // =========================================================
-    // ANIMACIÓN REUTILIZABLE
-    // =========================================================
 
     private fun animarEntrada(
         vista: View,
         retraso: Long
     ) {
-
         AnimatorSet().apply {
-
             playTogether(
                 ObjectAnimator.ofFloat(
                     vista,
@@ -244,12 +315,7 @@ class ActivityPerfilUsuario : AppCompatActivity() {
         }
     }
 
-    // =========================================================
-    // CARGAR DATOS DEL USUARIO
-    // =========================================================
-
     private fun cargarDatosUsuario() {
-
         val usuario = auth.currentUser
 
         if (usuario == null) {
@@ -265,7 +331,6 @@ class ActivityPerfilUsuario : AppCompatActivity() {
             .addOnSuccessListener { documento ->
 
                 if (documento.exists()) {
-
                     nombreActual =
                         documento.getString("nombre")
                             ?: "Usuario"
@@ -274,9 +339,7 @@ class ActivityPerfilUsuario : AppCompatActivity() {
                         documento.getString("correo")
                             ?: usuario.email
                                     ?: ""
-
                 } else {
-
                     nombreActual =
                         usuario.displayName
                             ?: "Usuario"
@@ -290,7 +353,6 @@ class ActivityPerfilUsuario : AppCompatActivity() {
                 ejecutarAnimacionInicial()
             }
             .addOnFailureListener {
-
                 nombreActual =
                     usuario.displayName
                         ?: "Usuario"
@@ -310,37 +372,25 @@ class ActivityPerfilUsuario : AppCompatActivity() {
             }
     }
 
-    // =========================================================
-    // MOSTRAR DATOS
-    // =========================================================
-
     private fun mostrarDatos() {
-
         tvNombrePerfil.text = nombreActual
         tvCorreoPerfil.text = correoActual
 
-        val inicial =
-            nombreActual
-                .trim()
-                .firstOrNull()
-                ?.uppercaseChar()
-                ?.toString()
-                ?: "U"
+        val inicial = nombreActual
+            .trim()
+            .firstOrNull()
+            ?.uppercaseChar()
+            ?.toString()
+            ?: "U"
 
         tvInicialPerfil.text = inicial
     }
 
-    // =========================================================
-    // EDITAR NOMBRE
-    // =========================================================
-
     private fun mostrarDialogEditarNombre() {
-
-        val dialogView =
-            layoutInflater.inflate(
-                R.layout.dialog_editar_perfil,
-                null
-            )
+        val dialogView = layoutInflater.inflate(
+            R.layout.dialog_editar_perfil,
+            null
+        )
 
         val etNombreEditar =
             dialogView.findViewById<TextInputEditText>(
@@ -359,10 +409,9 @@ class ActivityPerfilUsuario : AppCompatActivity() {
 
         etNombreEditar.setText(nombreActual)
 
-        val dialog =
-            AlertDialog.Builder(this)
-                .setView(dialogView)
-                .create()
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
 
         dialog.show()
 
@@ -371,18 +420,13 @@ class ActivityPerfilUsuario : AppCompatActivity() {
         }
 
         btnGuardar.setOnClickListener {
-
-            val nuevoNombre =
-                etNombreEditar.text
-                    ?.toString()
-                    ?.trim()
-                    ?: ""
+            val nuevoNombre = etNombreEditar.text
+                ?.toString()
+                ?.trim()
+                ?: ""
 
             if (nuevoNombre.isEmpty()) {
-
-                etNombreEditar.error =
-                    "Ingresa tu nombre"
-
+                etNombreEditar.error = "Ingresa tu nombre"
                 return@setOnClickListener
             }
 
@@ -394,16 +438,11 @@ class ActivityPerfilUsuario : AppCompatActivity() {
         }
     }
 
-    // =========================================================
-    // ACTUALIZAR NOMBRE
-    // =========================================================
-
     private fun actualizarNombre(
         nuevoNombre: String,
         dialog: AlertDialog,
         btnGuardar: MaterialButton
     ) {
-
         val usuario = auth.currentUser
 
         if (usuario == null) {
@@ -417,7 +456,6 @@ class ActivityPerfilUsuario : AppCompatActivity() {
             .document(usuario.uid)
             .update("nombre", nuevoNombre)
             .addOnSuccessListener {
-
                 nombreActual = nuevoNombre
                 mostrarDatos()
 
@@ -430,7 +468,6 @@ class ActivityPerfilUsuario : AppCompatActivity() {
                 dialog.dismiss()
             }
             .addOnFailureListener {
-
                 btnGuardar.isEnabled = true
 
                 Toast.makeText(
@@ -441,12 +478,7 @@ class ActivityPerfilUsuario : AppCompatActivity() {
             }
     }
 
-    // =========================================================
-    // CONFIRMAR CIERRE DE SESIÓN
-    // =========================================================
-
     private fun mostrarConfirmacionCerrarSesion() {
-
         AlertDialog.Builder(this)
             .setTitle("Cerrar sesión")
             .setMessage("¿Deseas cerrar tu sesión?")
@@ -457,27 +489,16 @@ class ActivityPerfilUsuario : AppCompatActivity() {
             .show()
     }
 
-    // =========================================================
-    // CERRAR SESIÓN
-    // =========================================================
-
     private fun cerrarSesion() {
-
         auth.signOut()
         regresarLogin()
     }
 
-    // =========================================================
-    // REGRESAR AL LOGIN
-    // =========================================================
-
     private fun regresarLogin() {
-
-        val intent =
-            Intent(
-                this,
-                LoginActivity::class.java
-            )
+        val intent = Intent(
+            this,
+            LoginActivity::class.java
+        )
 
         intent.flags =
             Intent.FLAG_ACTIVITY_NEW_TASK or

@@ -2,7 +2,10 @@ package com.example.appzetar.Usuario
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
+import android.view.animation.DecelerateInterpolator
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -16,26 +19,22 @@ import com.google.android.material.button.MaterialButton
 
 class ActivityPedido : AppCompatActivity() {
 
-    // =========================================================
-    // COMPONENTES
-    // =========================================================
-
     private lateinit var rvPedido: RecyclerView
     private lateinit var tvTotalProductos: TextView
     private lateinit var tvTotalPedido: TextView
+    private lateinit var tvCantidadCarrito: TextView
     private lateinit var tvMensajeVacio: View
     private lateinit var btnContinuar: MaterialButton
 
+    private lateinit var navInicio: LinearLayout
+    private lateinit var navExtras: LinearLayout
+    private lateinit var navPedidos: LinearLayout
+    private lateinit var navCarrito: LinearLayout
+    private lateinit var navPerfil: LinearLayout
+
     private lateinit var pedidoAdapter: PedidoAdapter
 
-
-    // =========================================================
-    // ON CREATE
-    // =========================================================
-
-    override fun onCreate(
-        savedInstanceState: Bundle?
-    ) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
@@ -45,23 +44,15 @@ class ActivityPedido : AppCompatActivity() {
             false
         )
 
-        setContentView(
-            R.layout.activity_pedido
-        )
-
-
-        // =====================================================
-        // INSETS
-        // =====================================================
+        setContentView(R.layout.activity_pedido)
 
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
         ) { view, insets ->
 
-            val systemBars =
-                insets.getInsets(
-                    WindowInsetsCompat.Type.systemBars()
-                )
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+            )
 
             view.setPadding(
                 systemBars.left,
@@ -73,261 +64,205 @@ class ActivityPedido : AppCompatActivity() {
             insets
         }
 
-
-        // =====================================================
-        // INICIALIZAR
-        // =====================================================
-
         initComponent()
         initUI()
         actualizarPedido()
     }
 
-
-    // =========================================================
-    // COMPONENTES
-    // =========================================================
-
     private fun initComponent() {
+        rvPedido = findViewById(R.id.rvPedido)
+        tvTotalProductos = findViewById(R.id.tvTotalProductos)
+        tvTotalPedido = findViewById(R.id.tvTotalPedido)
+        tvCantidadCarrito = findViewById(R.id.tvCantidadCarrito)
+        tvMensajeVacio = findViewById(R.id.tvMensajeVacio)
+        btnContinuar = findViewById(R.id.btnContinuar)
 
-        rvPedido =
-            findViewById(
-                R.id.rvPedido
-            )
-
-        tvTotalProductos =
-            findViewById(
-                R.id.tvTotalProductos
-            )
-
-        tvTotalPedido =
-            findViewById(
-                R.id.tvTotalPedido
-            )
-
-        tvMensajeVacio =
-            findViewById(
-                R.id.tvMensajeVacio
-            )
-
-        btnContinuar =
-            findViewById(
-                R.id.btnContinuar
-            )
+        navInicio = findViewById(R.id.navInicio)
+        navExtras = findViewById(R.id.navExtras)
+        navPedidos = findViewById(R.id.navPedidos)
+        navCarrito = findViewById(R.id.navCarrito)
+        navPerfil = findViewById(R.id.navPerfil)
     }
 
-
-    // =========================================================
-    // UI
-    // =========================================================
-
     private fun initUI() {
+        pedidoAdapter = PedidoAdapter(
+            PedidoManager.pedido,
 
-        pedidoAdapter =
-            PedidoAdapter(
-                PedidoManager.pedido,
+            onAumentar = { item ->
+                aumentarProducto(item)
+            },
 
-                onAumentar = { item ->
-                    aumentarProducto(item)
-                },
+            onDisminuir = { item ->
+                disminuirProducto(item)
+            },
 
-                onDisminuir = { item ->
-                    disminuirProducto(item)
-                },
+            onEliminar = { item ->
+                eliminarProducto(item)
+            }
+        )
 
-                onEliminar = { item ->
-                    eliminarProducto(item)
-                }
-            )
-
-
-        rvPedido.layoutManager =
-            LinearLayoutManager(this)
-
-        rvPedido.adapter =
-            pedidoAdapter
-
-
-        // =====================================================
-        // BOTÓN CONTINUAR
-        // =====================================================
+        rvPedido.layoutManager = LinearLayoutManager(this)
+        rvPedido.adapter = pedidoAdapter
 
         btnContinuar.setOnClickListener {
-
             continuarCompra()
+        }
+
+        configurarNavegacion()
+        configurarAnimacionesBarra()
+        marcarCarritoActivo()
+    }
+
+    private fun configurarNavegacion() {
+        navInicio.setOnClickListener {
+            startActivity(
+                Intent(this, ActivityMenuUsuario::class.java).apply {
+                    flags =
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                                Intent.FLAG_ACTIVITY_SINGLE_TOP
+                }
+            )
+        }
+
+        navExtras.setOnClickListener {
+            startActivity(
+                Intent(this, ActivityExtras::class.java)
+            )
+        }
+
+        navPedidos.setOnClickListener {
+            startActivity(
+                Intent(this, ActivityPedidosUsuario::class.java)
+            )
+        }
+
+        navCarrito.setOnClickListener {
+            // Ya estás en Carrito.
+        }
+
+        navPerfil.setOnClickListener {
+            startActivity(
+                Intent(this, ActivityPerfilUsuario::class.java)
+            )
         }
     }
 
-
-    // =========================================================
-    // AUMENTAR PRODUCTO
-    // =========================================================
-    //
-    // IMPORTANTE:
-    //
-    // Aquí NO se modifica Firestore.
-    // Solo se modifica el carrito.
-    //
-    // El stock se descontará al confirmar el pedido.
-    // =========================================================
-
-    private fun aumentarProducto(
-        item: PedidoItem
-    ) {
-
-        PedidoManager.aumentarCantidad(
-            item
+    private fun configurarAnimacionesBarra() {
+        val opciones = listOf(
+            navInicio,
+            navExtras,
+            navPedidos,
+            navCarrito,
+            navPerfil
         )
 
+        opciones.forEach { opcion ->
+            opcion.setOnTouchListener { vista, evento ->
+
+                when (evento.actionMasked) {
+                    MotionEvent.ACTION_DOWN -> {
+                        vista.animate()
+                            .scaleX(1.12f)
+                            .scaleY(1.12f)
+                            .translationY(-9f)
+                            .setDuration(150)
+                            .setInterpolator(DecelerateInterpolator())
+                            .start()
+                    }
+
+                    MotionEvent.ACTION_UP,
+                    MotionEvent.ACTION_CANCEL -> {
+                        vista.animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .translationY(0f)
+                            .setDuration(180)
+                            .setInterpolator(DecelerateInterpolator())
+                            .start()
+                    }
+                }
+
+                false
+            }
+        }
+    }
+
+    private fun marcarCarritoActivo() {
+        navCarrito.post {
+            navCarrito.animate()
+                .scaleX(1.08f)
+                .scaleY(1.08f)
+                .translationY(-5f)
+                .setDuration(280)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+        }
+    }
+
+    private fun aumentarProducto(item: PedidoItem) {
+        PedidoManager.aumentarCantidad(item)
         actualizarPedido()
     }
 
-
-    // =========================================================
-    // DISMINUIR PRODUCTO
-    // =========================================================
-    //
-    // Aquí tampoco se devuelve stock.
-    // Solo se modifica el carrito.
-    // =========================================================
-
-    private fun disminuirProducto(
-        item: PedidoItem
-    ) {
-
-        PedidoManager.disminuirCantidad(
-            item
-        )
-
+    private fun disminuirProducto(item: PedidoItem) {
+        PedidoManager.disminuirCantidad(item)
         actualizarPedido()
     }
 
-
-    // =========================================================
-    // ELIMINAR PRODUCTO
-    // =========================================================
-    //
-    // Solo elimina del carrito.
-    // No modifica Firestore.
-    // =========================================================
-
-    private fun eliminarProducto(
-        item: PedidoItem
-    ) {
-
-        PedidoManager.eliminarProducto(
-            item
-        )
-
+    private fun eliminarProducto(item: PedidoItem) {
+        PedidoManager.eliminarProducto(item)
         actualizarPedido()
     }
-
-
-    // =========================================================
-    // CONTINUAR COMPRA
-    // =========================================================
 
     private fun continuarCompra() {
-
-        if (
-            PedidoManager.pedido.isEmpty()
-        ) {
+        if (PedidoManager.pedido.isEmpty()) {
             return
         }
 
-        val intent =
-            Intent(
-                this,
-                ActivityEntrega::class.java
-            )
-
-        startActivity(intent)
+        startActivity(
+            Intent(this, ActivityEntrega::class.java)
+        )
     }
 
-
-    // =========================================================
-    // ACTUALIZAR PEDIDO
-    // =========================================================
-
     private fun actualizarPedido() {
-
         pedidoAdapter.notifyDataSetChanged()
 
-
-        // =====================================================
-        // CANTIDAD TOTAL
-        // =====================================================
-
-        val cantidad =
-            PedidoManager.cantidadTotal()
+        val cantidad = PedidoManager.cantidadTotal()
 
         tvTotalProductos.text =
             if (cantidad == 1) {
-
                 "1 producto"
-
             } else {
-
                 "$cantidad productos"
             }
 
+        tvCantidadCarrito.text = cantidad.toString()
 
-        // =====================================================
-        // TOTAL
-        // =====================================================
+        tvCantidadCarrito.visibility =
+            if (cantidad > 0) View.VISIBLE else View.GONE
 
-        val total =
-            PedidoManager.totalPedido()
+        val total = PedidoManager.totalPedido()
 
         tvTotalPedido.text =
             "S/ %.2f".format(total)
 
+        if (PedidoManager.pedido.isEmpty()) {
+            rvPedido.visibility = View.GONE
+            tvMensajeVacio.visibility = View.VISIBLE
 
-        // =====================================================
-        // PEDIDO VACÍO
-        // =====================================================
-
-        if (
-            PedidoManager.pedido.isEmpty()
-        ) {
-
-            rvPedido.visibility =
-                View.GONE
-
-            tvMensajeVacio.visibility =
-                View.VISIBLE
-
-            btnContinuar.isEnabled =
-                false
-
-            btnContinuar.alpha =
-                0.5f
-
+            btnContinuar.isEnabled = false
+            btnContinuar.alpha = 0.5f
         } else {
+            rvPedido.visibility = View.VISIBLE
+            tvMensajeVacio.visibility = View.GONE
 
-            rvPedido.visibility =
-                View.VISIBLE
-
-            tvMensajeVacio.visibility =
-                View.GONE
-
-            btnContinuar.isEnabled =
-                true
-
-            btnContinuar.alpha =
-                1f
+            btnContinuar.isEnabled = true
+            btnContinuar.alpha = 1f
         }
     }
 
-
-    // =========================================================
-    // AL REGRESAR
-    // =========================================================
-
     override fun onResume() {
-
         super.onResume()
-
         actualizarPedido()
     }
 }
