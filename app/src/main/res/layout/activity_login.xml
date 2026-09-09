@@ -1,158 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/fondo_login"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:overScrollMode="never"
+    android:paddingStart="24dp"
+    android:paddingTop="28dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="28dp">
 
-    android:orientation="vertical"
-    android:gravity="center"
-
-    android:padding="30dp"
-
-    android:background="#F7F7F7">
-
-
-    <!-- =====================================================
-         LOGO
-         ===================================================== -->
-
-    <ImageView
-        android:id="@+id/imgLogo"
-
-        android:layout_width="140dp"
-        android:layout_height="140dp"
-
-        android:src="@drawable/log_zeta"
-
-        android:contentDescription="Logo ZETA"
-
-        android:layout_marginBottom="20dp" />
-
-
-    <!-- =====================================================
-         TÍTULO
-         ===================================================== -->
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:text="Bienvenido a ZETA"
-
-        android:textSize="25sp"
-        android:textStyle="bold"
-
-        android:textColor="#333333"
-
-        android:layout_marginBottom="25dp" />
-
-
-    <!-- =====================================================
-         CORREO
-         ===================================================== -->
-
-    <com.google.android.material.textfield.TextInputLayout
-
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
 
-        android:hint="Correo electrónico"
+        <ImageView
+            android:id="@+id/imgLogo"
+            android:layout_width="155dp"
+            android:layout_height="155dp"
+            android:contentDescription="Logo ZETA"
+            android:scaleType="centerInside"
+            android:src="@drawable/log_zeta" />
 
-        app:boxCornerRadiusTopStart="15dp"
-        app:boxCornerRadiusTopEnd="15dp"
-        app:boxCornerRadiusBottomStart="15dp"
-        app:boxCornerRadiusBottomEnd="15dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="Bienvenido a ZETA"
+            android:textColor="#202020"
+            android:textSize="26sp"
+            android:textStyle="bold" />
 
-        <com.google.android.material.textfield.TextInputEditText
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:text="Ingresa para realizar tu pedido"
+            android:textColor="#777777"
+            android:textSize="15sp" />
 
-            android:id="@+id/etCorreo"
-
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="22dp"
+            app:cardElevation="1dp"
+            app:strokeColor="#EEEEEE"
+            app:strokeWidth="1dp">
 
-            android:inputType="textEmailAddress" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="18dp">
 
-    </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Iniciar sesión"
+                    android:textColor="#202020"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="Ingresa tus datos para continuar"
+                    android:textColor="#777777"
+                    android:textSize="14sp" />
 
-    <!-- =====================================================
-         CONTRASEÑA
-         ===================================================== -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:hint="Correo electrónico"
+                    app:boxBackgroundColor="#FFFCF9"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomEnd="14dp"
+                    app:boxCornerRadiusBottomStart="14dp"
+                    app:boxCornerRadiusTopEnd="14dp"
+                    app:boxCornerRadiusTopStart="14dp"
+                    app:boxStrokeColor="#E87520">
 
-    <com.google.android.material.textfield.TextInputLayout
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etCorreo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:textColor="#202020"
+                        android:textColorHint="#888888" />
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+                </com.google.android.material.textfield.TextInputLayout>
 
-        android:layout_marginTop="15dp"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:hint="Contraseña"
+                    app:boxBackgroundColor="#FFFCF9"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomEnd="14dp"
+                    app:boxCornerRadiusBottomStart="14dp"
+                    app:boxCornerRadiusTopEnd="14dp"
+                    app:boxCornerRadiusTopStart="14dp"
+                    app:boxStrokeColor="#E87520"
+                    app:endIconMode="password_toggle">
 
-        android:hint="Contraseña"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etContrasena"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:textColor="#202020"
+                        android:textColorHint="#888888" />
 
-        app:endIconMode="password_toggle"
+                </com.google.android.material.textfield.TextInputLayout>
 
-        app:boxCornerRadiusTopStart="15dp"
-        app:boxCornerRadiusTopEnd="15dp"
-        app:boxCornerRadiusBottomStart="15dp"
-        app:boxCornerRadiusBottomEnd="15dp">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnIniciarSesion"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:layout_marginTop="22dp"
+                    android:minHeight="54dp"
+                    android:text="Iniciar sesión"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="#E87520"
+                    app:cornerRadius="16dp"
+                    app:elevation="0dp" />
 
-        <com.google.android.material.textfield.TextInputEditText
+            </LinearLayout>
 
-            android:id="@+id/etContrasena"
+        </com.google.android.material.card.MaterialCardView>
 
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            android:inputType="textPassword" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¿No tienes una cuenta?"
+                android:textColor="#777777"
+                android:textSize="15sp" />
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:id="@+id/tvRegistrarse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingStart="6dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="6dp"
+                android:paddingBottom="6dp"
+                android:pointerIcon="hand"
+                android:text="Regístrate"
+                android:textColor="#E87520"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
+        </LinearLayout>
 
-    <!-- =====================================================
-         BOTÓN LOGIN
-         ===================================================== -->
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/btnIniciarSesion"
-
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-
-        android:layout_marginTop="25dp"
-
-        android:text="INICIAR SESIÓN"
-
-        android:textSize="16sp"
-
-        android:textColor="@android:color/white"
-
-        android:backgroundTint="#7351B5" />
-
-
-    <!-- =====================================================
-         REGISTRO
-         ===================================================== -->
-
-    <TextView
-
-        android:id="@+id/tvRegistrarse"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:layout_marginTop="20dp"
-
-        android:text="¿No tienes una cuenta? Regístrate"
-
-        android:textSize="15sp"
-
-        android:textColor="#7351B5"
-
-        android:textStyle="bold"
-
-        android:clickable="true"
-        android:focusable="true" />
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>
