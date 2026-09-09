@@ -1,10 +1,12 @@
-package com.example.appzetar.Usuario
+package com.example.appzetar.Usuario.Entradas
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.appzetar.Menu.TaskEntradas
+import com.example.appzetar.AdminMenu.EntradasAdmin.TaskEntradas
 import com.example.appzetar.R
+import com.example.appzetar.Usuario.Carrito.EntradaPedido
+import com.example.appzetar.Usuario.Carrito.PedidoManager
 
 class EntradasUsuarioAdapter(
     private val entradas: MutableList<TaskEntradas>

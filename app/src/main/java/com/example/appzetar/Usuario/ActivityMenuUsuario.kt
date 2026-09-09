@@ -2,6 +2,7 @@ package com.example.appzetar.Usuario
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -25,9 +26,16 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.appzetar.Menu.TaskEntradas
-import com.example.appzetar.Menu.TaskMenu
+import com.example.appzetar.AdminMenu.EntradasAdmin.TaskEntradas
+import com.example.appzetar.AdminMenu.TaskMenu
 import com.example.appzetar.R
+import com.example.appzetar.Usuario.Carrito.ActivityPedido
+import com.example.appzetar.Usuario.Carrito.EntradaPedido
+import com.example.appzetar.Usuario.Carrito.PedidoItem
+import com.example.appzetar.Usuario.Carrito.PedidoManager
+import com.example.appzetar.Usuario.Carrito.ReglasPrecioPedido
+import com.example.appzetar.Usuario.Carrito.TipoPedido
+import com.example.appzetar.Usuario.Entradas.EntradasUsuarioAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -740,6 +748,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
     // ANIMACIÓN DE LA BARRA INFERIOR
     // =========================================================
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun configurarAnimacionesBarra() {
 
         listOf(

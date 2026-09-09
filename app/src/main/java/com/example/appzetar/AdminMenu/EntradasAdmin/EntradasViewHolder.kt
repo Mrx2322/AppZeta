@@ -1,4 +1,4 @@
-package com.example.appzetar.Menu
+package com.example.appzetar.AdminMenu.EntradasAdmin
 
 import android.view.View
 import android.widget.TextView

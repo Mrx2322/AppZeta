@@ -1,4 +1,4 @@
-package com.example.appzetar.Usuario
+package com.example.appzetar.Usuario.Confirmacion
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
+import com.example.appzetar.Usuario.Carrito.PedidoItem
 
 class PedidoResumenAdapter(
     private val listaPedido: MutableList<PedidoItem>

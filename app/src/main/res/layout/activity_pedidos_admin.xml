@@ -11,7 +11,7 @@
 
     android:background="#F7F7F7"
 
-    tools:context=".Menu.ActivityPedidosAdmin">
+    tools:context=".AdminMenu.ActivityPedidosAdmin">
 
 
     <!-- =========================================================

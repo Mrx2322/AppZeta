@@ -1,4 +1,4 @@
-package com.example.appzetar.Menu
+package com.example.appzetar.AdminMenu
 
 data class TaskMenu(
     val id: Int,

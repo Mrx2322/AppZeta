@@ -1,4 +1,4 @@
-package com.example.appzetar.Menu
+package com.example.appzetar.AdminMenu
 
 import android.os.Bundle
 import android.util.Log

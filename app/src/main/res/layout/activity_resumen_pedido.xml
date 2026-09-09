@@ -10,7 +10,7 @@
     android:layout_height="match_parent"
     android:background="#F7F7F7"
 
-    tools:context=".Usuario.ActivityResumenPedido">
+    tools:context=".Usuario.Confirmacion.ActivityResumenPedido">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

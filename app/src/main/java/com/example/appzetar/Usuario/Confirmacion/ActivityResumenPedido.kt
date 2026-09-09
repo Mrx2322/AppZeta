@@ -1,4 +1,4 @@
-package com.example.appzetar.Usuario
+package com.example.appzetar.Usuario.Confirmacion
 
 import android.content.Intent
 import android.os.Bundle
@@ -14,6 +14,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
+import com.example.appzetar.Usuario.ActivityConfirmarPedido
+import com.example.appzetar.Usuario.Carrito.PedidoManager
 
 class ActivityResumenPedido : AppCompatActivity() {
 

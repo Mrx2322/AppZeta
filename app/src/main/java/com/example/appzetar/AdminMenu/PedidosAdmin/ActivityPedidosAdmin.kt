@@ -1,4 +1,4 @@
-package com.example.appzetar.Menu
+package com.example.appzetar.AdminMenu
 
 import android.content.Intent
 import android.os.Bundle

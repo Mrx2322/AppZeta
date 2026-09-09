@@ -1,5 +1,6 @@
-package com.example.appzetar.Usuario
+package com.example.appzetar.Usuario.Carrito
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
@@ -15,6 +16,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
+import com.example.appzetar.Usuario.ActivityEntrega
+import com.example.appzetar.Usuario.ActivityExtras
+import com.example.appzetar.Usuario.ActivityMenuUsuario
+import com.example.appzetar.Usuario.ActivityPedidosUsuario
+import com.example.appzetar.Usuario.ActivityPerfilUsuario
 import com.google.android.material.button.MaterialButton
 
 class ActivityPedido : AppCompatActivity() {
@@ -147,6 +153,7 @@ class ActivityPedido : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun configurarAnimacionesBarra() {
         val opciones = listOf(
             navInicio,

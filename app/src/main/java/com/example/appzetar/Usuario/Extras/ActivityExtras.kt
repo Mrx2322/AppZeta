@@ -1,5 +1,6 @@
 package com.example.appzetar.Usuario
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
+import com.example.appzetar.Usuario.Carrito.ActivityPedido
+import com.example.appzetar.Usuario.Carrito.PedidoItem
+import com.example.appzetar.Usuario.Carrito.PedidoManager
+import com.example.appzetar.Usuario.Carrito.TipoPedido
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityExtras : AppCompatActivity() {
@@ -132,6 +137,7 @@ class ActivityExtras : AppCompatActivity() {
         actualizarContadorCarrito()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun configurarAnimacionesBarra() {
         val opciones = listOf(
             navInicio,

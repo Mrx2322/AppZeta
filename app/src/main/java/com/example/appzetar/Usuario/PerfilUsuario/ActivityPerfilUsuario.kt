@@ -20,6 +20,9 @@ import com.example.appzetar.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
+import android.annotation.SuppressLint
+import com.example.appzetar.Usuario.Carrito.ActivityPedido
+import com.example.appzetar.Usuario.Carrito.PedidoManager
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityPerfilUsuario : AppCompatActivity() {
@@ -162,6 +165,7 @@ class ActivityPerfilUsuario : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun configurarAnimacionesBarra() {
         val opciones = listOf(
             navInicio,
@@ -183,9 +187,23 @@ class ActivityPerfilUsuario : AppCompatActivity() {
                             .setDuration(150)
                             .setInterpolator(DecelerateInterpolator())
                             .start()
+
+                        true
                     }
 
-                    MotionEvent.ACTION_UP,
+                    MotionEvent.ACTION_UP -> {
+                        vista.animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .translationY(0f)
+                            .setDuration(180)
+                            .setInterpolator(DecelerateInterpolator())
+                            .start()
+
+                        vista.performClick()
+                        true
+                    }
+
                     MotionEvent.ACTION_CANCEL -> {
                         vista.animate()
                             .scaleX(1f)
@@ -194,10 +212,12 @@ class ActivityPerfilUsuario : AppCompatActivity() {
                             .setDuration(180)
                             .setInterpolator(DecelerateInterpolator())
                             .start()
-                    }
-                }
 
-                false
+                        true
+                    }
+
+                    else -> true
+                }
             }
         }
     }

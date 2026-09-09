@@ -1,4 +1,4 @@
-package com.example.appzetar.Menu
+package com.example.appzetar.AdminMenu
 
 import android.content.Intent
 import android.graphics.Color
@@ -22,6 +22,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.appzetar.AdminMenu.EntradasAdmin.EntradasAdapter
+import com.example.appzetar.AdminMenu.EntradasAdmin.TaskEntradas
 import com.example.appzetar.R
 import com.example.appzetar.Usuario.ExtraItem
 import com.google.android.material.floatingactionbutton.FloatingActionButton

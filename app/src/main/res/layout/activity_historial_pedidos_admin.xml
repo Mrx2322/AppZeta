@@ -10,7 +10,7 @@
 
     android:background="#F7F7F7"
 
-    tools:context=".Menu.ActivityHistorialPedidosAdmin">
+    tools:context=".AdminMenu.ActivityHistorialPedidosAdmin">
 
     <ImageView
         android:layout_width="match_parent"

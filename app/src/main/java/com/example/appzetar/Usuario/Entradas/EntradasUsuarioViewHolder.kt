@@ -1,10 +1,10 @@
-package com.example.appzetar.Usuario
+package com.example.appzetar.Usuario.Entradas
 
 import android.graphics.Color
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.appzetar.Menu.TaskEntradas
+import com.example.appzetar.AdminMenu.EntradasAdmin.TaskEntradas
 import com.example.appzetar.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView

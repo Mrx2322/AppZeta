@@ -1,4 +1,4 @@
-package com.example.appzetar.Menu
+package com.example.appzetar.AdminMenu
 
 import android.graphics.Color
 import android.graphics.Typeface

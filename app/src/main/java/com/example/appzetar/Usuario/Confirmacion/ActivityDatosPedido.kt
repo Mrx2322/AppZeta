@@ -1,5 +1,6 @@
-package com.example.appzetar.Usuario
+package com.example.appzetar.Usuario.Confirmacion
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -9,7 +10,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.appzetar.R
-import android.content.Intent
 
 class ActivityDatosPedido : AppCompatActivity() {
 

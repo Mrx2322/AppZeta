@@ -1,4 +1,4 @@
-package com.example.appzetar.Usuario
+package com.example.appzetar.Usuario.Carrito
 
 /**
  * Entrada que queda asociada a una unidad del menú.

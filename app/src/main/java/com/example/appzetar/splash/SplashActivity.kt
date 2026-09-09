@@ -1,17 +1,13 @@
 package com.example.appzetar.splash
 
-import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.example.appzetar.Menu.ActivityMenu
+import com.example.appzetar.AdminMenu.ActivityMenu
 import com.example.appzetar.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

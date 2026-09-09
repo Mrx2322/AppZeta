@@ -9,7 +9,7 @@
     android:background="#F7F7F7"
     android:clipChildren="false"
     android:clipToPadding="false"
-    tools:context=".Usuario.ActivityPedido">
+    tools:context=".Usuario.Carrito.ActivityPedido">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardEncabezadoPedido"
