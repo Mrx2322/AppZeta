@@ -69,7 +69,7 @@
                         android:layout_width="55dp"
                         android:layout_height="55dp"
                         android:gravity="center"
-                        android:text="🛵"
+                        android:background="@drawable/ic_delivery"
                         android:textSize="30sp" />
 
                     <LinearLayout
@@ -133,7 +133,7 @@
                         android:layout_width="55dp"
                         android:layout_height="55dp"
                         android:gravity="center"
-                        android:text="🏪"
+                        android:background="@drawable/ic_local"
                         android:textSize="30sp" />
 
                     <LinearLayout
@@ -219,7 +219,7 @@
                         android:layout_width="55dp"
                         android:layout_height="55dp"
                         android:gravity="center"
-                        android:text="💵"
+                        android:background="@drawable/ic_entrega"
                         android:textSize="30sp" />
 
                     <LinearLayout
@@ -292,7 +292,7 @@
                         android:layout_width="55dp"
                         android:layout_height="55dp"
                         android:gravity="center"
-                        android:text="📱"
+                        android:background="@drawable/ic_yape"
                         android:textSize="30sp" />
 
                     <LinearLayout

@@ -3,11 +3,12 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F7F7F7">
+    android:background="#F7F7F7"
+    tools:ignore="UselessParent">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -19,10 +20,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingBottom="30dp">
-
-            <!-- ===================================================== -->
-            <!-- ENCABEZADO -->
-            <!-- ===================================================== -->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -36,7 +33,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Confirmar pedido"
+                    android:text="@string/Confirmar_pedido"
                     android:textColor="#202020"
                     android:textSize="30sp"
                     android:textStyle="bold" />
@@ -45,16 +42,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="Revisa los datos antes de confirmar"
-                    android:textColor="#888888"
+                    android:text="@string/datos_confirmar"
+                    android:textColor="#66666"
                     android:textSize="15sp" />
 
             </LinearLayout>
-
-
-            <!-- ===================================================== -->
-            <!-- DATOS DEL CLIENTE -->
-            <!-- ===================================================== -->
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -76,7 +68,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Datos del cliente"
+                        android:text="@string/datos_cliente"
                         android:textColor="#202020"
                         android:textSize="17sp"
                         android:textStyle="bold" />
@@ -86,7 +78,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:text="Nombre"
+                        android:text="@string/nombre_cliente"
                         android:textColor="#202020"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -96,18 +88,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="correo@email.com"
-                        android:textColor="#777777"
+                        android:text="@string/correo_cliente"
+                        android:textColor="#66666"
                         android:textSize="14sp" />
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
-
-
-            <!-- ===================================================== -->
-            <!-- RESUMEN DE COMPRA -->
-            <!-- ===================================================== -->
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -129,7 +116,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Resumen de compra"
+                        android:text="@string/rs_compra"
                         android:textColor="#202020"
                         android:textSize="17sp"
                         android:textStyle="bold" />
@@ -144,15 +131,15 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Productos"
-                            android:textColor="#777777"
+                            android:text="@string/product"
+                            android:textColor="#66666"
                             android:textSize="15sp" />
 
                         <TextView
                             android:id="@+id/tvResumenProductos"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0 productos"
+                            android:text="@string/cnt_compra"
                             android:textColor="#202020"
                             android:textSize="15sp"
                             android:textStyle="bold" />
@@ -163,14 +150,12 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-
-            <!-- ===================================================== -->
-            <!-- TIPO DE ENTREGA -->
-            <!-- ===================================================== -->
-
+            <!-- Se mantiene invisible para que el Kotlin conserve sus ID
+                 y no permita cambiar la opción seleccionada. -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="14dp"
@@ -188,7 +173,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="¿Cómo quieres recibirlo?"
+                        android:text="@string/c_recibirlo"
                         android:textColor="#202020"
                         android:textSize="17sp"
                         android:textStyle="bold" />
@@ -203,28 +188,19 @@
                             android:id="@+id/radioDelivery"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="🛵  Delivery"
-                            android:textColor="#202020"
-                            android:textSize="15sp" />
+                            android:text="@string/delivery" />
 
                         <RadioButton
                             android:id="@+id/radioRecojo"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="🏪  Recojo en tienda"
-                            android:textColor="#202020"
-                            android:textSize="15sp" />
+                            android:text="@string/rc_tienda" />
 
                     </RadioGroup>
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
-
-
-            <!-- ===================================================== -->
-            <!-- DATOS DE ENTREGA -->
-            <!-- ===================================================== -->
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardDatosEntrega"
@@ -247,7 +223,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Datos de entrega"
+                        android:text="@string/detal_compras"
                         android:textColor="#202020"
                         android:textSize="17sp"
                         android:textStyle="bold" />
@@ -256,7 +232,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp"
-                        android:text="📍 Dirección"
+                        android:text="@string/dc"
                         android:textColor="#777777"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -266,7 +242,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="No especificada"
+                        android:text="@string/especificacion"
                         android:textColor="#202020"
                         android:textSize="15sp" />
 
@@ -274,7 +250,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:text="📝 Referencia"
+                        android:text="@string/rf"
                         android:textColor="#777777"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -284,7 +260,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Sin referencia"
+                        android:text="@string/srf"
                         android:textColor="#202020"
                         android:textSize="15sp" />
 
@@ -292,7 +268,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:text="📞 Teléfono"
+                        android:text="@string/telefono"
                         android:textColor="#777777"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -302,18 +278,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="No especificado"
+                        android:text="@string/n_especifico"
                         android:textColor="#202020"
                         android:textSize="15sp" />
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
-
-
-            <!-- ===================================================== -->
-            <!-- MÉTODO DE PAGO -->
-            <!-- ===================================================== -->
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -335,10 +306,10 @@
                     android:padding="18dp">
 
                     <TextView
-                        android:layout_width="55dp"
-                        android:layout_height="55dp"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
                         android:gravity="center"
-                        android:text="💵"
+                        android:background="@drawable/ic_entrega"
                         android:textSize="30sp" />
 
                     <LinearLayout
@@ -351,7 +322,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Contra entrega"
+                            android:text="@string/c_entrega"
                             android:textColor="#202020"
                             android:textSize="17sp"
                             android:textStyle="bold" />
@@ -360,8 +331,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Paga cuando recibas tu pedido"
-                            android:textColor="#777777"
+                            android:text="@string/pg_entrega_pedido"
+                            android:textColor="#66666"
                             android:textSize="14sp" />
 
                         <TextView
@@ -369,8 +340,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
-                            android:text="✓ Disponible"
-                            android:textColor="#4CAF50"
+                            android:text="@string/disponible"
+                            android:textColor="#2E7D32"
                             android:textSize="13sp"
                             android:textStyle="bold" />
 
@@ -379,11 +350,6 @@
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
-
-
-            <!-- ===================================================== -->
-            <!-- YAPE PRÓXIMAMENTE -->
-            <!-- ===================================================== -->
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardYapeProximamente"
@@ -405,10 +371,10 @@
                     android:padding="16dp">
 
                     <TextView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
                         android:gravity="center"
-                        android:text="📱"
+                        android:background="@drawable/ic_yape"
                         android:textSize="28sp" />
 
                     <LinearLayout
@@ -421,7 +387,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Pagar con Yape"
+                            android:text="@string/pg_yp"
                             android:textColor="#555555"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -430,7 +396,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
-                            android:text="Esta opción estará disponible muy pronto"
+                            android:text="@string/op_pronto"
                             android:textColor="#888888"
                             android:textSize="13sp" />
 
@@ -438,7 +404,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="🔜 Próximamente"
+                            android:text="@string/prx"
                             android:textColor="#FF9500"
                             android:textSize="13sp"
                             android:textStyle="bold" />
@@ -448,11 +414,6 @@
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
-
-
-            <!-- ===================================================== -->
-            <!-- TOTAL -->
-            <!-- ===================================================== -->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -467,7 +428,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Total"
+                    android:text="@string/total"
                     android:textColor="#202020"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -476,17 +437,12 @@
                     android:id="@+id/tvTotalPedido"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="S/ 0.00"
+                    android:text="@string/$"
                     android:textColor="#202020"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
-
-
-            <!-- ===================================================== -->
-            <!-- CONFIRMAR PEDIDO -->
-            <!-- ===================================================== -->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnContinuarPago"
@@ -495,7 +451,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="18dp"
                 android:layout_marginEnd="24dp"
-                android:text="CONFIRMAR PEDIDO"
+                android:text="@string/confirmar_pedido"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp"
                 android:textStyle="bold"
