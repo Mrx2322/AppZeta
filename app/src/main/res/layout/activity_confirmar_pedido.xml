@@ -43,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="@string/datos_confirmar"
-                    android:textColor="#66666"
+                    android:textColor="#666666"
                     android:textSize="15sp" />
 
             </LinearLayout>
@@ -89,7 +89,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="@string/correo_cliente"
-                        android:textColor="#66666"
+                        android:textColor="#666666"
                         android:textSize="14sp" />
 
                 </LinearLayout>
@@ -132,7 +132,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/product"
-                            android:textColor="#66666"
+                            android:textColor="#666666"
                             android:textSize="15sp" />
 
                         <TextView
@@ -332,7 +332,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="@string/pg_entrega_pedido"
-                            android:textColor="#66666"
+                            android:textColor="#666666"
                             android:textSize="14sp" />
 
                         <TextView
