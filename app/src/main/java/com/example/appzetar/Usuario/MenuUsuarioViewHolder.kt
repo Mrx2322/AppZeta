@@ -6,7 +6,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.appzetar.AdminMenu.TaskMenu
+import com.example.appzetar.Usuario.Modelos.TaskMenu
 import com.example.appzetar.R
 import com.example.appzetar.Usuario.Carrito.ReglasPrecioPedido
 import com.google.android.material.button.MaterialButton

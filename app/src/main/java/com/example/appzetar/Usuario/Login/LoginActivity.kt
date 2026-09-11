@@ -14,6 +14,7 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
 import androidx.credentials.exceptions.GetCredentialException
 import com.example.appzetar.R
+import com.example.appzetar.splash.SplashActivity
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.material.button.MaterialButton
@@ -265,10 +266,7 @@ class LoginActivity : AppCompatActivity() {
             Toast.LENGTH_SHORT
         ).show()
 
-        val intent = Intent(
-            this,
-            ActivityMenuUsuario::class.java
-        )
+        val intent = Intent(this, SplashActivity::class.java)
 
         intent.flags =
             Intent.FLAG_ACTIVITY_NEW_TASK or

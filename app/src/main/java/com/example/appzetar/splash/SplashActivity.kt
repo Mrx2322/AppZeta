@@ -7,8 +7,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.appzetar.AdminMenu.ActivityMenu
 import com.example.appzetar.R
+import com.example.appzetar.Usuario.ActivityMenuUsuario
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -24,18 +24,25 @@ class SplashActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             for (progress in 1..100) {
-                delay(30)
+                delay(20)
                 progressBar.progress = progress
-                tvStatus.text = "Cargando menú... ($progress%)"
+                tvStatus.text = "Preparando tu experiencia... ($progress%)"
 
                 // Desplaza la moto hacia la derecha conforme aumenta el porcentaje
                 ivDelivery.translationX = (progress * 3).toFloat()
             }
 
-            // Abre tu siguiente layout/pantalla principal
-            val intent = Intent(this@SplashActivity, ActivityMenu::class.java)
+            val intent = Intent(
+                this@SplashActivity,
+                ActivityMenuUsuario::class.java
+            )
+
+            intent.flags =
+                Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TASK
+
             startActivity(intent)
-            finish() // Cierra la pantalla de carga para no regresar a ella con el botón 'atrás'
+            finish()
         }
     }
 }

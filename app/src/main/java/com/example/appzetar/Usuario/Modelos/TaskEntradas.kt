@@ -1,4 +1,4 @@
-package com.example.appzetar.AdminMenu.EntradasAdmin
+package com.example.appzetar.Usuario.Modelos
 
 sealed class TaskEntradas(
     var id: Int,

@@ -3,7 +3,7 @@ package com.example.appzetar.Usuario
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.appzetar.AdminMenu.TaskMenu
+import com.example.appzetar.Usuario.Modelos.TaskMenu
 import com.example.appzetar.R
 
 class MenuUsuarioAdapter(

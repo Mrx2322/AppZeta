@@ -26,8 +26,8 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.appzetar.AdminMenu.EntradasAdmin.TaskEntradas
-import com.example.appzetar.AdminMenu.TaskMenu
+import com.example.appzetar.Usuario.Modelos.TaskEntradas
+import com.example.appzetar.Usuario.Modelos.TaskMenu
 import com.example.appzetar.R
 import com.example.appzetar.Usuario.Carrito.ActivityPedido
 import com.example.appzetar.Usuario.Carrito.EntradaPedido
