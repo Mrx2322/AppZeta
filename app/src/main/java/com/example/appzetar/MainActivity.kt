@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.appzetar.Usuario.LoginActivity
-import com.example.appzetar.splash.SplashActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,14 +20,13 @@ class MainActivity : AppCompatActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
-        ) { v, insets ->
+        ) { view, insets ->
 
-            val systemBars =
-                insets.getInsets(
-                    WindowInsetsCompat.Type.systemBars()
-                )
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+            )
 
-            v.setPadding(
+            view.setPadding(
                 systemBars.left,
                 systemBars.top,
                 systemBars.right,
@@ -38,56 +36,15 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // =====================================================
-        // BOTÓN VISTA ADMIN
-        // =====================================================
+        findViewById<Button>(R.id.btnUsuario)
+            .setOnClickListener {
 
-        val btnInicio =
-            findViewById<Button>(R.id.btnIngresar)
-
-        btnInicio.setOnClickListener {
-            navigateToIngresar()
-        }
-
-        // =====================================================
-        // BOTÓN VISTA USUARIO
-        // =====================================================
-
-        val btnUsuario =
-            findViewById<Button>(R.id.btnUsuario)
-
-        btnUsuario.setOnClickListener {
-            navigateToLogin()
-        }
-    }
-
-    // =========================================================
-    // IR A ADMIN
-    // =========================================================
-
-    private fun navigateToIngresar() {
-
-        val intent =
-            Intent(
-                this,
-                SplashActivity::class.java
-            )
-
-        startActivity(intent)
-    }
-
-    // =========================================================
-    // IR AL LOGIN DE USUARIO
-    // =========================================================
-
-    private fun navigateToLogin() {
-
-        val intent =
-            Intent(
-                this,
-                LoginActivity::class.java
-            )
-
-        startActivity(intent)
+                startActivity(
+                    Intent(
+                        this,
+                        LoginActivity::class.java
+                    )
+                )
+            }
     }
 }
