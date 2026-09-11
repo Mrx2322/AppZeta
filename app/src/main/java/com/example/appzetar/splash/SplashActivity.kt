@@ -16,19 +16,20 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash) // Muestra la imagen HD + Barra de progreso
+
+        setContentView(R.layout.activity_splash)
 
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val tvStatus = findViewById<TextView>(R.id.tvStatus)
-        val ivDelivery = findViewById<ImageView>(R.id.ivDelivery) // 1. Referencia a la imagen
+        val ivDelivery = findViewById<ImageView>(R.id.ivDelivery)
 
         lifecycleScope.launch {
+
             for (progress in 1..100) {
                 delay(20)
+
                 progressBar.progress = progress
                 tvStatus.text = "Preparando tu experiencia... ($progress%)"
-
-                // Desplaza la moto hacia la derecha conforme aumenta el porcentaje
                 ivDelivery.translationX = (progress * 3).toFloat()
             }
 
@@ -42,6 +43,8 @@ class SplashActivity : AppCompatActivity() {
                         Intent.FLAG_ACTIVITY_CLEAR_TASK
 
             startActivity(intent)
+            overridePendingTransition(0, 0)
+
             finish()
         }
     }

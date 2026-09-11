@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -11,65 +14,81 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppZetaR">
 
-        <!-- PANTALLA 1: Tu bienvenida actual (ZETA RESTAURANTE) -->
         <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:name=".Usuario.ActivityPerfilUsuario"
+            android:exported="false" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <!-- PANTALLA 2: La pantalla de carga con la barra de progreso -->
         <activity
-            android:name=".splash.SplashActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".Usuario.ActivityMenuUsuario"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".Usuario.Carrito.ActivityPedido"
+            android:name=".Usuario.ActivityPedidosUsuario"
             android:exported="false" />
+
         <activity
-            android:name=".Usuario.Confirmacion.ActivityDatosPedido"
+            android:name=".Usuario.ActivityExtras"
             android:exported="false" />
+
         <activity
-            android:name=".Usuario.Confirmacion.ActivityResumenPedido"
+            android:name=".Usuario.ActivityDireccion"
             android:exported="false" />
-        <activity
-            android:name=".Usuario.Pagos.ActivityPagoYape"
-            android:exported="false" />
-        <activity
-            android:name=".Usuario.LoginActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".Usuario.RegistroActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Usuario.ActivityConfirmarPedido"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".Usuario.ActivityEntrega"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
-            android:name=".Usuario.ActivityDireccion"
-            android:exported="false" />
+            android:name=".Usuario.ActivityConfirmarPedido"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <activity
-            android:name=".Usuario.ActivityExtras"
+            android:name=".Usuario.RegistroActivity"
             android:exported="false" />
+
         <activity
-            android:name=".Usuario.ActivityPedidosUsuario"
-            android:exported="false" />
+            android:name=".Usuario.LoginActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <activity
-            android:name=".Usuario.ActivityPerfilUsuario"
+            android:name=".Usuario.Pagos.ActivityPagoYape"
             android:exported="false" />
+
+        <activity
+            android:name=".Usuario.Confirmacion.ActivityResumenPedido"
+            android:exported="false" />
+
+        <activity
+            android:name=".Usuario.Confirmacion.ActivityDatosPedido"
+            android:exported="false" />
+
+        <activity
+            android:name=".Usuario.Carrito.ActivityPedido"
+            android:exported="false" />
+
+        <activity
+            android:name=".Usuario.ActivityMenuUsuario"
+            android:exported="false"
+            android:theme="@style/Theme.AppZetaR.MenuUsuario"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".splash.SplashActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppZetaR.Splash"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
     </application>
 
 </manifest>

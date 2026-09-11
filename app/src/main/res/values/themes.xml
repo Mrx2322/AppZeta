@@ -1,10 +1,34 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.AppZetaR" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style
+        name="Base.Theme.AppZetaR"
+        parent="Theme.Material3.DayNight.NoActionBar">
+
+        <item name="android:windowBackground">#FFF8F2</item>
+
     </style>
 
-    <style name="Theme.AppZetaR" parent="Base.Theme.AppZetaR"/>
+    <style
+        name="Theme.AppZetaR"
+        parent="Base.Theme.AppZetaR" />
+
+    <style
+        name="Theme.AppZetaR.Splash"
+        parent="Base.Theme.AppZetaR">
+
+        <item name="android:windowBackground">@drawable/bg_restaurant_splash</item>
+        <item name="android:windowDisablePreview">true</item>
+
+    </style>
+
+    <style
+        name="Theme.AppZetaR.MenuUsuario"
+        parent="Base.Theme.AppZetaR">
+
+        <item name="android:windowBackground">#F7F7F7</item>
+        <item name="android:windowDisablePreview">true</item>
+
+    </style>
 
 </resources>
