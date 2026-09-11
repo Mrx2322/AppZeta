@@ -705,22 +705,12 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         navExtras.setOnClickListener {
 
-            startActivity(
-                Intent(
-                    this,
-                    ActivityExtras::class.java
-                )
-            )
+            NavegacionUsuario.abrir(this, ActivityExtras::class.java)
         }
 
         navPedidos.setOnClickListener {
 
-            startActivity(
-                Intent(
-                    this,
-                    ActivityPedidosUsuario::class.java
-                )
-            )
+            NavegacionUsuario.abrir(this, ActivityPedidosUsuario::class.java)
         }
 
         navCarrito.setOnClickListener {
@@ -730,12 +720,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         navPerfil.setOnClickListener {
 
-            startActivity(
-                Intent(
-                    this,
-                    ActivityPerfilUsuario::class.java
-                )
-            )
+            NavegacionUsuario.abrir(this, ActivityPerfilUsuario::class.java)
         }
 
         configurarAnimacionesBarra()
@@ -813,12 +798,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
     private fun abrirCarrito() {
 
-        startActivity(
-            Intent(
-                this,
-                ActivityPedido::class.java
-            )
-        )
+        NavegacionUsuario.abrir(this, ActivityPedido::class.java)
     }
 
 

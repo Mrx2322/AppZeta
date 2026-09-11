@@ -107,19 +107,11 @@ class ActivityPedidosUsuario : AppCompatActivity() {
 
     private fun configurarNavegacion() {
         navInicio.setOnClickListener {
-            startActivity(
-                Intent(this, ActivityMenuUsuario::class.java).apply {
-                    flags =
-                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                                Intent.FLAG_ACTIVITY_SINGLE_TOP
-                }
-            )
+            NavegacionUsuario.abrir(this, ActivityMenuUsuario::class.java)
         }
 
         navExtras.setOnClickListener {
-            startActivity(
-                Intent(this, ActivityExtras::class.java)
-            )
+            NavegacionUsuario.abrir(this, ActivityExtras::class.java)
         }
 
         navPedidos.setOnClickListener {
@@ -127,15 +119,11 @@ class ActivityPedidosUsuario : AppCompatActivity() {
         }
 
         navCarrito.setOnClickListener {
-            startActivity(
-                Intent(this, ActivityPedido::class.java)
-            )
+            NavegacionUsuario.abrir(this, ActivityPedido::class.java)
         }
 
         navPerfil.setOnClickListener {
-            startActivity(
-                Intent(this, ActivityPerfilUsuario::class.java)
-            )
+            NavegacionUsuario.abrir(this, ActivityPerfilUsuario::class.java)
         }
     }
 

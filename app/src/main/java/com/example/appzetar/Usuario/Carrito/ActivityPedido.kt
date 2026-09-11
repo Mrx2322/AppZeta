@@ -21,6 +21,7 @@ import com.example.appzetar.Usuario.ActivityExtras
 import com.example.appzetar.Usuario.ActivityMenuUsuario
 import com.example.appzetar.Usuario.ActivityPedidosUsuario
 import com.example.appzetar.Usuario.ActivityPerfilUsuario
+import com.example.appzetar.Usuario.NavegacionUsuario
 import com.google.android.material.button.MaterialButton
 
 class ActivityPedido : AppCompatActivity() {
@@ -121,25 +122,15 @@ class ActivityPedido : AppCompatActivity() {
 
     private fun configurarNavegacion() {
         navInicio.setOnClickListener {
-            startActivity(
-                Intent(this, ActivityMenuUsuario::class.java).apply {
-                    flags =
-                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                                Intent.FLAG_ACTIVITY_SINGLE_TOP
-                }
-            )
+            NavegacionUsuario.abrir(this, ActivityMenuUsuario::class.java)
         }
 
         navExtras.setOnClickListener {
-            startActivity(
-                Intent(this, ActivityExtras::class.java)
-            )
+            NavegacionUsuario.abrir(this, ActivityExtras::class.java)
         }
 
         navPedidos.setOnClickListener {
-            startActivity(
-                Intent(this, ActivityPedidosUsuario::class.java)
-            )
+            NavegacionUsuario.abrir(this, ActivityPedidosUsuario::class.java)
         }
 
         navCarrito.setOnClickListener {
@@ -147,9 +138,7 @@ class ActivityPedido : AppCompatActivity() {
         }
 
         navPerfil.setOnClickListener {
-            startActivity(
-                Intent(this, ActivityPerfilUsuario::class.java)
-            )
+            NavegacionUsuario.abrir(this, ActivityPerfilUsuario::class.java)
         }
     }
 

@@ -101,13 +101,7 @@ class ActivityExtras : AppCompatActivity() {
         rvExtras.adapter = extraAdapter
 
         navInicio.setOnClickListener {
-            startActivity(
-                Intent(this, ActivityMenuUsuario::class.java).apply {
-                    flags =
-                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                                Intent.FLAG_ACTIVITY_SINGLE_TOP
-                }
-            )
+            NavegacionUsuario.abrir(this, ActivityMenuUsuario::class.java)
         }
 
         navExtras.setOnClickListener {
@@ -115,21 +109,15 @@ class ActivityExtras : AppCompatActivity() {
         }
 
         navPedidos.setOnClickListener {
-            startActivity(
-                Intent(this, ActivityPedidosUsuario::class.java)
-            )
+            NavegacionUsuario.abrir(this, ActivityPedidosUsuario::class.java)
         }
 
         navCarrito.setOnClickListener {
-            startActivity(
-                Intent(this, ActivityPedido::class.java)
-            )
+            NavegacionUsuario.abrir(this, ActivityPedido::class.java)
         }
 
         navPerfil.setOnClickListener {
-            startActivity(
-                Intent(this, ActivityPerfilUsuario::class.java)
-            )
+            NavegacionUsuario.abrir(this, ActivityPerfilUsuario::class.java)
         }
 
         configurarAnimacionesBarra()
