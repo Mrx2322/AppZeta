@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import androidx.core.app.ActivityOptionsCompat
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -389,6 +390,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
     private fun cargarNombreUsuario() {
+
         val usuarioActual = auth.currentUser
 
         if (usuarioActual == null) {
@@ -396,6 +398,13 @@ class ActivityMenuUsuario : AppCompatActivity() {
             return
         }
 
+        // Usuario que ingresó sin correo ni contraseña
+        if (usuarioActual.isAnonymous) {
+            tvSaludo.text = "¡Hola, bienvenido!"
+            return
+        }
+
+        // Usuario registrado
         db.collection("usuarios")
             .document(usuarioActual.uid)
             .get()
@@ -461,11 +470,16 @@ class ActivityMenuUsuario : AppCompatActivity() {
                     ActivityTodosLosMenus::class.java
                 )
 
-            launcherTodosLosMenus.launch(intent)
+            val animacion =
+                ActivityOptionsCompat.makeCustomAnimation(
+                    this,
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out
+                )
 
-            overridePendingTransition(
-                android.R.anim.fade_in,
-                android.R.anim.fade_out
+            launcherTodosLosMenus.launch(
+                intent,
+                animacion
             )
         }
 
