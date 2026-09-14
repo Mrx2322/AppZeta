@@ -27,9 +27,9 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var etCorreo: TextInputEditText
     private lateinit var etContrasena: TextInputEditText
-
     private lateinit var btnIniciarSesion: Button
     private lateinit var btnGoogle: MaterialButton
+    private lateinit var btnInvitado: MaterialButton
     private lateinit var tvRegistrarse: TextView
 
     private lateinit var auth: FirebaseAuth
@@ -47,9 +47,9 @@ class LoginActivity : AppCompatActivity() {
 
         etCorreo = findViewById(R.id.etCorreo)
         etContrasena = findViewById(R.id.etContrasena)
-
         btnIniciarSesion = findViewById(R.id.btnIniciarSesion)
         btnGoogle = findViewById(R.id.btnGoogle)
+        btnInvitado = findViewById(R.id.btnInvitado)
         tvRegistrarse = findViewById(R.id.tvRegistrarse)
 
         btnIniciarSesion.setOnClickListener {
@@ -58,6 +58,10 @@ class LoginActivity : AppCompatActivity() {
 
         btnGoogle.setOnClickListener {
             iniciarSesionConGoogle()
+        }
+
+        btnInvitado.setOnClickListener {
+            continuarComoInvitado()
         }
 
         tvRegistrarse.setOnClickListener {
@@ -72,8 +76,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun iniciarSesion() {
 
-        val correo = etCorreo.text?.toString()?.trim() ?: ""
-        val contrasena = etContrasena.text?.toString()?.trim() ?: ""
+        val correo = etCorreo.text?.toString()?.trim().orEmpty()
+        val contrasena = etContrasena.text?.toString()?.trim().orEmpty()
 
         if (correo.isEmpty()) {
             etCorreo.error = "Ingresa tu correo"
@@ -92,7 +96,7 @@ class LoginActivity : AppCompatActivity() {
             contrasena
         )
             .addOnSuccessListener {
-                abrirMenuUsuario()
+                abrirMenuUsuario("Inicio de sesión correcto")
             }
             .addOnFailureListener {
                 btnIniciarSesion.isEnabled = true
@@ -100,6 +104,82 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(
                     this,
                     "Correo o contraseña incorrectos",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+    }
+
+    private fun continuarComoInvitado() {
+
+        btnInvitado.isEnabled = false
+
+        val usuarioActual = auth.currentUser
+
+        if (usuarioActual?.isAnonymous == true) {
+            crearPerfilInvitadoSiNoExiste()
+            return
+        }
+
+        auth.signInAnonymously()
+            .addOnSuccessListener {
+                crearPerfilInvitadoSiNoExiste()
+            }
+            .addOnFailureListener {
+                btnInvitado.isEnabled = true
+
+                Toast.makeText(
+                    this,
+                    "No se pudo ingresar como invitado",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+    }
+
+    private fun crearPerfilInvitadoSiNoExiste() {
+
+        val usuario = auth.currentUser ?: run {
+            btnInvitado.isEnabled = true
+            return
+        }
+
+        val referencia = db.collection("usuarios")
+            .document(usuario.uid)
+
+        referencia.get()
+            .addOnSuccessListener { documento ->
+
+                if (documento.exists()) {
+                    abrirMenuUsuario("¡Bienvenido a ZETA!")
+                    return@addOnSuccessListener
+                }
+
+                val datos = hashMapOf(
+                    "uid" to usuario.uid,
+                    "nombre" to "Invitado",
+                    "correo" to "",
+                    "esInvitado" to true
+                )
+
+                referencia.set(datos)
+                    .addOnSuccessListener {
+                        abrirMenuUsuario("¡Bienvenido a ZETA!")
+                    }
+                    .addOnFailureListener {
+                        btnInvitado.isEnabled = true
+
+                        Toast.makeText(
+                            this,
+                            "No se pudo preparar el perfil de invitado",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+            .addOnFailureListener {
+                btnInvitado.isEnabled = true
+
+                Toast.makeText(
+                    this,
+                    "No se pudo verificar el perfil de invitado",
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -125,11 +205,10 @@ class LoginActivity : AppCompatActivity() {
             solicitud,
             null,
             ContextCompat.getMainExecutor(this),
-            object :
-                CredentialManagerCallback<
-                        GetCredentialResponse,
-                        GetCredentialException
-                        > {
+            object : CredentialManagerCallback<
+                    GetCredentialResponse,
+                    GetCredentialException
+                    > {
 
                 override fun onResult(
                     resultado: GetCredentialResponse
@@ -186,11 +265,10 @@ class LoginActivity : AppCompatActivity() {
         idToken: String
     ) {
 
-        val credential =
-            GoogleAuthProvider.getCredential(
-                idToken,
-                null
-            )
+        val credential = GoogleAuthProvider.getCredential(
+            idToken,
+            null
+        )
 
         auth.signInWithCredential(credential)
             .addOnSuccessListener {
@@ -211,31 +289,26 @@ class LoginActivity : AppCompatActivity() {
 
         val usuario = auth.currentUser ?: return
 
-        val referencia =
-            db.collection("usuarios")
-                .document(usuario.uid)
+        val referencia = db.collection("usuarios")
+            .document(usuario.uid)
 
         referencia.get()
             .addOnSuccessListener { documento ->
 
                 if (documento.exists()) {
-                    abrirMenuUsuario()
+                    abrirMenuUsuario("Inicio de sesión correcto")
                     return@addOnSuccessListener
                 }
 
                 val datos = hashMapOf(
                     "uid" to usuario.uid,
-                    "nombre" to (
-                            usuario.displayName ?: "Cliente"
-                            ),
-                    "correo" to (
-                            usuario.email ?: ""
-                            )
+                    "nombre" to (usuario.displayName ?: "Cliente"),
+                    "correo" to (usuario.email ?: "")
                 )
 
                 referencia.set(datos)
                     .addOnSuccessListener {
-                        abrirMenuUsuario()
+                        abrirMenuUsuario("Inicio de sesión correcto")
                     }
                     .addOnFailureListener {
                         btnGoogle.isEnabled = true
@@ -258,22 +331,26 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-    private fun abrirMenuUsuario() {
+    private fun abrirMenuUsuario(
+        mensaje: String
+    ) {
 
         Toast.makeText(
             this,
-            "Inicio de sesión correcto",
+            mensaje,
             Toast.LENGTH_SHORT
         ).show()
 
-        val intent = Intent(this, SplashActivity::class.java)
+        val intent = Intent(
+            this,
+            SplashActivity::class.java
+        )
 
         intent.flags =
             Intent.FLAG_ACTIVITY_NEW_TASK or
                     Intent.FLAG_ACTIVITY_CLEAR_TASK
 
         startActivity(intent)
-
         finish()
     }
 }
