@@ -59,5 +59,53 @@
     <!--login usuario-->
     <string name="continuar_invitado"><u>Continuar como invitado</u></string>
 
+    <!--MenuActivity.kt-->
+
+    <string name="menu_seleccionado_no_disponible">El menú seleccionado ya no está disponible</string>
+
+    <string name="saludo_generico">¡Hola!</string>
+    <string name="saludo_bienvenida">¡Hola, bienvenido!</string>
+    <string name="saludo_usuario">¡Hola, %1$s!</string>
+
+    <string name="categoria_gaseosas">Gaseosas</string>
+    <string name="categoria_tortas">Tortas</string>
+    <string name="categoria_platos">Platos</string>
+
+    <string name="extra_agregado_pedido">%1$s agregado al pedido</string>
+    <string name="limite_unidades_plato">Ya no puedes agregar más unidades de este plato</string>
+
+    <string name="formato_precio_soles">S/ %1$.2f</string>
+    <string name="precio_entrada_adicional">Entradas adicionales: +S/ %1$.2f cada una</string>
+    <string name="ayuda_menu_sin_entrada">Sin entrada, este menú te costará S/ %1$.2f.</string>
+    <string name="ayuda_menu_con_entrada">Con una entrada, este menú te costará S/ %1$.2f.</string>
+    <string name="ayuda_cantidad_entradas">Elegiste %1$d entradas para este menú.</string>
+
+    <string name="stock_entrada_insuficiente">No hay stock suficiente de %1$s</string>
+    <string name="plato_agregado_precio">%1$s agregado por S/ %2$.2f</string>
+
+    <string name="sin_entrada">Sin entrada</string>
+    <string name="detalle_cantidad_entrada">%1$d x %2$s</string>
+    <string name="con_entrada_detalle">Con entrada: %1$s</string>
+    <string name="con_varias_entradas_detalle">Con %1$d entradas: %2$s</string>
+
+    <!--Splash.kt-->
+    <string name="splash_preparando_experiencia">Preparando tu experiencia... (%1$d%%)</string>
+
+    <!--Login.kt-->
+    <string name="login_error_ingresa_correo">Ingresa tu correo</string>
+    <string name="login_error_ingresa_contrasena">Ingresa tu contraseña</string>
+    <string name="login_inicio_correcto">Inicio de sesión correcto</string>
+    <string name="login_error_credenciales">Correo o contraseña incorrectos</string>
+    <string name="login_error_ingreso_invitado">No se pudo ingresar como invitado</string>
+    <string name="login_bienvenida_zeta">¡Bienvenido a ZETA!</string>
+    <string name="login_nombre_invitado">Invitado</string>
+    <string name="login_error_preparar_perfil_invitado">No se pudo preparar el perfil de invitado</string>
+    <string name="login_error_verificar_perfil_invitado">No se pudo verificar el perfil de invitado</string>
+    <string name="login_error_google">No se pudo iniciar sesión con Google</string>
+    <string name="login_error_obtener_cuenta_google">No se pudo obtener la cuenta de Google</string>
+    <string name="login_nombre_cliente">Cliente</string>
+    <string name="login_error_crear_perfil">La cuenta ingresó, pero no se pudo crear el perfil</string>
+    <string name="login_error_verificar_perfil">No se pudo verificar el perfil</string>
+
 
 </resources>

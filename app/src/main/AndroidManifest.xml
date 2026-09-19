@@ -13,46 +13,46 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppZetaR">
         <activity
-            android:name=".Usuario.ActivityPerfilUsuario"
+            android:name=".usuario.ActivityPerfilUsuario"
             android:exported="false" />
         <activity
-            android:name=".Usuario.ActivityPedidosUsuario"
+            android:name=".usuario.ActivityPedidosUsuario"
             android:exported="false" />
         <activity
-            android:name=".Usuario.ActivityExtras"
+            android:name=".usuario.ActivityExtras"
             android:exported="false" />
         <activity
-            android:name=".Usuario.ActivityDireccion"
+            android:name=".usuario.ActivityDireccion"
             android:exported="false" />
         <activity
-            android:name=".Usuario.ActivityEntrega"
+            android:name=".usuario.ActivityEntrega"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Usuario.ActivityConfirmarPedido"
+            android:name=".usuario.ActivityConfirmarPedido"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Usuario.RegistroActivity"
+            android:name=".usuario.login.RegistroActivity"
             android:exported="false" />
         <activity
-            android:name=".Usuario.LoginActivity"
+            android:name=".usuario.login.LoginActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Usuario.Pagos.ActivityPagoYape"
+            android:name=".usuario.Pagos.ActivityPagoYape"
             android:exported="false" />
         <activity
-            android:name=".Usuario.Confirmacion.ActivityResumenPedido"
+            android:name=".usuario.Confirmacion.ActivityResumenPedido"
             android:exported="false" />
         <activity
-            android:name=".Usuario.Confirmacion.ActivityDatosPedido"
+            android:name=".usuario.Confirmacion.ActivityDatosPedido"
             android:exported="false" />
         <activity
-            android:name=".Usuario.Carrito.ActivityPedido"
+            android:name=".usuario.Carrito.ActivityPedido"
             android:exported="false" />
         <activity
-            android:name=".Usuario.ActivityMenuUsuario"
+            android:name=".usuario.ActivityMenuUsuario"
             android:exported="false"
             android:theme="@style/Theme.AppZetaR.MenuUsuario"
             android:windowSoftInputMode="adjustResize" />
@@ -72,7 +72,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Usuario.ActivityTodosLosMenus"
+            android:name=".usuario.ActivityTodosLosMenus"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
     </application>
