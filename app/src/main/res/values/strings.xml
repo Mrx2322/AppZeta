@@ -136,6 +136,25 @@
     <string name="error_nombre_invitado">Ingresa tu nombre</string>
     <string name="continuar_nombre_invitado">Continuar</string>
 
+    <!--Entradas Usuario-->
+    <string name="entrada_estado_agotado">Agotado</string>
+    <string name="entrada_estado_disponible">Disponible</string>
+    <string name="entrada_ultima_unidad">¡Última unidad!</string>
+    <string name="entrada_ultimas_unidades">¡Últimas %1$d unidades!</string>
+    <string name="entrada_agregar">Agregar</string>
+    <string name="entrada_quitar">Quitar</string>
+
+    <!--activityDireccion-->
+    <string name="error_direccion_vacia">Ingresa tu dirección</string>
+    <string name="error_telefono_vacio">Ingresa tu número de teléfono</string>
+    <string name="error_telefono_longitud">El teléfono debe tener 9 dígitos</string>
+    <string name="error_telefono_solo_numeros">El teléfono solo debe contener números</string>
+    <string name="tipo_entrega_delivery">Delivery</string>
+    <string name="metodo_pago_contra_entrega">Contra entrega</string>
+
+    <string name="yape_proximamente">Yape estará disponible muy pronto. Por ahora puedes pagar contra entrega.</string>
+    <string name="selecciona_tipo_entrega">Selecciona cómo quieres recibir tu pedido.</string>
+    <string name="tipo_entrega_recojo">Recojo en tienda</string>
 
 
 

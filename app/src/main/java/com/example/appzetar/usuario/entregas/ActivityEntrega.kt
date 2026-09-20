@@ -1,4 +1,4 @@
-package com.example.appzetar.usuario
+package com.example.appzetar.usuario.entregas
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,6 +6,7 @@ import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.appzetar.R
+import com.example.appzetar.usuario.ActivityConfirmarPedido
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 
@@ -30,29 +31,40 @@ class ActivityEntrega : AppCompatActivity() {
 
         setContentView(R.layout.activity_entrega)
 
-        initComponent()
-        initUI()
+        inicializarVistas()
+        configurarInterfaz()
     }
 
-    private fun initComponent() {
+    private fun inicializarVistas() {
+        cardDelivery =
+            findViewById(R.id.cardDelivery)
 
-        cardDelivery = findViewById(R.id.cardDelivery)
-        cardRecojo = findViewById(R.id.cardRecojo)
+        cardRecojo =
+            findViewById(R.id.cardRecojo)
 
-        rbDelivery = findViewById(R.id.rbDelivery)
-        rbRecojo = findViewById(R.id.rbRecojo)
+        rbDelivery =
+            findViewById(R.id.rbDelivery)
 
-        cardContraEntrega = findViewById(R.id.cardContraEntrega)
-        cardYape = findViewById(R.id.cardYape)
+        rbRecojo =
+            findViewById(R.id.rbRecojo)
 
-        rbContraEntrega = findViewById(R.id.rbContraEntrega)
-        rbYape = findViewById(R.id.rbYape)
+        cardContraEntrega =
+            findViewById(R.id.cardContraEntrega)
 
-        btnContinuar = findViewById(R.id.btnContinuarEntrega)
+        cardYape =
+            findViewById(R.id.cardYape)
+
+        rbContraEntrega =
+            findViewById(R.id.rbContraEntrega)
+
+        rbYape =
+            findViewById(R.id.rbYape)
+
+        btnContinuar =
+            findViewById(R.id.btnContinuarEntrega)
     }
 
-    private fun initUI() {
-
+    private fun configurarInterfaz() {
         rbDelivery.isChecked = false
         rbRecojo.isChecked = false
 
@@ -100,7 +112,6 @@ class ActivityEntrega : AppCompatActivity() {
     }
 
     private fun seleccionarDelivery() {
-
         rbDelivery.isChecked = true
         rbRecojo.isChecked = false
 
@@ -108,7 +119,6 @@ class ActivityEntrega : AppCompatActivity() {
     }
 
     private fun seleccionarRecojo() {
-
         rbDelivery.isChecked = false
         rbRecojo.isChecked = true
 
@@ -116,7 +126,6 @@ class ActivityEntrega : AppCompatActivity() {
     }
 
     private fun seleccionarContraEntrega() {
-
         rbContraEntrega.isChecked = true
         rbYape.isChecked = false
 
@@ -124,24 +133,34 @@ class ActivityEntrega : AppCompatActivity() {
     }
 
     private fun actualizarSeleccionEntrega() {
-
         cardDelivery.strokeWidth =
-            if (rbDelivery.isChecked) 2 else 0
+            if (rbDelivery.isChecked) {
+                STROKE_SELECCIONADO
+            } else {
+                STROKE_NORMAL
+            }
 
         cardRecojo.strokeWidth =
-            if (rbRecojo.isChecked) 2 else 0
+            if (rbRecojo.isChecked) {
+                STROKE_SELECCIONADO
+            } else {
+                STROKE_NORMAL
+            }
     }
 
     private fun actualizarSeleccionPago() {
-
         cardContraEntrega.strokeWidth =
-            if (rbContraEntrega.isChecked) 2 else 0
+            if (rbContraEntrega.isChecked) {
+                STROKE_SELECCIONADO
+            } else {
+                STROKE_NORMAL
+            }
 
-        cardYape.strokeWidth = 0
+        cardYape.strokeWidth =
+            STROKE_NORMAL
     }
 
     private fun mostrarYapeProximamente() {
-
         rbContraEntrega.isChecked = true
         rbYape.isChecked = false
 
@@ -149,66 +168,95 @@ class ActivityEntrega : AppCompatActivity() {
 
         Toast.makeText(
             this,
-            "Yape estará disponible muy pronto. Por ahora puedes pagar contra entrega.",
+            getString(R.string.yape_proximamente),
             Toast.LENGTH_LONG
         ).show()
     }
 
     private fun continuar() {
-
         if (!rbContraEntrega.isChecked) {
             mostrarYapeProximamente()
             return
         }
 
-        if (rbDelivery.isChecked) {
+        when {
+            rbDelivery.isChecked -> {
+                abrirDelivery()
+            }
 
-            val intent = Intent(
+            rbRecojo.isChecked -> {
+                abrirRecojo()
+            }
+
+            else -> {
+                Toast.makeText(
+                    this,
+                    getString(R.string.selecciona_tipo_entrega),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private fun abrirDelivery() {
+        val intent =
+            Intent(
                 this,
                 ActivityDireccion::class.java
-            )
+            ).apply {
 
-            intent.putExtra(
-                "metodoPago",
-                "Contra entrega"
-            )
+                putExtra(
+                    ActivityDireccion.EXTRA_METODO_PAGO,
+                    getString(
+                        R.string.metodo_pago_contra_entrega
+                    )
+                )
 
-            intent.putExtra(
-                "tipoEntrega",
-                "Delivery"
-            )
+                putExtra(
+                    ActivityDireccion.EXTRA_TIPO_ENTREGA,
+                    getString(
+                        R.string.tipo_entrega_delivery
+                    )
+                )
+            }
 
-            startActivity(intent)
+        startActivity(intent)
+    }
 
-            return
-        }
-
-        if (rbRecojo.isChecked) {
-
-            val intent = Intent(
+    private fun abrirRecojo() {
+        val intent =
+            Intent(
                 this,
                 ActivityConfirmarPedido::class.java
-            )
+            ).apply {
 
-            intent.putExtra(
-                "metodoPago",
-                "Contra entrega"
-            )
+                putExtra(
+                    EXTRA_METODO_PAGO,
+                    getString(
+                        R.string.metodo_pago_contra_entrega
+                    )
+                )
 
-            intent.putExtra(
-                "tipoEntrega",
-                "Recojo en tienda"
-            )
+                putExtra(
+                    EXTRA_TIPO_ENTREGA,
+                    getString(
+                        R.string.tipo_entrega_recojo
+                    )
+                )
+            }
 
-            startActivity(intent)
+        startActivity(intent)
+    }
 
-            return
-        }
+    companion object {
 
-        Toast.makeText(
-            this,
-            "Selecciona cómo quieres recibir tu pedido.",
-            Toast.LENGTH_SHORT
-        ).show()
+        private const val STROKE_NORMAL = 0
+        private const val STROKE_SELECCIONADO = 2
+
+        private const val EXTRA_METODO_PAGO =
+            "metodoPago"
+
+        private const val EXTRA_TIPO_ENTREGA =
+            "tipoEntrega"
     }
 }
