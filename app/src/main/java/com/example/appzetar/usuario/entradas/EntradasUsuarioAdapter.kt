@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
-import com.example.appzetar.usuario.Modelos.TaskEntradas
+import com.example.appzetar.usuario.modelos.TaskEntradas
 import com.example.appzetar.usuario.carrito.EntradaPedido
 import com.example.appzetar.usuario.carrito.PedidoManager
 

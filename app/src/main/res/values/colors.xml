@@ -34,4 +34,11 @@
 
     <color name="entrada_boton_fondo_seleccionado">#FFE0C2</color>
     <color name="entrada_boton_fondo_normal">#E87520</color>
+
+    <color name="categoria_texto_seleccionado">#FF9500</color>
+    <color name="categoria_texto_normal">#333333</color>
+
+    <color name="menu_stock_agotado">#D32F2F</color>
+    <color name="menu_stock_bajo">#E65100</color>
+    <color name="menu_stock_disponible">#757575</color>
 </resources>

@@ -3,8 +3,8 @@ package com.example.appzetar.usuario
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.appzetar.usuario.Modelos.TaskMenu
 import com.example.appzetar.R
+import com.example.appzetar.usuario.modelos.TaskMenu
 
 class MenuUsuarioAdapter(
     private val listaMenu: MutableList<TaskMenu>,
@@ -15,11 +15,15 @@ class MenuUsuarioAdapter(
         parent: ViewGroup,
         viewType: Int
     ): MenuUsuarioViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(
-            R.layout.item_task_menu_usuario,
-            parent,
-            false
-        )
+
+        val view =
+            LayoutInflater
+                .from(parent.context)
+                .inflate(
+                    R.layout.item_task_menu_usuario,
+                    parent,
+                    false
+                )
 
         return MenuUsuarioViewHolder(view)
     }
@@ -29,12 +33,11 @@ class MenuUsuarioAdapter(
         position: Int
     ) {
         holder.render(
-            listaMenu[position],
-            onAgregarClick
+            taskMenu = listaMenu[position],
+            onAgregarClick = onAgregarClick
         )
     }
 
-    override fun getItemCount(): Int {
-        return listaMenu.size
-    }
+    override fun getItemCount(): Int =
+        listaMenu.size
 }

@@ -156,6 +156,25 @@
     <string name="selecciona_tipo_entrega">Selecciona cómo quieres recibir tu pedido.</string>
     <string name="tipo_entrega_recojo">Recojo en tienda</string>
 
+    <!--activityExtras-->
+    <string name="categoria_todos">Todos</string>
+    <string name="error_cargar_extras">Error al cargar extras</string>
+    <string name="extra_nombre_generico">Extra</string>
+    <string name="extra_agregado_carrito">%1$s agregado al carrito</string>
+    <plurals name="cantidad_opciones_extras">
+        <item quantity="one">%1$d opción</item>
+        <item quantity="other">%1$d opciones</item>
+    </plurals>
+    <string name="precio_soles_formato">S/ %1$.2f</string>
+
+    <string name="error_cargar_menus">No se pudieron cargar los menús</string>
+    <string name="menu_agotado">Este plato está agotado</string>
+    <string name="menu_precio_sin_entrada">S/ %1$.2f sin entrada</string>
+    <string name="menu_estado_agotado">Agotado</string>
+    <string name="menu_estado_disponible">Disponible</string>
+    <string name="menu_ultima_unidad">¡Última unidad!</string>
+    <string name="menu_ultimas_unidades">¡Últimas %1$d unidades!</string>
+
 
 
 </resources>

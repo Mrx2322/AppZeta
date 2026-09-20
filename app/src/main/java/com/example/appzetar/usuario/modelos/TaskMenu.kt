@@ -1,4 +1,4 @@
-package com.example.appzetar.usuario.Modelos
+package com.example.appzetar.usuario.modelos
 
 data class TaskMenu(
     val id: Int,

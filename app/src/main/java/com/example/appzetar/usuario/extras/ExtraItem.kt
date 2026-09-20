@@ -1,4 +1,4 @@
-package com.example.appzetar.usuario
+package com.example.appzetar.usuario.extras
 
 data class ExtraItem(
     val id: Int,

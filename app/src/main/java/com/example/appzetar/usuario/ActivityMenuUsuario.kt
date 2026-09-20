@@ -37,8 +37,8 @@ import com.example.appzetar.usuario.carrito.PedidoManager
 import com.example.appzetar.usuario.carrito.ReglasPrecioPedido
 import com.example.appzetar.usuario.carrito.TipoPedido
 import com.example.appzetar.usuario.entradas.EntradasUsuarioAdapter
-import com.example.appzetar.usuario.Modelos.TaskEntradas
-import com.example.appzetar.usuario.Modelos.TaskMenu
+import com.example.appzetar.usuario.modelos.TaskEntradas
+import com.example.appzetar.usuario.modelos.TaskMenu
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser

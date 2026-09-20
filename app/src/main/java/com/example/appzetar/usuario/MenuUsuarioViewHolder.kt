@@ -1,14 +1,13 @@
 package com.example.appzetar.usuario
 
-import android.annotation.SuppressLint
-import android.graphics.Color
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.example.appzetar.usuario.Modelos.TaskMenu
 import com.example.appzetar.R
 import com.example.appzetar.usuario.carrito.ReglasPrecioPedido
+import com.example.appzetar.usuario.modelos.TaskMenu
 import com.google.android.material.button.MaterialButton
 
 class MenuUsuarioViewHolder(
@@ -30,22 +29,37 @@ class MenuUsuarioViewHolder(
     private val btnAgregar: MaterialButton =
         view.findViewById(R.id.btnAgregar)
 
-    @SuppressLint("SetTextI18n")
     fun render(
         taskMenu: TaskMenu,
         onAgregarClick: (TaskMenu) -> Unit
     ) {
+        mostrarNombre(taskMenu)
+        mostrarImagen()
+        mostrarPrecio(taskMenu)
+        mostrarStock(
+            taskMenu = taskMenu,
+            onAgregarClick = onAgregarClick
+        )
 
-        // Nombre
-        tvMenuPlato.text = taskMenu.name
+        itemView.setOnClickListener(null)
+    }
 
-        // Imagen provisional
+    private fun mostrarNombre(
+        taskMenu: TaskMenu
+    ) {
+        tvMenuPlato.text =
+            taskMenu.name
+    }
+
+    private fun mostrarImagen() {
         imgPlato.setImageResource(
             R.drawable.fondo_menu
         )
+    }
 
-        // Precio final mínimo visible para el cliente.
-        // El precio base interno del menú no se muestra.
+    private fun mostrarPrecio(
+        taskMenu: TaskMenu
+    ) {
         val precioSinEntrada =
             ReglasPrecioPedido.calcularPrecioMenu(
                 precioMenuConEntrada = taskMenu.precio,
@@ -53,64 +67,172 @@ class MenuUsuarioViewHolder(
             )
 
         tvPrecio.text =
-            "S/ %.2f sin entrada".format(
+            itemView.context.getString(
+                R.string.menu_precio_sin_entrada,
                 precioSinEntrada
             )
+    }
 
-        // ==============================
-        // ESTADO DEL STOCK
-        // ==============================
-
+    private fun mostrarStock(
+        taskMenu: TaskMenu,
+        onAgregarClick: (TaskMenu) -> Unit
+    ) {
         when {
+
             taskMenu.stock <= 0 -> {
-
-                tvStockPlato.text = "Agotado"
-                tvStockPlato.setTextColor(
-                    Color.parseColor("#D32F2F")
-                )
-
-                btnAgregar.isEnabled = false
-                btnAgregar.alpha = 0.45f
-                btnAgregar.setOnClickListener(null)
+                mostrarAgotado()
             }
 
-            taskMenu.stock <= 3 -> {
-
-                tvStockPlato.text = when (taskMenu.stock) {
-                    1 -> "¡Última unidad!"
-                    else -> "¡Últimas ${taskMenu.stock} unidades!"
-                }
-
-                tvStockPlato.setTextColor(
-                    Color.parseColor("#E65100")
+            taskMenu.stock == 1 -> {
+                mostrarUltimaUnidad(
+                    taskMenu,
+                    onAgregarClick
                 )
+            }
 
-                btnAgregar.isEnabled = true
-                btnAgregar.alpha = 1f
-
-                btnAgregar.setOnClickListener {
-                    onAgregarClick(taskMenu)
-                }
+            taskMenu.stock in 2..3 -> {
+                mostrarUltimasUnidades(
+                    taskMenu,
+                    onAgregarClick
+                )
             }
 
             else -> {
-
-                tvStockPlato.text = "Disponible"
-
-                tvStockPlato.setTextColor(
-                    Color.parseColor("#757575")
+                mostrarDisponible(
+                    taskMenu,
+                    onAgregarClick
                 )
-
-                btnAgregar.isEnabled = true
-                btnAgregar.alpha = 1f
-
-                btnAgregar.setOnClickListener {
-                    onAgregarClick(taskMenu)
-                }
             }
         }
+    }
 
-        // El usuario no tiene funciones administrativas
-        itemView.setOnClickListener(null)
+    private fun mostrarAgotado() {
+        tvStockPlato.text =
+            itemView.context.getString(
+                R.string.menu_estado_agotado
+            )
+
+        tvStockPlato.setTextColor(
+            obtenerColor(
+                R.color.menu_stock_agotado
+            )
+        )
+
+        configurarBotonAgregar(
+            habilitado = false
+        )
+    }
+
+    private fun mostrarUltimaUnidad(
+        taskMenu: TaskMenu,
+        onAgregarClick: (TaskMenu) -> Unit
+    ) {
+        tvStockPlato.text =
+            itemView.context.getString(
+                R.string.menu_ultima_unidad
+            )
+
+        tvStockPlato.setTextColor(
+            obtenerColor(
+                R.color.menu_stock_bajo
+            )
+        )
+
+        configurarBotonAgregar(
+            habilitado = true,
+            taskMenu = taskMenu,
+            onAgregarClick = onAgregarClick
+        )
+    }
+
+    private fun mostrarUltimasUnidades(
+        taskMenu: TaskMenu,
+        onAgregarClick: (TaskMenu) -> Unit
+    ) {
+        tvStockPlato.text =
+            itemView.context.getString(
+                R.string.menu_ultimas_unidades,
+                taskMenu.stock
+            )
+
+        tvStockPlato.setTextColor(
+            obtenerColor(
+                R.color.menu_stock_bajo
+            )
+        )
+
+        configurarBotonAgregar(
+            habilitado = true,
+            taskMenu = taskMenu,
+            onAgregarClick = onAgregarClick
+        )
+    }
+
+    private fun mostrarDisponible(
+        taskMenu: TaskMenu,
+        onAgregarClick: (TaskMenu) -> Unit
+    ) {
+        tvStockPlato.text =
+            itemView.context.getString(
+                R.string.menu_estado_disponible
+            )
+
+        tvStockPlato.setTextColor(
+            obtenerColor(
+                R.color.menu_stock_disponible
+            )
+        )
+
+        configurarBotonAgregar(
+            habilitado = true,
+            taskMenu = taskMenu,
+            onAgregarClick = onAgregarClick
+        )
+    }
+
+    private fun configurarBotonAgregar(
+        habilitado: Boolean,
+        taskMenu: TaskMenu? = null,
+        onAgregarClick: ((TaskMenu) -> Unit)? = null
+    ) {
+        btnAgregar.isEnabled =
+            habilitado
+
+        btnAgregar.alpha =
+            if (habilitado) {
+                ALPHA_HABILITADO
+            } else {
+                ALPHA_DESHABILITADO
+            }
+
+        if (
+            habilitado &&
+            taskMenu != null &&
+            onAgregarClick != null
+        ) {
+            btnAgregar.setOnClickListener {
+                onAgregarClick(taskMenu)
+            }
+        } else {
+            btnAgregar.setOnClickListener(null)
+        }
+    }
+
+    private fun obtenerColor(
+        colorRes: Int
+    ): Int {
+        return ContextCompat.getColor(
+            itemView.context,
+            colorRes
+        )
+    }
+
+    companion object {
+
+        private const val ALPHA_HABILITADO =
+            1f
+
+        private const val ALPHA_DESHABILITADO =
+            0.45f
     }
 }
