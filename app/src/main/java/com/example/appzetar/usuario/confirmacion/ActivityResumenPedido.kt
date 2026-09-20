@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
 import com.example.appzetar.usuario.ActivityConfirmarPedido
 import com.example.appzetar.usuario.carrito.PedidoManager
+import com.google.firebase.auth.FirebaseAuth
 
 class ActivityResumenPedido : AppCompatActivity() {
 
@@ -93,10 +94,12 @@ class ActivityResumenPedido : AppCompatActivity() {
 
     private fun obtenerDatos() {
 
-        nombre =
+        val nombreRecibido =
             intent.getStringExtra("nombre")
                 ?.trim()
                 .orEmpty()
+
+        nombre = obtenerNombreCliente(nombreRecibido)
 
         telefono =
             intent.getStringExtra("telefono")
@@ -112,6 +115,29 @@ class ActivityResumenPedido : AppCompatActivity() {
             intent.getStringExtra("observacion")
                 ?.trim()
                 .orEmpty()
+    }
+
+    private fun obtenerNombreCliente(nombreRecibido: String): String {
+        val nombreGenerico = getString(R.string.login_nombre_invitado)
+
+        if (
+            nombreRecibido.isNotBlank() &&
+            !nombreRecibido.equals(nombreGenerico, ignoreCase = true)
+        ) {
+            return nombreRecibido
+        }
+
+        val usuarioActual = FirebaseAuth.getInstance().currentUser
+        val identificador = usuarioActual?.uid ?: INVITADO_SIN_UID
+        val claveNombre = "$CLAVE_NOMBRE_INVITADO$identificador"
+
+        return getSharedPreferences(
+            PREFERENCIAS_INVITADO,
+            MODE_PRIVATE
+        ).getString(claveNombre, null)
+            ?.trim()
+            ?.takeIf { nombre -> nombre.isNotBlank() }
+            ?: nombreGenerico
     }
 
     // =========================================================
@@ -260,5 +286,11 @@ class ActivityResumenPedido : AppCompatActivity() {
         }
 
         startActivity(intent)
+    }
+
+    companion object {
+        private const val PREFERENCIAS_INVITADO = "preferencias_invitado"
+        private const val CLAVE_NOMBRE_INVITADO = "nombre_invitado_"
+        private const val INVITADO_SIN_UID = "sin_uid"
     }
 }

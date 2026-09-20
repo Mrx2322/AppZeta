@@ -126,9 +126,15 @@
         <item quantity="one">%1$d producto</item>
         <item quantity="other">%1$d productos</item>
     </plurals>
-
     <string name="resumen_cantidad_item">x%1$d</string>
     <string name="resumen_carrito_vacio">El carrito está vacío</string>
+
+    <!--Nombre invitado-->
+    <string name="titulo_nombre_invitado">Antes de continuar</string>
+    <string name="mensaje_nombre_invitado">Escribe tu nombre para personalizar tu experiencia.</string>
+    <string name="nombre_invitado_hint">Nombre y Apellidos</string>
+    <string name="error_nombre_invitado">Ingresa tu nombre</string>
+    <string name="continuar_nombre_invitado">Continuar</string>
 
 
 

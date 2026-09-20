@@ -2,13 +2,10 @@ package com.example.appzetar.usuario
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import androidx.core.app.ActivityOptionsCompat
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.Button
@@ -20,6 +17,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.edit
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -41,7 +41,9 @@ import com.example.appzetar.usuario.Modelos.TaskEntradas
 import com.example.appzetar.usuario.Modelos.TaskMenu
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlin.math.abs
 
 class ActivityMenuUsuario : AppCompatActivity() {
@@ -379,7 +381,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
     private fun animarBadgeCarrito() {
-        if (tvCantidadCarrito.visibility != View.VISIBLE) return
+        if (!tvCantidadCarrito.isVisible) return
 
         tvCantidadCarrito.animate()
             .scaleX(1.25f)
@@ -396,17 +398,10 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
     private fun cargarNombreUsuario() {
-
         val usuarioActual = auth.currentUser
 
-        if (usuarioActual == null) {
-            tvSaludo.text = getString(R.string.saludo_generico)
-            return
-        }
-
-        // Usuario que ingresó sin correo ni contraseña
-        if (usuarioActual.isAnonymous) {
-            tvSaludo.text = getString(R.string.saludo_bienvenida)
+        if (usuarioActual == null || usuarioActual.isAnonymous) {
+            cargarNombreInvitado(usuarioActual)
             return
         }
 
@@ -440,6 +435,108 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 tvSaludo.text =
                     getString(R.string.saludo_generico)
             }
+    }
+
+    private fun cargarNombreInvitado(usuario: FirebaseUser?) {
+        val preferencias = getSharedPreferences(
+            PREFERENCIAS_INVITADO,
+            MODE_PRIVATE
+        )
+
+        val claveNombre = obtenerClaveNombreInvitado(usuario)
+        val nombreGuardado = preferencias
+            .getString(claveNombre, null)
+            ?.trim()
+            .orEmpty()
+
+        if (nombreGuardado.isNotEmpty()) {
+            guardarNombreInvitadoEnFirebase(nombreGuardado)
+            mostrarSaludo(nombreGuardado)
+        } else {
+            solicitarNombreInvitado(claveNombre)
+        }
+    }
+
+    private fun solicitarNombreInvitado(claveNombre: String) {
+        val vistaDialogo = layoutInflater.inflate(
+            R.layout.dialog_nombre_invitado,
+            null
+        )
+        val campoNombre = vistaDialogo.findViewById<AppCompatEditText>(
+            R.id.etNombreInvitado
+        )
+
+        val dialogo = AlertDialog.Builder(this)
+            .setTitle(R.string.titulo_nombre_invitado)
+            .setMessage(R.string.mensaje_nombre_invitado)
+            .setView(vistaDialogo)
+            .setCancelable(false)
+            .setPositiveButton(R.string.continuar_nombre_invitado, null)
+            .create()
+
+        dialogo.setOnShowListener {
+            dialogo.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setOnClickListener {
+                    val nombre = campoNombre.text
+                        ?.toString()
+                        ?.trim()
+                        .orEmpty()
+
+                    if (nombre.isBlank()) {
+                        campoNombre.error = getString(
+                            R.string.error_nombre_invitado
+                        )
+                        return@setOnClickListener
+                    }
+
+                    getSharedPreferences(
+                        PREFERENCIAS_INVITADO,
+                        MODE_PRIVATE
+                    ).edit {
+                        putString(claveNombre, nombre)
+                    }
+
+                    guardarNombreInvitadoEnFirebase(nombre)
+                    mostrarSaludo(nombre)
+                    dialogo.dismiss()
+                }
+        }
+
+        dialogo.show()
+        campoNombre.requestFocus()
+    }
+
+    private fun mostrarSaludo(nombre: String) {
+        tvSaludo.text = getString(
+            R.string.saludo_usuario,
+            nombre
+        )
+    }
+
+    private fun guardarNombreInvitadoEnFirebase(nombre: String) {
+        val usuarioActual = auth.currentUser ?: return
+
+        db.collection("usuarios")
+            .document(usuarioActual.uid)
+            .set(
+                mapOf(
+                    "nombre" to nombre,
+                    "esInvitado" to true
+                ),
+                SetOptions.merge()
+            )
+            .addOnFailureListener { error ->
+                Log.e(
+                    "USUARIO_FIREBASE",
+                    "Error guardando nombre del invitado",
+                    error
+                )
+            }
+    }
+
+    private fun obtenerClaveNombreInvitado(usuario: FirebaseUser?): String {
+        val identificador = usuario?.uid ?: INVITADO_SIN_UID
+        return "$CLAVE_NOMBRE_INVITADO$identificador"
     }
 
     private fun initUI() {
@@ -497,81 +594,64 @@ class ActivityMenuUsuario : AppCompatActivity() {
             abrirCarrito()
         }
 
-        navInicio.setOnClickListener {
+        configurarClickNavegacion(navInicio) {
             // Ya estamos en Inicio.
         }
 
-        navExtras.setOnClickListener {
+        configurarClickNavegacion(navExtras) {
             NavegacionUsuario.abrir(
                 this,
                 ActivityExtras::class.java
             )
         }
 
-        navPedidos.setOnClickListener {
+        configurarClickNavegacion(navPedidos) {
             NavegacionUsuario.abrir(
                 this,
                 ActivityPedidosUsuario::class.java
             )
         }
 
-        navCarrito.setOnClickListener {
+        configurarClickNavegacion(navCarrito) {
             abrirCarrito()
         }
 
-        navPerfil.setOnClickListener {
+        configurarClickNavegacion(navPerfil) {
             NavegacionUsuario.abrir(
                 this,
                 ActivityPerfilUsuario::class.java
             )
         }
 
-        configurarAnimacionesBarra()
         marcarInicioActivo()
         actualizarContadorCarrito()
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    private fun configurarAnimacionesBarra() {
-        listOf(
-            navInicio,
-            navExtras,
-            navPedidos,
-            navCarrito,
-            navPerfil
-        ).forEach { item ->
-
-            item.setOnTouchListener { vista, evento ->
-
-                when (evento.actionMasked) {
-                    MotionEvent.ACTION_DOWN -> {
-                        vista.animate()
-                            .scaleX(1.12f)
-                            .scaleY(1.12f)
-                            .translationY(-9f)
-                            .setDuration(150)
-                            .setInterpolator(
-                                DecelerateInterpolator()
-                            )
-                            .start()
-                    }
-
-                    MotionEvent.ACTION_UP,
-                    MotionEvent.ACTION_CANCEL -> {
-                        vista.animate()
-                            .scaleX(1f)
-                            .scaleY(1f)
-                            .translationY(0f)
-                            .setDuration(180)
-                            .setInterpolator(
-                                DecelerateInterpolator()
-                            )
-                            .start()
-                    }
+    private fun configurarClickNavegacion(
+        item: View,
+        accion: () -> Unit
+    ) {
+        item.setOnClickListener { vista ->
+            vista.animate().cancel()
+            vista.animate()
+                .scaleX(1.12f)
+                .scaleY(1.12f)
+                .translationY(-9f)
+                .setDuration(120)
+                .setInterpolator(DecelerateInterpolator())
+                .withEndAction {
+                    vista.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .translationY(0f)
+                        .setDuration(160)
+                        .setInterpolator(DecelerateInterpolator())
+                        .withEndAction {
+                            accion()
+                        }
+                        .start()
                 }
-
-                false
-            }
+                .start()
         }
     }
 
@@ -1473,5 +1553,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
     companion object {
         private const val LIMITE_MENU_CARRUSEL = 3
+        private const val PREFERENCIAS_INVITADO = "preferencias_invitado"
+        private const val CLAVE_NOMBRE_INVITADO = "nombre_invitado_"
+        private const val INVITADO_SIN_UID = "sin_uid"
     }
 }
