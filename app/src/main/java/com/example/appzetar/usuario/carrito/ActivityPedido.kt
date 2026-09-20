@@ -1,9 +1,10 @@
-package com.example.appzetar.usuario.Carrito
+package com.example.appzetar.usuario.carrito
 
-import android.annotation.SuppressLint
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.StateListAnimator
 import android.content.Intent
 import android.os.Bundle
-import android.view.MotionEvent
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
@@ -73,7 +75,7 @@ class ActivityPedido : AppCompatActivity() {
 
         initComponent()
         initUI()
-        actualizarPedido()
+        actualizarResumenPedido()
     }
 
     private fun initComponent() {
@@ -142,7 +144,6 @@ class ActivityPedido : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun configurarAnimacionesBarra() {
         val opciones = listOf(
             navInicio,
@@ -153,33 +154,37 @@ class ActivityPedido : AppCompatActivity() {
         )
 
         opciones.forEach { opcion ->
-            opcion.setOnTouchListener { vista, evento ->
+            opcion.stateListAnimator = crearAnimadorDePresion(opcion)
+        }
+    }
 
-                when (evento.actionMasked) {
-                    MotionEvent.ACTION_DOWN -> {
-                        vista.animate()
-                            .scaleX(1.12f)
-                            .scaleY(1.12f)
-                            .translationY(-9f)
-                            .setDuration(150)
-                            .setInterpolator(DecelerateInterpolator())
-                            .start()
-                    }
+    private fun crearAnimadorDePresion(vista: View): StateListAnimator {
+        val animacionPresionada = AnimatorSet().apply {
+            playTogether(
+                ObjectAnimator.ofFloat(vista, View.SCALE_X, 1.12f),
+                ObjectAnimator.ofFloat(vista, View.SCALE_Y, 1.12f),
+                ObjectAnimator.ofFloat(vista, View.TRANSLATION_Y, -9f)
+            )
+            duration = 150
+            interpolator = DecelerateInterpolator()
+        }
 
-                    MotionEvent.ACTION_UP,
-                    MotionEvent.ACTION_CANCEL -> {
-                        vista.animate()
-                            .scaleX(1f)
-                            .scaleY(1f)
-                            .translationY(0f)
-                            .setDuration(180)
-                            .setInterpolator(DecelerateInterpolator())
-                            .start()
-                    }
-                }
+        val animacionNormal = AnimatorSet().apply {
+            playTogether(
+                ObjectAnimator.ofFloat(vista, View.SCALE_X, 1f),
+                ObjectAnimator.ofFloat(vista, View.SCALE_Y, 1f),
+                ObjectAnimator.ofFloat(vista, View.TRANSLATION_Y, 0f)
+            )
+            duration = 180
+            interpolator = DecelerateInterpolator()
+        }
 
-                false
-            }
+        return StateListAnimator().apply {
+            addState(
+                intArrayOf(android.R.attr.state_pressed),
+                animacionPresionada
+            )
+            addState(intArrayOf(), animacionNormal)
         }
     }
 
@@ -196,18 +201,44 @@ class ActivityPedido : AppCompatActivity() {
     }
 
     private fun aumentarProducto(item: PedidoItem) {
+        val posicion = PedidoManager.pedido.indexOf(item)
+
         PedidoManager.aumentarCantidad(item)
-        actualizarPedido()
+
+        if (posicion >= 0) {
+            pedidoAdapter.notifyItemChanged(posicion)
+        }
+
+        actualizarResumenPedido()
     }
 
     private fun disminuirProducto(item: PedidoItem) {
+        val posicion = PedidoManager.pedido.indexOf(item)
+        val cantidadItemsAnterior = PedidoManager.pedido.size
+
         PedidoManager.disminuirCantidad(item)
-        actualizarPedido()
+
+        if (posicion >= 0) {
+            if (PedidoManager.pedido.size < cantidadItemsAnterior) {
+                pedidoAdapter.notifyItemRemoved(posicion)
+            } else {
+                pedidoAdapter.notifyItemChanged(posicion)
+            }
+        }
+
+        actualizarResumenPedido()
     }
 
     private fun eliminarProducto(item: PedidoItem) {
+        val posicion = PedidoManager.pedido.indexOf(item)
+
         PedidoManager.eliminarProducto(item)
-        actualizarPedido()
+
+        if (posicion >= 0) {
+            pedidoAdapter.notifyItemRemoved(posicion)
+        }
+
+        actualizarResumenPedido()
     }
 
     private fun continuarCompra() {
@@ -220,45 +251,36 @@ class ActivityPedido : AppCompatActivity() {
         )
     }
 
-    private fun actualizarPedido() {
-        pedidoAdapter.notifyDataSetChanged()
-
+    private fun actualizarResumenPedido() {
         val cantidad = PedidoManager.cantidadTotal()
 
-        tvTotalProductos.text =
-            if (cantidad == 1) {
-                "1 producto"
-            } else {
-                "$cantidad productos"
-            }
+        tvTotalProductos.text = resources.getQuantityString(
+            R.plurals.pedido_cantidad_productos,
+            cantidad,
+            cantidad
+        )
 
         tvCantidadCarrito.text = cantidad.toString()
-
-        tvCantidadCarrito.visibility =
-            if (cantidad > 0) View.VISIBLE else View.GONE
+        tvCantidadCarrito.isVisible = cantidad > 0
 
         val total = PedidoManager.totalPedido()
 
-        tvTotalPedido.text =
-            "S/ %.2f".format(total)
+        tvTotalPedido.text = getString(
+            R.string.pedido_total_formato,
+            total
+        )
 
-        if (PedidoManager.pedido.isEmpty()) {
-            rvPedido.visibility = View.GONE
-            tvMensajeVacio.visibility = View.VISIBLE
+        val pedidoVacio = PedidoManager.pedido.isEmpty()
 
-            btnContinuar.isEnabled = false
-            btnContinuar.alpha = 0.5f
-        } else {
-            rvPedido.visibility = View.VISIBLE
-            tvMensajeVacio.visibility = View.GONE
+        rvPedido.isVisible = !pedidoVacio
+        tvMensajeVacio.isVisible = pedidoVacio
 
-            btnContinuar.isEnabled = true
-            btnContinuar.alpha = 1f
-        }
+        btnContinuar.isEnabled = !pedidoVacio
+        btnContinuar.alpha = if (pedidoVacio) 0.5f else 1f
     }
 
     override fun onResume() {
         super.onResume()
-        actualizarPedido()
+        actualizarResumenPedido()
     }
 }

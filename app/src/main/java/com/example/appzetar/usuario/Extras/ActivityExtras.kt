@@ -14,10 +14,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
-import com.example.appzetar.usuario.Carrito.ActivityPedido
-import com.example.appzetar.usuario.Carrito.PedidoItem
-import com.example.appzetar.usuario.Carrito.PedidoManager
-import com.example.appzetar.usuario.Carrito.TipoPedido
+import com.example.appzetar.usuario.carrito.ActivityPedido
+import com.example.appzetar.usuario.carrito.PedidoItem
+import com.example.appzetar.usuario.carrito.PedidoManager
+import com.example.appzetar.usuario.carrito.TipoPedido
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityExtras : AppCompatActivity() {

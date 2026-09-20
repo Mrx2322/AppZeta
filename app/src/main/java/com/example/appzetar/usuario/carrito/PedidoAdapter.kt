@@ -1,4 +1,4 @@
-package com.example.appzetar.usuario.Carrito
+package com.example.appzetar.usuario.carrito
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

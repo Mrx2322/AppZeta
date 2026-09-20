@@ -107,5 +107,30 @@
     <string name="login_error_crear_perfil">La cuenta ingresó, pero no se pudo crear el perfil</string>
     <string name="login_error_verificar_perfil">No se pudo verificar el perfil</string>
 
+    <!--Activity_pedidos.kt-->
+    <plurals name="pedido_cantidad_productos">
+        <item quantity="one">%1$d producto</item>
+        <item quantity="other">%1$d productos</item>
+    </plurals>
+    <string name="pedido_total_formato">S/ %1$.2f</string>
+
+    <!--PedidoView holder.kt-->
+    <string name="pedido_sin_entrada">Sin entrada</string>
+    <string name="pedido_entrada_detalle">Entrada: %1$s</string>
+    <string name="pedido_entradas_detalle">Entradas: %1$s</string>
+    <string name="pedido_precio_unitario">S/ %1$.2f c/u</string>
+    <string name="pedido_subtotal">S/ %1$.2f</string>
+
+    <!--Confirmacion.kt-->
+    <plurals name="resumen_cantidad_productos">
+        <item quantity="one">%1$d producto</item>
+        <item quantity="other">%1$d productos</item>
+    </plurals>
+
+    <string name="resumen_cantidad_item">x%1$d</string>
+    <string name="resumen_carrito_vacio">El carrito está vacío</string>
+
+
+
 
 </resources>

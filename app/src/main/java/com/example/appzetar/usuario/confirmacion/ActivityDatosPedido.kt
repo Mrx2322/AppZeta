@@ -1,4 +1,4 @@
-package com.example.appzetar.usuario.Confirmacion
+package com.example.appzetar.usuario.confirmacion
 
 import android.content.Intent
 import android.os.Bundle

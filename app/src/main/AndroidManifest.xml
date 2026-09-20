@@ -43,13 +43,13 @@
             android:name=".usuario.Pagos.ActivityPagoYape"
             android:exported="false" />
         <activity
-            android:name=".usuario.Confirmacion.ActivityResumenPedido"
+            android:name=".usuario.confirmacion.ActivityResumenPedido"
             android:exported="false" />
         <activity
-            android:name=".usuario.Confirmacion.ActivityDatosPedido"
+            android:name=".usuario.confirmacion.ActivityDatosPedido"
             android:exported="false" />
         <activity
-            android:name=".usuario.Carrito.ActivityPedido"
+            android:name=".usuario.carrito.ActivityPedido"
             android:exported="false" />
         <activity
             android:name=".usuario.ActivityMenuUsuario"

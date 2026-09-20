@@ -1,7 +1,7 @@
 package com.example.appzetar.usuario
 
-import com.example.appzetar.usuario.Carrito.PedidoItem
-import com.example.appzetar.usuario.Carrito.TipoPedido
+import com.example.appzetar.usuario.carrito.PedidoItem
+import com.example.appzetar.usuario.carrito.TipoPedido
 import com.google.firebase.firestore.FirebaseFirestore
 
 object StockManager {

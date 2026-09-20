@@ -16,8 +16,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
-import com.example.appzetar.usuario.Carrito.ActivityPedido
-import com.example.appzetar.usuario.Carrito.PedidoManager
+import com.example.appzetar.usuario.carrito.ActivityPedido
+import com.example.appzetar.usuario.carrito.PedidoManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore

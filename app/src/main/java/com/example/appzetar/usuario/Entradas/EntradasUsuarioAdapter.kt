@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.usuario.Modelos.TaskEntradas
 import com.example.appzetar.R
-import com.example.appzetar.usuario.Carrito.EntradaPedido
-import com.example.appzetar.usuario.Carrito.PedidoManager
+import com.example.appzetar.usuario.carrito.EntradaPedido
+import com.example.appzetar.usuario.carrito.PedidoManager
 
 class EntradasUsuarioAdapter(
     private val entradas: MutableList<TaskEntradas>

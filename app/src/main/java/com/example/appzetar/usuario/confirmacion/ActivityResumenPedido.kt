@@ -1,8 +1,7 @@
-package com.example.appzetar.usuario.Confirmacion
+package com.example.appzetar.usuario.confirmacion
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -11,11 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
 import com.example.appzetar.usuario.ActivityConfirmarPedido
-import com.example.appzetar.usuario.Carrito.PedidoManager
+import com.example.appzetar.usuario.carrito.PedidoManager
 
 class ActivityResumenPedido : AppCompatActivity() {
 
@@ -30,8 +30,6 @@ class ActivityResumenPedido : AppCompatActivity() {
     private lateinit var tvObservacionCliente: TextView
     private lateinit var tvTotalProductos: TextView
     private lateinit var btnConfirmarPedido: Button
-
-    private lateinit var resumenAdapter: PedidoResumenAdapter
 
     // =========================================================
     // DATOS RECIBIDOS
@@ -171,16 +169,9 @@ class ActivityResumenPedido : AppCompatActivity() {
         tvDireccionCliente.text =
             direccion
 
-        if (observacion.isBlank()) {
+        tvObservacionCliente.isVisible = observacion.isNotBlank()
 
-            tvObservacionCliente.visibility =
-                View.GONE
-
-        } else {
-
-            tvObservacionCliente.visibility =
-                View.VISIBLE
-
+        if (observacion.isNotBlank()) {
             tvObservacionCliente.text =
                 observacion
         }
@@ -192,7 +183,7 @@ class ActivityResumenPedido : AppCompatActivity() {
 
     private fun configurarListaPedido() {
 
-        resumenAdapter =
+        val resumenAdapter =
             PedidoResumenAdapter(
                 PedidoManager.pedido
             )
@@ -218,12 +209,11 @@ class ActivityResumenPedido : AppCompatActivity() {
         val cantidad =
             PedidoManager.cantidadTotal()
 
-        tvTotalProductos.text =
-            if (cantidad == 1) {
-                "1 producto"
-            } else {
-                "$cantidad productos"
-            }
+        tvTotalProductos.text = resources.getQuantityString(
+            R.plurals.resumen_cantidad_productos,
+            cantidad,
+            cantidad
+        )
     }
 
     // =========================================================
@@ -247,7 +237,7 @@ class ActivityResumenPedido : AppCompatActivity() {
 
             Toast.makeText(
                 this,
-                "El carrito está vacío",
+                R.string.resumen_carrito_vacio,
                 Toast.LENGTH_SHORT
             ).show()
 

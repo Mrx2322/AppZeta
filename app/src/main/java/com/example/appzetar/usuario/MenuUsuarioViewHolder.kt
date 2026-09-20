@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.usuario.Modelos.TaskMenu
 import com.example.appzetar.R
-import com.example.appzetar.usuario.Carrito.ReglasPrecioPedido
+import com.example.appzetar.usuario.carrito.ReglasPrecioPedido
 import com.google.android.material.button.MaterialButton
 
 class MenuUsuarioViewHolder(

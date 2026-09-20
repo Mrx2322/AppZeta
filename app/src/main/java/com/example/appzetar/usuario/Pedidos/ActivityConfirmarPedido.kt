@@ -12,9 +12,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.appzetar.R
-import com.example.appzetar.usuario.Carrito.PedidoItem
-import com.example.appzetar.usuario.Carrito.PedidoManager
-import com.example.appzetar.usuario.Carrito.TipoPedido
+import com.example.appzetar.usuario.carrito.PedidoItem
+import com.example.appzetar.usuario.carrito.PedidoManager
+import com.example.appzetar.usuario.carrito.TipoPedido
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference

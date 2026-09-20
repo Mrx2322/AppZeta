@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.appzetar.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
-import com.example.appzetar.usuario.Carrito.PedidoManager
+import com.example.appzetar.usuario.carrito.PedidoManager
 
 class ActivityPagoYape : AppCompatActivity() {
 
