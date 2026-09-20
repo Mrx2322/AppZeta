@@ -19,13 +19,13 @@
             android:name=".usuario.ActivityPedidosUsuario"
             android:exported="false" />
         <activity
-            android:name=".usuario.ActivityExtras"
+            android:name=".usuario.extras.ActivityExtras"
             android:exported="false" />
         <activity
-            android:name=".usuario.ActivityDireccion"
+            android:name=".usuario.entregas.ActivityDireccion"
             android:exported="false" />
         <activity
-            android:name=".usuario.ActivityEntrega"
+            android:name=".usuario.entregas.ActivityEntrega"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
@@ -40,7 +40,7 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".usuario.Pagos.ActivityPagoYape"
+            android:name=".usuario.pagos.ActivityPagoYape"
             android:exported="false" />
         <activity
             android:name=".usuario.confirmacion.ActivityResumenPedido"
@@ -72,7 +72,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".usuario.ActivityTodosLosMenus"
+            android:name=".usuario.menus.ActivityTodosLosMenus"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
     </application>

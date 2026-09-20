@@ -18,12 +18,12 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
-import com.example.appzetar.usuario.ActivityEntrega
-import com.example.appzetar.usuario.ActivityExtras
+import com.example.appzetar.usuario.entregas.ActivityEntrega
+import com.example.appzetar.usuario.extras.ActivityExtras
 import com.example.appzetar.usuario.ActivityMenuUsuario
 import com.example.appzetar.usuario.ActivityPedidosUsuario
 import com.example.appzetar.usuario.ActivityPerfilUsuario
-import com.example.appzetar.usuario.NavegacionUsuario
+import com.example.appzetar.usuario.navegacionUsuario.NavegacionUsuario
 import com.google.android.material.button.MaterialButton
 
 class ActivityPedido : AppCompatActivity() {

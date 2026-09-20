@@ -17,7 +17,7 @@ import com.example.appzetar.R
 import com.example.appzetar.usuario.ActivityMenuUsuario
 import com.example.appzetar.usuario.ActivityPedidosUsuario
 import com.example.appzetar.usuario.ActivityPerfilUsuario
-import com.example.appzetar.usuario.NavegacionUsuario
+import com.example.appzetar.usuario.navegacionUsuario.NavegacionUsuario
 import com.example.appzetar.usuario.carrito.ActivityPedido
 import com.example.appzetar.usuario.carrito.PedidoItem
 import com.example.appzetar.usuario.carrito.PedidoManager

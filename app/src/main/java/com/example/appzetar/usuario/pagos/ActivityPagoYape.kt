@@ -1,4 +1,4 @@
-package com.example.appzetar.usuario.Pagos
+package com.example.appzetar.usuario.pagos
 
 import android.os.Bundle
 import android.widget.TextView

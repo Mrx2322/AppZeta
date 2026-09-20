@@ -1,5 +1,7 @@
 package com.example.appzetar.usuario
 
+import com.example.appzetar.usuario.navegacionUsuario.NavegacionUsuario
+import com.example.appzetar.usuario.extras.ActivityExtras
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Intent

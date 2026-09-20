@@ -30,6 +30,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
+import com.example.appzetar.usuario.extras.ActivityExtras
+import com.example.appzetar.usuario.extras.CategoriaAdapter
+import com.example.appzetar.usuario.extras.CategoriaItem
+import com.example.appzetar.usuario.extras.ExtraAdapter
+import com.example.appzetar.usuario.extras.ExtraItem
+import com.example.appzetar.usuario.menus.ActivityTodosLosMenus
 import com.example.appzetar.usuario.carrito.ActivityPedido
 import com.example.appzetar.usuario.carrito.EntradaPedido
 import com.example.appzetar.usuario.carrito.PedidoItem
@@ -44,6 +50,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.example.appzetar.usuario.navegacionUsuario.NavegacionUsuario
 import kotlin.math.abs
 
 class ActivityMenuUsuario : AppCompatActivity() {
