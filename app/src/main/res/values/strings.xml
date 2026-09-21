@@ -190,7 +190,7 @@
     <string name="entrega_recojo_titulo">Recojo en local</string>
     <string name="entrega_recojo_descripcion">Recoge tu pedido en nuestro local</string>
 
-    <!-- Método de pago -->
+    <!-- Metodo de pago -->
 
     <string name="entrega_pago_titulo">¿Cómo quieres pagar?</string>
     <string name="entrega_pago_subtitulo">Selecciona tu método de pago</string>
