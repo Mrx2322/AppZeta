@@ -2,7 +2,7 @@
     <string name="app_name">AppZetaR</string>
 
     <!--TodoApp-->
-    <string name="todo_title">Bienvenido...</string>
+    <string name="todo_title">Bienvenido..</string>
     <string name="todo_categories">Popular Entradas :</string>
     <string name="todo_Menu">Menu :</string>
     <string name="Ingresar">VISTA ADMIN</string>
@@ -89,7 +89,7 @@
     <string name="con_varias_entradas_detalle">Con %1$d entradas: %2$s</string>
 
     <!--Splash.kt-->
-    <string name="splash_preparando_experiencia">Preparando tu experiencia... (%1$d%%)</string>
+    <string name="splash_preparando_experiencia">Preparando tu experiencia.. (%1$d%%)</string>
 
     <!--Login.kt-->
     <string name="login_error_ingresa_correo">Ingresa tu correo</string>
@@ -344,7 +344,7 @@
     <!-- SPLASH -->
     <!-- ===================================================== -->
 
-    <string name="splash_estado_inicial">Cargando módulos... (0%%)</string>
+    <string name="splash_estado_inicial">Cargando módulos.. (0%%)</string>
 
     <!-- ===================================================== -->
     <!-- TODOS LOS MENÚS -->
@@ -353,7 +353,15 @@
     <string name="todos_menus_volver">‹</string>
     <string name="todos_menus_titulo">Todos los menús</string>
     <string name="todos_menus_subtitulo">Elige el plato que deseas pedir</string>
-    <string name="todos_menus_vacio">No hay menús disponibles en este momento</string>
+    <string name="todos_menus_vacio">No hay menús disponibles en este Moment</string>
+
+    <!-- ===================================================== -->
+    <!-- PAGO YAPE - KOTLIN -->
+    <!-- ===================================================== -->
+
+    <string name="pago_yape_total_formato">Total: S/ %.2f</string>
+    <string name="pago_yape_error_operacion">Ingresa el número de operación</string>
+    <string name="pago_yape_proximamente_mensaje">Yape estará disponible muy pronto 🚀</string>
 
     <!-- ===================================================== -->
     <!-- DIÁLOGO CONFIRMAR MENÚ -->

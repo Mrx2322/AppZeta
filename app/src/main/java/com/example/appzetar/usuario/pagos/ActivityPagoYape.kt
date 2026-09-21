@@ -5,9 +5,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.appzetar.R
+import com.example.appzetar.usuario.carrito.PedidoManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
-import com.example.appzetar.usuario.carrito.PedidoManager
 
 class ActivityPagoYape : AppCompatActivity() {
 
@@ -16,9 +16,7 @@ class ActivityPagoYape : AppCompatActivity() {
     // =========================================================
 
     private lateinit var tvTotal: TextView
-
     private lateinit var etOperacion: TextInputEditText
-
     private lateinit var btnYaPague: MaterialButton
 
 
@@ -26,14 +24,10 @@ class ActivityPagoYape : AppCompatActivity() {
     // ON CREATE
     // =========================================================
 
-    override fun onCreate(
-        savedInstanceState: Bundle?
-    ) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(
-            R.layout.activity_pago_yape
-        )
+        setContentView(R.layout.activity_pago_yape)
 
         initComponent()
 
@@ -50,19 +44,13 @@ class ActivityPagoYape : AppCompatActivity() {
     private fun initComponent() {
 
         tvTotal =
-            findViewById(
-                R.id.tvTotal
-            )
+            findViewById(R.id.tvTotal)
 
         etOperacion =
-            findViewById(
-                R.id.etOperacion
-            )
+            findViewById(R.id.etOperacion)
 
         btnYaPague =
-            findViewById(
-                R.id.btnYaPague
-            )
+            findViewById(R.id.btnYaPague)
     }
 
 
@@ -74,12 +62,12 @@ class ActivityPagoYape : AppCompatActivity() {
 
         val total =
             PedidoManager.pedido.sumOf {
-
                 it.precio * it.cantidad
             }
 
         tvTotal.text =
-            "Total: S/ %.2f".format(
+            getString(
+                R.string.pago_yape_total_formato,
                 total
             )
     }
@@ -107,7 +95,9 @@ class ActivityPagoYape : AppCompatActivity() {
             if (operacion.isEmpty()) {
 
                 etOperacion.error =
-                    "Ingresa el número de operación"
+                    getString(
+                        R.string.pago_yape_error_operacion
+                    )
 
                 etOperacion.requestFocus()
 
@@ -121,7 +111,9 @@ class ActivityPagoYape : AppCompatActivity() {
 
             Toast.makeText(
                 this,
-                "Yape estará disponible muy pronto 🚀",
+                getString(
+                    R.string.pago_yape_proximamente_mensaje
+                ),
                 Toast.LENGTH_LONG
             ).show()
         }
