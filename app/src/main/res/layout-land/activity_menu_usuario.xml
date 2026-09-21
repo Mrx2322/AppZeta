@@ -1,336 +1,600 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+
     android:id="@+id/main"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:background="#F7F7F7"
+
     tools:context=".usuario.ActivityMenuUsuario">
 
-    <!-- CONTENIDO DESPLAZABLE EN HORIZONTAL -->
+
+    <!-- ===================================================== -->
+    <!-- CONTENIDO PRINCIPAL -->
+    <!-- ===================================================== -->
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollMenuUsuario"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         android:clipToPadding="false"
         android:fillViewport="true"
+
         android:overScrollMode="never"
+
         android:paddingTop="14dp"
         android:paddingBottom="76dp"
+
         android:scrollbars="none">
+
 
         <LinearLayout
             android:id="@+id/contenidoMenuUsuario"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             android:orientation="vertical"
+
             android:paddingStart="22dp"
             android:paddingEnd="22dp"
             android:paddingBottom="18dp">
 
+
+            <!-- ================================================= -->
+            <!-- SALUDO -->
+            <!-- ================================================= -->
+
             <TextView
                 android:id="@+id/tvSaludo"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:text="¡Hola!"
+
+                android:text="@string/menu_usuario_saludo_default"
+
                 android:textColor="#222222"
                 android:textSize="23sp"
                 android:textStyle="bold" />
 
+
             <TextView
                 android:id="@+id/tvSubtituloMenu"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:layout_marginTop="2dp"
-                android:text="¿Qué deseas comer hoy?"
+
+                android:text="@string/menu_usuario_subtitulo"
+
                 android:textColor="#777777"
                 android:textSize="14sp" />
 
+
+            <!-- ================================================= -->
+            <!-- ENTRADAS -->
+            <!-- ================================================= -->
+
             <TextView
                 android:id="@+id/tvTituloEntradas"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:layout_marginTop="14dp"
-                android:text="Entradas"
+
+                android:text="@string/menu_usuario_entradas"
+
                 android:textColor="#222222"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvEntradas"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:layout_marginTop="7dp"
+
                 android:clipToPadding="false"
+
                 android:minHeight="98dp"
                 android:nestedScrollingEnabled="false"
+
                 android:overScrollMode="never"
+
                 android:paddingStart="2dp"
                 android:paddingEnd="2dp"
+
                 android:scrollbars="none" />
+
+
+            <!-- ================================================= -->
+            <!-- NUESTRO MENÚ -->
+            <!-- ================================================= -->
 
             <LinearLayout
                 android:id="@+id/layoutTituloMenu"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:layout_marginTop="14dp"
+
                 android:baselineAligned="false"
+
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
+
                 <TextView
                     android:id="@+id/tvTituloMenu"
+
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+
                     android:layout_weight="1"
+
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="Nuestro menú"
+
+                    android:text="@string/menu_usuario_nuestro_menu"
+
                     android:textColor="#222222"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
+
                 <TextView
                     android:id="@+id/tvVerTodo"
+
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
+
                     android:clickable="true"
                     android:focusable="true"
+
                     android:paddingStart="10dp"
                     android:paddingTop="5dp"
                     android:paddingEnd="4dp"
                     android:paddingBottom="5dp"
-                    android:text="Ver todo"
+
+                    android:text="@string/menu_usuario_ver_todo"
+
                     android:textColor="#E87520"
                     android:textSize="13sp"
                     android:textStyle="bold" />
+
             </LinearLayout>
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvMenu"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:layout_marginTop="7dp"
+
                 android:clipToPadding="false"
+
                 android:minHeight="250dp"
                 android:nestedScrollingEnabled="false"
+
                 android:overScrollMode="never"
+
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp"
+
                 android:scrollbars="none" />
 
-            <!-- VISTAS CONSERVADAS PARA EL KOTLIN -->
+
+            <!-- ================================================= -->
+            <!-- VISTAS CONSERVADAS PARA KOTLIN -->
+            <!-- ================================================= -->
+
             <TextView
                 android:id="@+id/tvTituloExtras"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Extras"
+
+                android:text="@string/menu_usuario_extras"
+
                 android:visibility="gone" />
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvCategorias"
+
                 android:layout_width="match_parent"
                 android:layout_height="82dp"
+
                 android:overScrollMode="never"
                 android:visibility="gone" />
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvExtras"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:overScrollMode="never"
                 android:visibility="gone" />
+
         </LinearLayout>
+
     </androidx.core.widget.NestedScrollView>
+
+
+    <!-- ===================================================== -->
+    <!-- PROGRESS -->
+    <!-- ===================================================== -->
 
     <ProgressBar
         android:id="@+id/progressBarMenu"
+
         android:layout_width="42dp"
         android:layout_height="42dp"
+
         android:layout_gravity="center"
+
         android:visibility="gone" />
 
+
+    <!-- ===================================================== -->
     <!-- BARRA INFERIOR COMPACTA -->
+    <!-- ===================================================== -->
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/bottomNavigation"
+
         android:layout_width="match_parent"
-        android:layout_height="62dp"
+        android:layout_height="66dp"
+
         android:layout_gravity="bottom"
+
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="8dp"
+
         app:cardBackgroundColor="#FFFFFF"
         app:cardCornerRadius="20dp"
         app:cardElevation="6dp"
+
         app:strokeColor="#EEEEEE"
         app:strokeWidth="1dp">
 
+
         <LinearLayout
             android:id="@+id/layoutBottomNavigation"
+
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+
+            android:baselineAligned="false"
+
             android:gravity="center"
             android:orientation="horizontal"
+
             android:paddingStart="5dp"
             android:paddingEnd="5dp">
 
+
+            <!-- ================================================= -->
+            <!-- INICIO -->
+            <!-- ================================================= -->
+
             <LinearLayout
                 android:id="@+id/navInicio"
+
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+
                 android:layout_weight="1"
+
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+
+                tools:ignore="UseCompoundDrawables">
+
+
                 <ImageView
                     android:id="@+id/imgNavInicio"
-                    android:layout_width="21dp"
-                    android:layout_height="21dp"
-                    android:contentDescription="Inicio"
+
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+
+                    android:contentDescription="@string/cd_inicio"
+
                     android:src="@drawable/ic_home" />
+
+
                 <TextView
                     android:id="@+id/tvNavInicio"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
                     android:layout_marginTop="1dp"
+
                     android:gravity="center"
+
                     android:maxLines="1"
-                    android:text="Inicio"
+
+                    android:text="@string/nav_inicio"
+
                     android:textColor="#E87520"
-                    android:textSize="9sp"
+                    android:textSize="11sp"
                     android:textStyle="bold" />
+
+
                 <View
                     android:id="@+id/navIndicadorInicio"
+
                     android:layout_width="16dp"
                     android:layout_height="2dp"
+
                     android:layout_marginTop="2dp"
+
                     android:background="@drawable/bg_nav_indicator" />
+
             </LinearLayout>
+
+
+            <!-- ================================================= -->
+            <!-- EXTRAS -->
+            <!-- ================================================= -->
 
             <LinearLayout
                 android:id="@+id/navExtras"
+
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+
                 android:layout_weight="1"
+
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+
+                tools:ignore="UseCompoundDrawables">
+
+
                 <ImageView
                     android:id="@+id/imgNavExtras"
-                    android:layout_width="21dp"
-                    android:layout_height="21dp"
-                    android:contentDescription="Extras"
+
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+
+                    android:contentDescription="@string/cd_extras"
+
                     android:src="@drawable/ic_extra" />
+
+
                 <TextView
                     android:id="@+id/tvNavExtras"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
                     android:layout_marginTop="2dp"
+
                     android:gravity="center"
+
                     android:maxLines="1"
-                    android:text="Extras"
+
+                    android:text="@string/nav_extras"
+
                     android:textColor="#888888"
-                    android:textSize="9sp" />
+                    android:textSize="11sp" />
+
             </LinearLayout>
+
+
+            <!-- ================================================= -->
+            <!-- PEDIDOS -->
+            <!-- ================================================= -->
 
             <LinearLayout
                 android:id="@+id/navPedidos"
+
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+
                 android:layout_weight="1"
+
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+
+                tools:ignore="UseCompoundDrawables">
+
+
                 <ImageView
                     android:id="@+id/imgNavPedidos"
-                    android:layout_width="21dp"
-                    android:layout_height="21dp"
-                    android:contentDescription="Pedidos"
+
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+
+                    android:contentDescription="@string/cd_pedidos"
+
                     android:src="@drawable/ic_pedidos" />
+
+
                 <TextView
                     android:id="@+id/tvNavPedidos"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
                     android:layout_marginTop="2dp"
+
                     android:gravity="center"
+
                     android:maxLines="1"
-                    android:text="Pedidos"
+
+                    android:text="@string/nav_pedidos"
+
                     android:textColor="#888888"
-                    android:textSize="9sp" />
+                    android:textSize="11sp" />
+
             </LinearLayout>
+
+
+            <!-- ================================================= -->
+            <!-- CARRITO -->
+            <!-- ================================================= -->
 
             <LinearLayout
                 android:id="@+id/navCarrito"
+
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+
                 android:layout_weight="1"
+
                 android:gravity="center"
                 android:orientation="vertical">
+
+
                 <FrameLayout
                     android:id="@+id/contenedorCarrito"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp">
+
+                    android:layout_width="30dp"
+                    android:layout_height="30dp">
+
+
                     <ImageView
                         android:id="@+id/imgNavCarrito"
-                        android:layout_width="21dp"
-                        android:layout_height="21dp"
+
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+
                         android:layout_gravity="center"
-                        android:contentDescription="Carrito"
+
+                        android:contentDescription="@string/cd_carrito"
+
                         android:src="@drawable/ic_carrito" />
+
+
                     <TextView
                         android:id="@+id/tvCantidadCarrito"
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
+
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+
                         android:layout_gravity="top|end"
+
                         android:background="@drawable/bg_badge_carrito"
+
                         android:gravity="center"
-                        android:text="0"
+
+                        android:text="@string/contador_cero"
+
                         android:textColor="#FFFFFF"
-                        android:textSize="7sp"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
+
                 </FrameLayout>
+
+
                 <TextView
                     android:id="@+id/tvNavCarrito"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
                     android:gravity="center"
+
                     android:maxLines="1"
-                    android:text="Carrito"
+
+                    android:text="@string/nav_carrito"
+
                     android:textColor="#888888"
-                    android:textSize="9sp" />
+                    android:textSize="11sp" />
+
             </LinearLayout>
+
+
+            <!-- ================================================= -->
+            <!-- PERFIL -->
+            <!-- ================================================= -->
 
             <LinearLayout
                 android:id="@+id/navPerfil"
+
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+
                 android:layout_weight="1"
+
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+
+                tools:ignore="UseCompoundDrawables">
+
+
                 <ImageView
                     android:id="@+id/imgNavPerfil"
-                    android:layout_width="21dp"
-                    android:layout_height="21dp"
-                    android:contentDescription="Perfil"
+
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+
+                    android:contentDescription="@string/cd_perfil"
+
                     android:src="@drawable/ic_perfil" />
+
+
                 <TextView
                     android:id="@+id/tvNavPerfil"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
                     android:layout_marginTop="2dp"
+
                     android:gravity="center"
+
                     android:maxLines="1"
-                    android:text="Perfil"
+
+                    android:text="@string/nav_perfil"
+
                     android:textColor="#888888"
-                    android:textSize="9sp" />
+                    android:textSize="11sp" />
+
             </LinearLayout>
+
         </LinearLayout>
+
     </com.google.android.material.card.MaterialCardView>
+
+
+    <!-- ===================================================== -->
+    <!-- FAB ANTIGUO OCULTO -->
+    <!-- ===================================================== -->
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnCarrito"
+
         android:layout_width="1dp"
         android:layout_height="1dp"
-        android:visibility="gone" />
+
+        android:visibility="gone"
+
+        tools:ignore="ContentDescription,TouchTargetSizeCheck" />
+
 </FrameLayout>

@@ -17,30 +17,37 @@
     app:cardCornerRadius="20dp"
     app:cardElevation="2dp"
     app:cardMaxElevation="2dp"
+
     app:cardPreventCornerOverlap="true"
     app:cardUseCompatPadding="false">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:orientation="vertical">
+
 
         <!-- ================================================= -->
         <!-- IMAGEN DEL PLATO -->
         <!-- ================================================= -->
 
+        <ImageView
+            android:id="@+id/imgPlato"
+
+            android:layout_width="match_parent"
+            android:layout_height="135dp"
+
+            android:background="#F2F2F2"
+
+            android:contentDescription="@string/txt_plato"
+
+            android:scaleType="centerCrop" />
+
 
         <!-- ================================================= -->
         <!-- INFORMACIÓN -->
         <!-- ================================================= -->
-
-        <ImageView
-            android:id="@+id/imgPlato"
-            android:layout_width="match_parent"
-            android:layout_height="135dp"
-            android:background="#F2F2F2"
-            android:contentDescription="@string/txt_plato"
-            android:scaleType="centerCrop" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -48,8 +55,9 @@
 
             android:minHeight="112dp"
 
-            android:gravity="center_vertical"
+            android:baselineAligned="false"
 
+            android:gravity="center_vertical"
             android:orientation="horizontal"
 
             android:paddingStart="14dp"
@@ -58,14 +66,16 @@
             android:paddingBottom="10dp">
 
 
-            <!-- ============================================= -->
+            <!-- ================================================= -->
             <!-- INFORMACIÓN DEL PLATO -->
-            <!-- ============================================= -->
+            <!-- ================================================= -->
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+
                 android:layout_weight="1"
+
                 android:orientation="vertical">
 
 
@@ -73,6 +83,7 @@
 
                 <TextView
                     android:id="@+id/tvMenuPlato"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
 
@@ -88,6 +99,7 @@
 
                 <TextView
                     android:id="@+id/tvPrecio"
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
@@ -102,6 +114,7 @@
 
                 <TextView
                     android:id="@+id/tvStockPlato"
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
@@ -113,9 +126,9 @@
             </LinearLayout>
 
 
-            <!-- ============================================= -->
+            <!-- ================================================= -->
             <!-- BOTÓN AGREGAR -->
-            <!-- ============================================= -->
+            <!-- ================================================= -->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAgregar"
@@ -125,14 +138,15 @@
 
                 android:layout_marginStart="8dp"
 
-                android:minWidth="0dp"
-                android:minHeight="0dp"
+                android:minWidth="88dp"
+                android:minHeight="48dp"
 
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
 
-                android:text="Agregar"
+                android:text="@string/item_menu_agregar"
                 android:textAllCaps="false"
+
                 android:textColor="#FFFFFF"
                 android:textSize="13sp"
                 android:textStyle="bold"

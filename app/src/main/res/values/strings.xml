@@ -175,6 +175,388 @@
     <string name="menu_ultima_unidad">¡Última unidad!</string>
     <string name="menu_ultimas_unidades">¡Últimas %1$d unidades!</string>
 
+    <!-- ===================================================== -->
+    <!-- ACTIVITY ENTREGA -->
+    <!-- ===================================================== -->
 
+    <string name="entrega_titulo">¿Cómo quieres recibir tu pedido?</string>
+    <string name="entrega_subtitulo">Elige una opción para continuar</string>
+
+    <!-- Tipo de entrega -->
+
+    <string name="entrega_delivery_titulo">Delivery</string>
+    <string name="entrega_delivery_descripcion">Recibe tu pedido donde estés</string>
+
+    <string name="entrega_recojo_titulo">Recojo en local</string>
+    <string name="entrega_recojo_descripcion">Recoge tu pedido en nuestro local</string>
+
+    <!-- Método de pago -->
+
+    <string name="entrega_pago_titulo">¿Cómo quieres pagar?</string>
+    <string name="entrega_pago_subtitulo">Selecciona tu método de pago</string>
+
+    <string name="entrega_contra_entrega_titulo">Contra entrega</string>
+    <string name="entrega_contra_entrega_descripcion">Paga cuando recibas tu pedido</string>
+    <string name="entrega_disponible_ahora">✓ Disponible ahora</string>
+
+    <string name="entrega_yape_titulo">Pagar con Yape</string>
+    <string name="entrega_yape_descripcion">Paga directamente desde tu celular</string>
+    <string name="entrega_yape_proximamente">🔜 Próximamente</string>
+
+    <!-- Acciones -->
+
+    <string name="entrega_continuar">CONTINUAR</string>
+
+    <!-- ===================================================== -->
+    <!-- ACTIVITY EXTRAS -->
+    <!-- ===================================================== -->
+
+    <string name="extras_titulo">Extras</string>
+    <string name="extras_subtitulo">Completa tu pedido con algo especial</string>
+
+    <string name="extras_categorias_titulo">Categorías</string>
+
+    <string name="extras_elige_titulo">Elige tus extras</string>
+    <string name="extras_cantidad_inicial">0 opciones</string>
+
+    <string name="extras_sin_disponibles">No hay extras disponibles</string>
+    <string name="extras_sin_disponibles_descripcion">Prueba seleccionando otra categoría</string>
+
+    <!-- Content descriptions -->
+
+    <string name="cd_extras">Extras</string>
+    <string name="cd_sin_extras">Sin extras</string>
+    <string name="cd_inicio">Inicio</string>
+    <string name="cd_pedidos">Pedidos</string>
+    <string name="cd_carrito">Carrito</string>
+    <string name="cd_perfil">Perfil</string>
+
+    <!-- Barra inferior -->
+
+    <string name="nav_inicio">Inicio</string>
+    <string name="nav_extras">Extras</string>
+    <string name="nav_pedidos">Pedidos</string>
+    <string name="nav_carrito">Carrito</string>
+    <string name="nav_perfil">Perfil</string>
+
+    <!-- Valores iniciales -->
+
+    <string name="contador_cero">0</string>
+
+    <!-- ===================================================== -->
+    <!-- LOGIN USUARIO -->
+    <!-- ===================================================== -->
+
+    <string name="login_logo_descripcion">Logo ZETA</string>
+
+    <string name="login_bienvenida">¡Bienvenido de nuevo a ZETA!</string>
+    <string name="login_subtitulo">Inicia sesión o continúa para hacer tu pedido.</string>
+
+    <string name="login_titulo">Iniciar sesión</string>
+
+    <string name="login_hint_correo">Correo electrónico</string>
+    <string name="login_hint_contrasena">Contraseña</string>
+
+    <string name="login_icono_correo">Icono de correo</string>
+    <string name="login_icono_contrasena">Icono de contraseña</string>
+
+    <string name="login_boton_iniciar">Iniciar sesión</string>
+    <string name="login_separador">o</string>
+    <string name="login_google">Continuar con Google</string>
+
+    <string name="login_invitado_pregunta">¿Prefieres pedir sin cuenta?</string>
+
+    <string name="login_sin_cuenta">¿No tienes una cuenta?</string>
+    <string name="login_registrarse">Regístrate</string>
+
+    <!-- ===================================================== -->
+    <!-- MAIN ACTIVITY -->
+    <!-- ===================================================== -->
+
+    <string name="main_logo_descripcion">Logo restaurante Zeta</string>
+
+    <!-- ===================================================== -->
+    <!-- PAGO YAPE -->
+    <!-- ===================================================== -->
+
+    <string name="pago_yape_titulo">Pago con Yape</string>
+    <string name="pago_yape_descripcion">Escanea el código QR con Yape para realizar el pago.</string>
+    <string name="pago_yape_total_inicial">Total: S/ 0.00</string>
+    <string name="pago_yape_qr_descripcion">Código QR de Yape</string>
+    <string name="pago_yape_ayuda">1. Abre Yape\n2. Escanea el código QR\n3. Realiza el pago\n4. Regresa aquí</string>
+    <string name="pago_yape_operacion_hint">Número de operación</string>
+    <string name="pago_yape_boton_confirmar">YA REALICÉ EL PAGO</string>
+
+    <!-- ===================================================== -->
+    <!-- PERFIL USUARIO -->
+    <!-- ===================================================== -->
+
+    <string name="perfil_titulo">Mi perfil</string>
+    <string name="perfil_subtitulo">Administra tu información personal</string>
+
+    <string name="perfil_inicial_default">U</string>
+    <string name="perfil_nombre_default">Usuario</string>
+    <string name="perfil_correo_default">correo@ejemplo.com</string>
+    <string name="perfil_cuenta_activa">Cuenta activa</string>
+
+    <string name="perfil_opciones">Opciones</string>
+
+    <string name="perfil_editar_icono">✎</string>
+    <string name="perfil_editar_titulo">Editar perfil</string>
+    <string name="perfil_editar_descripcion">Actualiza tu nombre</string>
+
+    <string name="perfil_pedidos_icono">▣</string>
+    <string name="perfil_pedidos_titulo">Mis pedidos</string>
+    <string name="perfil_pedidos_descripcion">Consulta tus pedidos realizados</string>
+
+    <string name="perfil_flecha">›</string>
+
+    <string name="perfil_cerrar_sesion">Cerrar sesión</string>
+
+    <!-- ===================================================== -->
+    <!-- REGISTRO USUARIO -->
+    <!-- ===================================================== -->
+
+    <string name="registro_logo_descripcion">Logo ZETA</string>
+    <string name="registro_titulo">Únete a ZETA</string>
+    <string name="registro_subtitulo">Crea tu cuenta y disfruta nuestro menú</string>
+    <string name="registro_crear_cuenta_titulo">Crear cuenta</string>
+    <string name="registro_crear_cuenta_subtitulo">Completa tus datos para registrarte</string>
+    <string name="registro_hint_nombre">Nombre completo</string>
+    <string name="registro_hint_correo">Correo electrónico</string>
+    <string name="registro_hint_contrasena">Contraseña</string>
+    <string name="registro_hint_confirmar_contrasena">Confirmar contraseña</string>
+    <string name="registro_boton_crear_cuenta">Crear mi cuenta</string>
+    <string name="registro_mensaje_final">Al registrarte podrás realizar tus pedidos desde la app.</string>
+
+    <!-- ===================================================== -->
+    <!-- RESUMEN PEDIDO -->
+    <!-- ===================================================== -->
+
+    <string name="resumen_pedido_titulo">Confirmar pedido</string>
+    <string name="resumen_pedido_subtitulo">Revisa tus datos antes de confirmar</string>
+    <string name="resumen_datos_entrega">Datos de entrega</string>
+    <string name="resumen_tu_pedido">Tu pedido</string>
+    <string name="resumen_productos_cero">0 productos</string>
+    <string name="resumen_confirmar_pedido">Confirmar pedido</string>
+
+    <!-- ===================================================== -->
+    <!-- SPLASH -->
+    <!-- ===================================================== -->
+
+    <string name="splash_estado_inicial">Cargando módulos... (0%%)</string>
+
+    <!-- ===================================================== -->
+    <!-- TODOS LOS MENÚS -->
+    <!-- ===================================================== -->
+
+    <string name="todos_menus_volver">‹</string>
+    <string name="todos_menus_titulo">Todos los menús</string>
+    <string name="todos_menus_subtitulo">Elige el plato que deseas pedir</string>
+    <string name="todos_menus_vacio">No hay menús disponibles en este momento</string>
+
+    <!-- ===================================================== -->
+    <!-- DIÁLOGO CONFIRMAR MENÚ -->
+    <!-- ===================================================== -->
+
+    <string name="dialog_pedido_icono">🛒</string>
+    <string name="dialog_pedido_cd_agregar">Agregar al pedido</string>
+
+    <string name="dialog_pedido_titulo">Confirma tu menú</string>
+    <string name="dialog_pedido_nombre_default">Nombre del plato</string>
+
+    <string name="dialog_pedido_sin_entrada">Sin entrada</string>
+    <string name="dialog_pedido_con_entrada">Con una entrada</string>
+
+    <string name="dialog_pedido_precio_sin_entrada">S/ 11.00</string>
+    <string name="dialog_pedido_precio_con_entrada">S/ 12.00</string>
+    <string name="dialog_pedido_entrada_adicional">Entradas adicionales: +S/ 2.00 cada una</string>
+
+    <string name="dialog_pedido_tu_seleccion">Tu selección</string>
+    <string name="dialog_pedido_total_seleccion">Total de esta selección</string>
+
+    <string name="dialog_pedido_ayuda_sin_entrada">Sin entrada, este menú te costará S/ 11.00.</string>
+
+    <string name="dialog_pedido_cancelar">Cancelar</string>
+    <string name="dialog_pedido_agregar">Agregar</string>
+
+    <!-- ===================================================== -->
+    <!-- EDITAR PERFIL -->
+    <!-- ===================================================== -->
+
+    <string name="editar_perfil_titulo">Editar perfil</string>
+    <string name="editar_perfil_subtitulo">Actualiza tu nombre</string>
+    <string name="editar_perfil_hint_nombre">Nombre</string>
+
+    <string name="editar_perfil_cancelar">Cancelar</string>
+    <string name="editar_perfil_guardar">Guardar</string>
+
+    <string name="Gaseosas">Gaseosas</string>
+
+    <!-- ===================================================== -->
+    <!-- ITEM EXTRA -->
+    <!-- ===================================================== -->
+
+    <string name="item_extra_imagen_descripcion">Imagen del extra</string>
+    <string name="item_extra_nombre_default">Inca Kola</string>
+    <string name="item_extra_tipo">Complemento</string>
+    <string name="item_extra_precio_default">S/ 4.00</string>
+
+    <string name="item_extra_agregar">+</string>
+    <string name="item_extra_agregar_descripcion">Agregar extra</string>
+
+    <!-- ===================================================== -->
+    <!-- ITEM CARRITO / PEDIDO -->
+    <!-- ===================================================== -->
+
+    <string name="item_pedido_producto_descripcion">Producto</string>
+
+    <string name="item_pedido_nombre_default">Nombre del plato</string>
+    <string name="item_pedido_detalle_default">Sin entrada</string>
+    <string name="item_pedido_precio_default">S/ 0.00 c/u</string>
+
+    <string name="item_pedido_eliminar_descripcion">Eliminar producto</string>
+    <string name="item_pedido_disminuir_descripcion">Disminuir cantidad</string>
+    <string name="item_pedido_aumentar_descripcion">Aumentar cantidad</string>
+
+    <string name="item_pedido_cantidad_inicial">1</string>
+
+    <string name="item_pedido_subtotal">Subtotal</string>
+    <string name="item_pedido_subtotal_default">S/ 0.00</string>
+
+    <!-- ===================================================== -->
+    <!-- ITEM RESUMEN PEDIDO -->
+    <!-- ===================================================== -->
+
+    <string name="item_resumen_producto_default">Producto</string>
+    <string name="item_resumen_cantidad_default">x1</string>
+
+    <!-- ===================================================== -->
+    <!-- ITEM PEDIDO USUARIO -->
+    <!-- ===================================================== -->
+
+    <string name="pedido_usuario_numero_default">Pedido #0001</string>
+    <string name="pedido_usuario_fecha_default">08/09/2026 10:30</string>
+
+    <string name="pedido_usuario_estado_pendiente">Pendiente</string>
+    <string name="pedido_usuario_mensaje_recibido">Recibimos tu pedido</string>
+
+    <!-- Seguimiento -->
+
+    <string name="pedido_usuario_paso_completado">✓</string>
+    <string name="pedido_usuario_paso_2">2</string>
+    <string name="pedido_usuario_paso_3">3</string>
+    <string name="pedido_usuario_paso_4">4</string>
+    <string name="pedido_usuario_paso_5">5</string>
+
+    <!-- Etiquetas de seguimiento -->
+
+    <string name="pedido_usuario_recibido">Recibido</string>
+    <string name="pedido_usuario_confirmado">Confirmado</string>
+    <string name="pedido_usuario_preparando">Preparando</string>
+    <string name="pedido_usuario_en_camino">En camino</string>
+    <string name="pedido_usuario_entregado">Entregado</string>
+
+    <!-- Total -->
+
+    <string name="pedido_usuario_total_titulo">Total del pedido</string>
+    <string name="pedido_usuario_total_default">S/ 0.00</string>
+
+    <!-- ===================================================== -->
+    <!-- ITEM ENTRADA USUARIO -->
+    <!-- ===================================================== -->
+
+    <string name="item_entrada_icono">🍽</string>
+    <string name="item_entrada_descripcion">Entrada</string>
+
+    <string name="item_entrada_stock_default">Disponible</string>
+
+    <string name="item_entrada_agregar">Agregar</string>
+
+    <!-- ===================================================== -->
+    <!-- ITEM MENÚ USUARIO -->
+    <!-- ===================================================== -->
+
+    <string name="item_menu_agregar">Agregar</string>
+
+    <!-- ===================================================== -->
+    <!-- DATOS DEL PEDIDO -->
+    <!-- ===================================================== -->
+
+    <string name="datos_pedido_titulo">Datos del pedido</string>
+    <string name="datos_pedido_subtitulo">Completa tus datos para continuar</string>
+
+    <string name="datos_pedido_hint_nombre">Nombre completo</string>
+    <string name="datos_pedido_hint_telefono">Teléfono</string>
+    <string name="datos_pedido_hint_direccion">Dirección de entrega</string>
+    <string name="datos_pedido_hint_observacion">Observación (opcional)</string>
+
+    <string name="datos_pedido_continuar">Continuar</string>
+
+    <!-- ===================================================== -->
+    <!-- DIRECCIÓN DE ENTREGA -->
+    <!-- ===================================================== -->
+
+    <string name="direccion_entrega_titulo">Dirección de entrega</string>
+    <string name="direccion_entrega_subtitulo">¿Dónde quieres recibir tu pedido?</string>
+
+    <string name="direccion_entrega_seccion_ubicacion">Ubicación</string>
+    <string name="direccion_entrega_hint_direccion">Dirección</string>
+    <string name="direccion_entrega_hint_referencia">Referencia</string>
+
+    <string name="direccion_entrega_seccion_contacto">Datos de contacto</string>
+    <string name="direccion_entrega_hint_telefono">Número de teléfono</string>
+
+    <string name="direccion_entrega_info">Verifica que la dirección y el número de teléfono sean correctos.</string>
+
+    <string name="direccion_entrega_continuar_pago">CONTINUAR AL PAGO</string>
+
+    <!-- ===================================================== -->
+    <!-- MENÚ USUARIO / HOME -->
+    <!-- ===================================================== -->
+
+    <string name="menu_usuario_saludo_default">¡Hola!</string>
+    <string name="menu_usuario_subtitulo">¿Qué deseas comer hoy?</string>
+
+    <string name="menu_usuario_entradas">Entradas</string>
+
+    <string name="menu_usuario_nuestro_menu">Nuestro menú</string>
+    <string name="menu_usuario_ver_todo">Ver todo</string>
+
+    <string name="menu_usuario_extras">Extras</string>
+
+
+    <!-- ===================================================== -->
+    <!-- CARRITO / PEDIDO -->
+    <!-- ===================================================== -->
+
+    <string name="carrito_titulo">Tu pedido</string>
+    <string name="carrito_productos_cero">0 productos</string>
+    <string name="carrito_descripcion">Carrito</string>
+
+    <string name="carrito_vacio_descripcion">Pedido vacío</string>
+    <string name="carrito_vacio_titulo">Tu pedido está vacío</string>
+    <string name="carrito_vacio_subtitulo">Agrega productos para continuar</string>
+
+    <string name="carrito_total_titulo">Total del pedido</string>
+    <string name="carrito_total_default">S/ 0.00</string>
+    <string name="carrito_todo_listo">¿Todo listo?</string>
+
+    <string name="carrito_continuar">CONTINUAR</string>
+
+    <!-- ===================================================== -->
+    <!-- PEDIDOS USUARIO -->
+    <!-- ===================================================== -->
+
+    <string name="pedidos_usuario_titulo">Mis pedidos</string>
+    <string name="pedidos_usuario_subtitulo">Seguimiento de tus pedidos</string>
+
+    <string name="pedidos_usuario_descripcion">Pedidos</string>
+
+    <string name="pedidos_usuario_sin_pedidos_descripcion">Sin pedidos</string>
+    <string name="pedidos_usuario_sin_pedidos_titulo">Todavía no tienes pedidos</string>
+    <string name="pedidos_usuario_sin_pedidos_subtitulo">Cuando realices un pedido, aparecerá aquí.</string>
+
+    <string name="pedidos_usuario_volver">Volver</string>
 
 </resources>

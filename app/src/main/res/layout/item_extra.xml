@@ -1,94 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+
     android:layout_marginStart="2dp"
     android:layout_marginTop="5dp"
     android:layout_marginEnd="2dp"
     android:layout_marginBottom="7dp"
+
     android:minHeight="94dp"
+
     app:cardBackgroundColor="#FFFFFF"
     app:cardCornerRadius="18dp"
     app:cardElevation="1dp"
+
     app:strokeColor="#ECECEC"
     app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
+        android:baselineAligned="false"
+
         android:gravity="center_vertical"
         android:orientation="horizontal"
+
         android:padding="12dp">
+
+
+        <!-- ================================================= -->
+        <!-- IMAGEN -->
+        <!-- ================================================= -->
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="64dp"
             android:layout_height="64dp"
+
             app:cardBackgroundColor="#FFF5EC"
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp">
 
             <ImageView
                 android:id="@+id/imgExtra"
+
                 android:layout_width="44dp"
                 android:layout_height="44dp"
+
                 android:layout_gravity="center"
-                android:contentDescription="Imagen del extra"
+
+                android:contentDescription="@string/item_extra_imagen_descripcion"
+
                 android:scaleType="centerInside" />
+
         </com.google.android.material.card.MaterialCardView>
+
+
+        <!-- ================================================= -->
+        <!-- INFORMACIÓN -->
+        <!-- ================================================= -->
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+
             android:layout_marginStart="14dp"
+
             android:layout_weight="1"
+
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvNombreExtra"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:text="Inca Kola"
+
+                android:text="@string/item_extra_nombre_default"
+
                 android:textColor="#202020"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
                 android:layout_marginTop="3dp"
-                android:text="Complemento"
+
+                android:text="@string/item_extra_tipo"
+
                 android:textColor="#8A8A8A"
                 android:textSize="12sp" />
 
+
             <TextView
                 android:id="@+id/tvPrecioExtra"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
                 android:layout_marginTop="5dp"
-                android:text="S/ 4.00"
+
+                android:text="@string/item_extra_precio_default"
+
                 android:textColor="#E87520"
                 android:textSize="15sp"
                 android:textStyle="bold" />
+
         </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- AGREGAR -->
+        <!-- ================================================= -->
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAgregarExtra"
+
             android:layout_width="48dp"
             android:layout_height="48dp"
+
             android:layout_marginStart="8dp"
-            android:contentDescription="Agregar extra"
+
             android:minWidth="48dp"
             android:minHeight="48dp"
+
             android:padding="0dp"
-            android:text="+"
+
+            android:contentDescription="@string/item_extra_agregar_descripcion"
+
+            android:text="@string/item_extra_agregar"
+
             android:textColor="#FFFFFF"
             android:textSize="22sp"
             android:textStyle="bold"
+
             app:backgroundTint="#E87520"
             app:cornerRadius="24dp" />
+
     </LinearLayout>
+
 </com.google.android.material.card.MaterialCardView>

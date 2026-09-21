@@ -1,163 +1,274 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:background="#F7F7F7">
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         android:orientation="vertical"
+
         android:paddingStart="18dp"
         android:paddingTop="20dp"
         android:paddingEnd="18dp"
         android:paddingBottom="16dp">
 
+
+        <!-- ===================================================== -->
+        <!-- ENCABEZADO -->
+        <!-- ===================================================== -->
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             app:cardBackgroundColor="#FFF3E8"
             app:cardCornerRadius="24dp"
             app:cardElevation="0dp"
+
             app:strokeColor="#FFE0C2"
             app:strokeWidth="1dp">
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
+                android:baselineAligned="false"
+
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
+
                 android:paddingStart="10dp"
                 android:paddingTop="14dp"
                 android:paddingEnd="16dp"
                 android:paddingBottom="14dp">
 
+
+                <!-- VOLVER -->
+
                 <ImageButton
                     android:id="@+id/btnVolver"
+
                     android:layout_width="48dp"
                     android:layout_height="48dp"
+
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Volver"
+
+                    android:contentDescription="@string/pedidos_usuario_volver"
+
                     android:padding="12dp"
+
                     android:src="@drawable/ic_arrow_back"
+
                     app:tint="#333333" />
+
+
+                <!-- TÍTULO -->
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+
                     android:layout_marginStart="6dp"
+
                     android:layout_weight="1"
+
                     android:orientation="vertical">
+
 
                     <TextView
                         android:id="@+id/tvTituloPedidos"
+
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="Mis pedidos"
+
+                        android:text="@string/pedidos_usuario_titulo"
+
                         android:textColor="#222222"
                         android:textSize="25sp"
                         android:textStyle="bold" />
 
+
                     <TextView
                         android:id="@+id/tvSubtituloPedidos"
+
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+
                         android:layout_marginTop="2dp"
+
                         android:ellipsize="end"
                         android:maxLines="2"
-                        android:text="Seguimiento de tus pedidos"
+
+                        android:text="@string/pedidos_usuario_subtitulo"
+
                         android:textColor="#766B64"
                         android:textSize="14sp" />
+
                 </LinearLayout>
+
+
+                <!-- ICONO PEDIDOS -->
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
+
                     android:layout_marginStart="8dp"
+
                     app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="24dp"
                     app:cardElevation="0dp">
+
+
                     <ImageView
                         android:layout_width="27dp"
                         android:layout_height="27dp"
+
                         android:layout_gravity="center"
-                        android:contentDescription="Pedidos"
+
+                        android:contentDescription="@string/pedidos_usuario_descripcion"
+
                         android:src="@drawable/ic_pedidos" />
+
                 </com.google.android.material.card.MaterialCardView>
+
             </LinearLayout>
+
         </com.google.android.material.card.MaterialCardView>
+
+
+        <!-- ===================================================== -->
+        <!-- CONTENIDO DE PEDIDOS -->
+        <!-- ===================================================== -->
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+
             android:layout_marginTop="14dp"
+
             android:layout_weight="1">
+
+
+            <!-- LISTA -->
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvPedidos"
+
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+
                 android:clipToPadding="false"
+
                 android:overScrollMode="never"
+
                 android:paddingTop="3dp"
                 android:paddingBottom="10dp"
+
                 android:scrollbars="none" />
+
+
+            <!-- CARGANDO -->
 
             <ProgressBar
                 android:id="@+id/progressBarPedidos"
+
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+
                 android:layout_gravity="center"
+
                 android:visibility="gone" />
+
+
+            <!-- ================================================= -->
+            <!-- SIN PEDIDOS -->
+            <!-- ================================================= -->
 
             <LinearLayout
                 android:id="@+id/layoutSinPedidos"
+
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+
                 android:gravity="center"
                 android:orientation="vertical"
+
                 android:padding="28dp"
+
                 android:visibility="gone">
+
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="78dp"
                     android:layout_height="78dp"
+
                     app:cardBackgroundColor="#FFF3E8"
                     app:cardCornerRadius="39dp"
                     app:cardElevation="0dp">
+
+
                     <ImageView
                         android:layout_width="42dp"
                         android:layout_height="42dp"
+
                         android:layout_gravity="center"
-                        android:contentDescription="Sin pedidos"
+
+                        android:contentDescription="@string/pedidos_usuario_sin_pedidos_descripcion"
+
                         android:src="@drawable/ic_pedidos" />
+
                 </com.google.android.material.card.MaterialCardView>
+
 
                 <TextView
                     android:id="@+id/tvSinPedidos"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
                     android:layout_marginTop="16dp"
+
                     android:gravity="center"
-                    android:text="Todavía no tienes pedidos"
+
+                    android:text="@string/pedidos_usuario_sin_pedidos_titulo"
+
                     android:textColor="#333333"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
                     android:layout_marginTop="6dp"
+
                     android:gravity="center"
-                    android:text="Cuando realices un pedido, aparecerá aquí."
+
+                    android:text="@string/pedidos_usuario_sin_pedidos_subtitulo"
+
                     android:textColor="#888888"
                     android:textSize="14sp" />
+
             </LinearLayout>
+
         </FrameLayout>
+
     </LinearLayout>
+
 </FrameLayout>

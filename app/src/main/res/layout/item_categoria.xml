@@ -27,7 +27,7 @@
         android:layout_marginTop="5dp"
         android:gravity="center"
         android:maxLines="1"
-        android:text="Gaseosas"
+        android:text="@string/Gaseosas"
         android:textColor="#333333"
         android:textSize="11sp"
         android:textStyle="bold" />

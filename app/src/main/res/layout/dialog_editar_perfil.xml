@@ -7,10 +7,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
 
-    android:orientation="vertical"
-    android:padding="24dp"
+    android:background="#FFFFFF"
 
-    android:background="#FFFFFF">
+    android:orientation="vertical"
+    android:padding="24dp">
 
 
     <!-- ================================================= -->
@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        android:text="Editar perfil"
+        android:text="@string/editar_perfil_titulo"
 
         android:textColor="#222222"
         android:textSize="21sp"
@@ -38,7 +38,7 @@
 
         android:layout_marginTop="5dp"
 
-        android:text="Actualiza tu nombre"
+        android:text="@string/editar_perfil_subtitulo"
 
         android:textColor="#777777"
         android:textSize="14sp" />
@@ -54,17 +54,19 @@
 
         android:layout_marginTop="22dp"
 
-        android:hint="Nombre"
+        android:hint="@string/editar_perfil_hint_nombre"
 
         app:boxBackgroundMode="outline"
         app:boxStrokeColor="#FF9800">
-
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etNombreEditar"
 
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+
+            android:inputType="textPersonName"
+            android:maxLines="1" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -79,6 +81,8 @@
 
         android:layout_marginTop="22dp"
 
+        android:baselineAligned="false"
+
         android:gravity="end"
         android:orientation="horizontal">
 
@@ -89,13 +93,14 @@
             android:layout_width="wrap_content"
             android:layout_height="48dp"
 
-            android:text="Cancelar"
+            android:text="@string/editar_perfil_cancelar"
             android:textAllCaps="false"
 
             android:textColor="#666666"
 
             app:backgroundTint="#EEEEEE"
-            app:cornerRadius="14dp" />
+            app:cornerRadius="14dp"
+            app:elevation="0dp" />
 
 
         <com.google.android.material.button.MaterialButton
@@ -106,13 +111,14 @@
 
             android:layout_marginStart="10dp"
 
-            android:text="Guardar"
+            android:text="@string/editar_perfil_guardar"
             android:textAllCaps="false"
 
             android:textColor="#FFFFFF"
 
             app:backgroundTint="#FF9800"
-            app:cornerRadius="14dp" />
+            app:cornerRadius="14dp"
+            app:elevation="0dp" />
 
     </LinearLayout>
 
