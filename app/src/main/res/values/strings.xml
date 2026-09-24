@@ -75,6 +75,36 @@
     <!--login usuario-->
     <string name="continuar_invitado"><u>Continuar como invitado</u></string>
 
+    <!--Confirmar pedido-->
+    <string name="confirmar_pedido_sesion_no_activa">No hay una sesión activa</string>
+    <string name="confirmar_pedido_sin_correo">Sin correo</string>
+    <string name="confirmar_pedido_cliente">Cliente</string>
+    <string name="confirmar_pedido_carrito_vacio">El carrito está vacío</string>
+
+    <plurals name="confirmar_pedido_cantidad_productos">
+        <item quantity="one">%1$d producto</item>
+        <item quantity="other">%1$d productos</item>
+    </plurals>
+
+    <string name="confirmar_pedido_total_formato">S/ %1$.2f</string>
+    <string name="confirmar_pedido_contra_entrega">Contra entrega</string>
+    <string name="confirmar_pedido_direccion_no_especificada">No especificada</string>
+    <string name="confirmar_pedido_sin_observaciones">Sin observaciones</string>
+    <string name="confirmar_pedido_telefono_no_especificado">No especificado</string>
+    <string name="confirmar_pedido_recojo_tienda">Recojo en tienda</string>
+    <string name="confirmar_pedido_seleccionar_entrega">Selecciona cómo deseas recibir tu pedido</string>
+    <string name="confirmar_pedido_direccion_no_encontrada">No se encontró la dirección de entrega</string>
+    <string name="confirmar_pedido_telefono_no_encontrado">No se encontró el teléfono</string>
+    <string name="confirmar_pedido_confirmando">CONFIRMANDO…</string>
+    <string name="confirmar_pedido_boton_confirmar">CONFIRMAR PEDIDO</string>
+    <string name="confirmar_pedido_producto_no_encontrado">No se encontró %1$s en el catálogo.</string>
+    <string name="confirmar_pedido_producto_ya_no_existe">El producto %1$s ya no existe.</string>
+    <string name="confirmar_pedido_stock_invalido">El producto %1$s no tiene un stock válido.</string>
+    <string name="confirmar_pedido_exito">¡Pedido confirmado correctamente! 🚀</string>
+    <string name="confirmar_pedido_producto_generico">este producto</string>
+    <string name="confirmar_pedido_stock_insuficiente">No hay stock suficiente de %1$s. Disponible: %2$s. Solicitado: %3$s.</string>
+    <string name="confirmar_pedido_error_generico">No se pudo confirmar el pedido. Inténtalo nuevamente.</string>
+
     <!--MenuActivity.kt-->
 
     <string name="menu_seleccionado_no_disponible">El menú seleccionado ya no está disponible</string>

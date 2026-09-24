@@ -69,10 +69,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         ""
 
     private var tipoEntrega =
-        "Delivery"
-
-    private var metodoPago =
-        "Contra entrega"
+        TIPO_ENTREGA_DELIVERY
 
     private var direccion =
         ""
@@ -192,41 +189,38 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     private fun recibirDatos() {
 
         nombreUsuario =
-            intent.getStringExtra("nombre")
+            intent.getStringExtra(EXTRA_NOMBRE)
                 ?.trim()
                 .orEmpty()
 
         telefono =
-            intent.getStringExtra("telefono")
+            intent.getStringExtra(EXTRA_TELEFONO)
                 ?.trim()
                 .orEmpty()
 
         direccion =
-            intent.getStringExtra("direccion")
+            intent.getStringExtra(EXTRA_DIRECCION)
                 ?.trim()
                 .orEmpty()
 
         observacion =
-            intent.getStringExtra("observacion")
+            intent.getStringExtra(EXTRA_OBSERVACION)
                 ?.trim()
                 .orEmpty()
 
         referencia =
-            intent.getStringExtra("referencia")
+            intent.getStringExtra(EXTRA_REFERENCIA)
                 ?.trim()
                 .orEmpty()
 
         tipoEntrega =
-            intent.getStringExtra("tipoEntrega")
+            intent.getStringExtra(EXTRA_TIPO_ENTREGA)
                 ?.trim()
                 .orEmpty()
                 .ifBlank {
-                    "Delivery"
+                    TIPO_ENTREGA_DELIVERY
                 }
 
-        // Único método habilitado actualmente
-        metodoPago =
-            "Contra entrega"
     }
 
     // =========================================================
@@ -242,7 +236,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
             Toast.makeText(
                 this,
-                "No hay una sesión activa",
+                getString(R.string.confirmar_pedido_sesion_no_activa),
                 Toast.LENGTH_SHORT
             ).show()
 
@@ -251,7 +245,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         }
 
         tvCorreoUsuario.text =
-            usuario.email ?: "Sin correo"
+            usuario.email ?: getString(R.string.confirmar_pedido_sin_correo)
 
         if (nombreUsuario.isNotBlank()) {
 
@@ -261,17 +255,17 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             return
         }
 
-        db.collection("usuarios")
+        db.collection(COLECCION_USUARIOS)
             .document(usuario.uid)
             .get()
             .addOnSuccessListener { documento ->
 
                 nombreUsuario =
-                    documento.getString("nombre")
+                    documento.getString(CAMPO_NOMBRE)
                         ?.trim()
                         .orEmpty()
                         .ifBlank {
-                            "Cliente"
+                            getString(R.string.confirmar_pedido_cliente)
                         }
 
                 tvNombreUsuario.text =
@@ -280,7 +274,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             .addOnFailureListener {
 
                 nombreUsuario =
-                    "Cliente"
+                    getString(R.string.confirmar_pedido_cliente)
 
                 tvNombreUsuario.text =
                     nombreUsuario
@@ -300,7 +294,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
             Toast.makeText(
                 this,
-                "El carrito está vacío",
+                getString(R.string.confirmar_pedido_carrito_vacio),
                 Toast.LENGTH_SHORT
             ).show()
 
@@ -311,26 +305,27 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         val cantidad =
             PedidoManager.cantidadTotal()
 
-        tvResumenProductos.text =
-            if (cantidad == 1) {
-                "1 producto"
-            } else {
-                "$cantidad productos"
-            }
+        tvResumenProductos.text = resources.getQuantityString(
+            R.plurals.confirmar_pedido_cantidad_productos,
+            cantidad,
+            cantidad
+        )
 
         val total = PedidoManager.totalPedido()
 
-        tvTotalPedido.text =
-            "S/ %.2f".format(total)
+        tvTotalPedido.text = getString(
+            R.string.confirmar_pedido_total_formato,
+            total
+        )
     }
 
     // =========================================================
-    // MOSTRAR ENTREGA
+    // MOSTRA ENTREGA
     // =========================================================
 
     private fun mostrarDatosEntrega() {
 
-        if (tipoEntrega.equals("Delivery", ignoreCase = true)) {
+        if (tipoEntrega.equals(TIPO_ENTREGA_DELIVERY, ignoreCase = true)) {
 
             radioDelivery.isChecked =
                 true
@@ -346,14 +341,14 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         }
 
         tvMetodoPago.text =
-            "Contra entrega"
+            getString(R.string.confirmar_pedido_contra_entrega)
     }
 
     private fun mostrarDatosDelivery() {
 
         tvDireccion.text =
             direccion.ifBlank {
-                "No especificada"
+                getString(R.string.confirmar_pedido_direccion_no_especificada)
             }
 
         /*
@@ -364,28 +359,28 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             when {
                 referencia.isNotBlank() -> referencia
                 observacion.isNotBlank() -> observacion
-                else -> "Sin observaciones"
+                else -> getString(R.string.confirmar_pedido_sin_observaciones)
             }
 
         tvTelefono.text =
             telefono.ifBlank {
-                "No especificado"
+                getString(R.string.confirmar_pedido_telefono_no_especificado)
             }
     }
 
     private fun mostrarDatosRecojo() {
 
         tvDireccion.text =
-            "Recojo en tienda"
+            getString(R.string.confirmar_pedido_recojo_tienda)
 
         tvReferencia.text =
             observacion.ifBlank {
-                "Sin observaciones"
+                getString(R.string.confirmar_pedido_sin_observaciones)
             }
 
         tvTelefono.text =
             telefono.ifBlank {
-                "No especificado"
+                getString(R.string.confirmar_pedido_telefono_no_especificado)
             }
     }
 
@@ -404,7 +399,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 R.id.radioDelivery -> {
 
                     tipoEntrega =
-                        "Delivery"
+                        TIPO_ENTREGA_DELIVERY
 
                     mostrarDatosDelivery()
                 }
@@ -412,7 +407,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 R.id.radioRecojo -> {
 
                     tipoEntrega =
-                        "Recojo en tienda"
+                        TIPO_ENTREGA_RECOJO
 
                     mostrarDatosRecojo()
                 }
@@ -449,7 +444,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
             Toast.makeText(
                 this,
-                "No hay una sesión activa",
+                getString(R.string.confirmar_pedido_sesion_no_activa),
                 Toast.LENGTH_SHORT
             ).show()
 
@@ -463,7 +458,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
             Toast.makeText(
                 this,
-                "El carrito está vacío",
+                getString(R.string.confirmar_pedido_carrito_vacio),
                 Toast.LENGTH_SHORT
             ).show()
 
@@ -477,7 +472,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
             Toast.makeText(
                 this,
-                "Selecciona cómo deseas recibir tu pedido",
+                getString(R.string.confirmar_pedido_seleccionar_entrega),
                 Toast.LENGTH_SHORT
             ).show()
 
@@ -488,22 +483,22 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             when (opcionSeleccionada) {
 
                 R.id.radioDelivery ->
-                    "Delivery"
+                    TIPO_ENTREGA_DELIVERY
 
                 R.id.radioRecojo ->
-                    "Recojo en tienda"
+                    TIPO_ENTREGA_RECOJO
 
                 else ->
                     return
             }
 
-        if (tipoEntrega == "Delivery") {
+        if (tipoEntrega == TIPO_ENTREGA_DELIVERY) {
 
             if (direccion.isBlank()) {
 
                 Toast.makeText(
                     this,
-                    "No se encontró la dirección de entrega",
+                    getString(R.string.confirmar_pedido_direccion_no_encontrada),
                     Toast.LENGTH_SHORT
                 ).show()
 
@@ -514,7 +509,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
                 Toast.makeText(
                     this,
-                    "No se encontró el teléfono",
+                    getString(R.string.confirmar_pedido_telefono_no_encontrado),
                     Toast.LENGTH_SHORT
                 ).show()
 
@@ -524,22 +519,24 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
         bloquearBoton()
 
-        val productos = pedido.map { item ->
-            hashMapOf<String, Any>(
+        val productos: List<HashMap<String, Any>> = pedido.map { item ->
+            val entradas: List<HashMap<String, Any>> = item.entradas.map { entrada ->
+                hashMapOf(
+                    "id" to entrada.id,
+                    "nombre" to entrada.nombre,
+                    "cantidad" to entrada.cantidad,
+                    "precioUnitario" to entrada.precioUnitario
+                )
+            }
+
+            hashMapOf(
                 "id" to item.id,
                 "nombre" to item.nombre,
                 "precio" to item.precio,
                 "cantidad" to item.cantidad,
                 "tipo" to item.tipo.name,
                 "precioBaseMenu" to (item.precioBaseMenu ?: 0.0),
-                "entradas" to item.entradas.map { entrada ->
-                    hashMapOf<String, Any>(
-                        "id" to entrada.id,
-                        "nombre" to entrada.nombre,
-                        "cantidad" to entrada.cantidad,
-                        "precioUnitario" to entrada.precioUnitario
-                    )
-                }
+                "entradas" to entradas
             )
         }
 
@@ -582,7 +579,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             0.5f
 
         btnContinuarPago.text =
-            "CONFIRMANDO..."
+            getString(R.string.confirmar_pedido_confirmando)
     }
 
     // =========================================================
@@ -620,11 +617,11 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         pedido.forEach { item ->
             when (item.tipo) {
                 TipoPedido.MENU -> {
-                    agregarSolicitud("menu", item.id, item.nombre, item.cantidad)
+                    agregarSolicitud(COLECCION_MENU, item.id, item.nombre, item.cantidad)
 
                     item.entradas.forEach { entrada ->
                         agregarSolicitud(
-                            coleccion = "entradas",
+                            coleccion = COLECCION_ENTRADAS,
                             id = entrada.id,
                             nombre = entrada.nombre,
                             cantidad = entrada.cantidad * item.cantidad
@@ -634,7 +631,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
                 // Compatibilidad temporal con entradas antiguas independientes.
                 TipoPedido.ENTRADA ->
-                    agregarSolicitud("entradas", item.id, item.nombre, item.cantidad)
+                    agregarSolicitud(COLECCION_ENTRADAS, item.id, item.nombre, item.cantidad)
 
                 TipoPedido.EXTRA -> Unit
             }
@@ -680,7 +677,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             productos[posicion]
 
         db.collection(item.coleccion)
-            .whereEqualTo("id", item.idProducto)
+            .whereEqualTo(CAMPO_ID, item.idProducto)
             .limit(1)
             .get()
             .addOnSuccessListener { resultado ->
@@ -689,7 +686,10 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
                     onError(
                         IllegalStateException(
-                            "No se encontró '${item.nombre}' en ${item.coleccion}."
+                            getString(
+                                R.string.confirmar_pedido_producto_no_encontrado,
+                                item.nombre
+                            )
                         )
                     )
 
@@ -728,12 +728,12 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     ) {
 
         val referenciaPedido =
-            db.collection("pedidos")
+            db.collection(COLECCION_PEDIDOS)
                 .document()
 
         val contadorReferencia =
-            db.collection("configuracion")
-                .document("contadorPedidos")
+            db.collection(COLECCION_CONFIGURACION)
+                .document(DOCUMENTO_CONTADOR_PEDIDOS)
 
         db.runTransaction { transaction ->
 
@@ -741,7 +741,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 transaction.get(contadorReferencia)
 
             val ultimoNumero =
-                contadorSnapshot.getLong("ultimoNumero")
+                contadorSnapshot.getLong(CAMPO_ULTIMO_NUMERO)
                     ?: 0L
 
             val numeroPedido =
@@ -758,20 +758,27 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 if (!snapshot.exists()) {
 
                     throw IllegalStateException(
-                        "El producto '${item.nombre}' ya no existe."
+                        getString(
+                            R.string.confirmar_pedido_producto_ya_no_existe,
+                            item.nombre
+                        )
                     )
                 }
 
                 val stock =
-                    snapshot.getLong("stock")
+                    snapshot.getLong(CAMPO_STOCK)
                         ?: throw IllegalStateException(
-                            "El producto '${item.nombre}' no tiene un stock válido."
+                            getString(
+                                R.string.confirmar_pedido_stock_invalido,
+                                item.nombre
+                            )
                         )
 
                 if (stock < item.cantidad) {
 
                     throw IllegalStateException(
-                        "SIN_STOCK:${item.nombre}:$stock:${item.cantidad}"
+                        "$ERROR_SIN_STOCK${SEPARADOR_ERROR}${item.nombre}" +
+                                "$SEPARADOR_ERROR$stock$SEPARADOR_ERROR${item.cantidad}"
                     )
                 }
 
@@ -791,20 +798,20 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
                 transaction.update(
                     referenciaStock,
-                    "stock",
+                    CAMPO_STOCK,
                     nuevoStock
                 )
             }
 
-            val datosPedido =
-                hashMapOf<String, Any>(
+            val datosPedido: HashMap<String, Any> =
+                hashMapOf(
 
                     "numeroPedido" to numeroPedido,
                     "usuarioId" to usuarioId,
 
                     "nombreUsuario" to
                             nombreUsuario.ifBlank {
-                                "Cliente"
+                                getString(R.string.confirmar_pedido_cliente)
                             },
 
                     "correo" to correo,
@@ -814,10 +821,10 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     "tipoEntrega" to tipoEntrega,
 
                     "direccion" to
-                            if (tipoEntrega == "Delivery") {
+                            if (tipoEntrega == TIPO_ENTREGA_DELIVERY) {
                                 direccion
                             } else {
-                                "Recojo en tienda"
+                                TIPO_ENTREGA_RECOJO
                             },
 
                     "referencia" to referencia,
@@ -825,9 +832,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     "observacion" to observacion,
 
                     // Único método disponible actualmente
-                    "metodoPago" to "Contra entrega",
-                    "estadoPago" to "Pendiente",
-                    "estadoPedido" to "Pendiente",
+                    "metodoPago" to METODO_PAGO_CONTRA_ENTREGA,
+                    "estadoPago" to ESTADO_PENDIENTE,
+                    "estadoPedido" to ESTADO_PENDIENTE,
 
                     "fecha" to
                             FieldValue.serverTimestamp()
@@ -841,7 +848,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             transaction.set(
                 contadorReferencia,
                 hashMapOf(
-                    "ultimoNumero" to numeroPedido
+                    CAMPO_ULTIMO_NUMERO to numeroPedido
                 )
             )
         }
@@ -865,7 +872,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
         Toast.makeText(
             this,
-            "¡Pedido confirmado correctamente! 🚀",
+            getString(R.string.confirmar_pedido_exito),
             Toast.LENGTH_LONG
         ).show()
 
@@ -899,21 +906,21 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             1f
 
         btnContinuarPago.text =
-            "CONFIRMAR PEDIDO"
+            getString(R.string.confirmar_pedido_boton_confirmar)
 
         val mensaje =
             if (
                 exception.message
-                    ?.startsWith("SIN_STOCK:") == true
+                    ?.startsWith("$ERROR_SIN_STOCK$SEPARADOR_ERROR") == true
             ) {
 
                 val partes =
                     exception.message
-                        ?.split(":")
+                        ?.split(SEPARADOR_ERROR)
 
                 val producto =
                     partes?.getOrNull(1)
-                        ?: "este producto"
+                        ?: getString(R.string.confirmar_pedido_producto_generico)
 
                 val disponible =
                     partes?.getOrNull(2)
@@ -923,14 +930,16 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     partes?.getOrNull(3)
                         ?: "0"
 
-                "No hay stock suficiente de $producto. " +
-                        "Disponible: $disponible. " +
-                        "Solicitado: $solicitado."
+                getString(
+                    R.string.confirmar_pedido_stock_insuficiente,
+                    producto,
+                    disponible,
+                    solicitado
+                )
 
             } else {
 
-                exception.message
-                    ?: "No se pudo confirmar el pedido. Inténtalo nuevamente."
+                getString(R.string.confirmar_pedido_error_generico)
             }
 
         Toast.makeText(
@@ -938,5 +947,34 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             mensaje,
             Toast.LENGTH_LONG
         ).show()
+    }
+
+    private companion object {
+        const val EXTRA_NOMBRE = "nombre"
+        const val EXTRA_TELEFONO = "telefono"
+        const val EXTRA_DIRECCION = "direccion"
+        const val EXTRA_OBSERVACION = "observacion"
+        const val EXTRA_REFERENCIA = "referencia"
+        const val EXTRA_TIPO_ENTREGA = "tipoEntrega"
+
+        const val TIPO_ENTREGA_DELIVERY = "Delivery"
+        const val TIPO_ENTREGA_RECOJO = "Recojo en tienda"
+        const val METODO_PAGO_CONTRA_ENTREGA = "Contra entrega"
+        const val ESTADO_PENDIENTE = "Pendiente"
+
+        const val COLECCION_USUARIOS = "usuarios"
+        const val COLECCION_MENU = "menu"
+        const val COLECCION_ENTRADAS = "entradas"
+        const val COLECCION_PEDIDOS = "pedidos"
+        const val COLECCION_CONFIGURACION = "configuracion"
+        const val DOCUMENTO_CONTADOR_PEDIDOS = "contadorPedidos"
+
+        const val CAMPO_ID = "id"
+        const val CAMPO_NOMBRE = "nombre"
+        const val CAMPO_STOCK = "stock"
+        const val CAMPO_ULTIMO_NUMERO = "ultimoNumero"
+
+        const val ERROR_SIN_STOCK = "SIN_STOCK"
+        const val SEPARADOR_ERROR = ":"
     }
 }
