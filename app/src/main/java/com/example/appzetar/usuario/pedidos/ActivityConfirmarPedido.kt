@@ -42,7 +42,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         FirebaseFirestore.getInstance()
 
     // =========================================================
-    // COMPONENTES
+    // COMPONENTE
     // =========================================================
 
     private lateinit var tvNombreUsuario: TextView
@@ -62,7 +62,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     private lateinit var btnContinuarPago: MaterialButton
 
     // =========================================================
-    // DATOS DEL PEDIDO
+    // DATO DEL PEDIDO
     // =========================================================
 
     private var nombreUsuario =
@@ -140,7 +140,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     }
 
     // =========================================================
-    // COMPONENTES
+    // COMPONENTE
     // =========================================================
 
     private fun initComponent() {
@@ -183,7 +183,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     }
 
     // =========================================================
-    // RECIBIR DATOS
+    // RECIBIR DATO
     // =========================================================
 
     private fun recibirDatos() {
@@ -224,7 +224,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     }
 
     // =========================================================
-    // DATOS DEL USUARIO
+    // DATO DEL USER
     // =========================================================
 
     private fun cargarDatosUsuario() {
@@ -282,7 +282,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     }
 
     // =========================================================
-    // RESUMEN
+    // RESUME
     // =========================================================
 
     private fun cargarResumenPedido() {
@@ -656,7 +656,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     }
 
     // =========================================================
-    // BÚSQUEDA RECURSIVA
+    // BÚSQUEDA RECURS
     // =========================================================
 
     private fun buscarReferenciaRecursiva(
@@ -716,7 +716,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     }
 
     // =========================================================
-    // GUARDAR PEDIDO Y DESCONTAR STOCK
+    // GUARDAR PEDIDO Y DES STOCK
     // =========================================================
 
     private fun guardarPedidoYDescontarStock(
@@ -891,7 +891,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     }
 
     // =========================================================
-    // MANEJO DE ERRORES
+    // MANEJO DE ERROR
     // =========================================================
 
     private fun finalizarConError(exception: Exception) {
