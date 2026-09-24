@@ -6,7 +6,7 @@ import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.appzetar.R
-import com.example.appzetar.usuario.ActivityConfirmarPedido
+import com.example.appzetar.usuario.pedidos.ActivityConfirmarPedido
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 

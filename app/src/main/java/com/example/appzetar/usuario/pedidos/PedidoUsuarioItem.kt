@@ -1,4 +1,4 @@
-package com.example.appzetar.usuario
+package com.example.appzetar.usuario.pedidos
 
 data class PedidoUsuarioItem(
 
@@ -36,16 +36,9 @@ data class PedidoUsuarioItem(
     // =========================================================
 
     fun numeroPedidoFormateado(): String {
-
-        return if (numeroPedido > 0L) {
-
-            String.format(
-                "%04d",
-                numeroPedido
-            )
-
+        return if (numeroPedido > 0) {
+            numeroPedido.toString().padStart(4, '0')
         } else {
-
             "----"
         }
     }
@@ -137,7 +130,7 @@ data class PedidoUsuarioItem(
     }
 
     // =========================================================
-    // VISIBILIDAD PARA EL CLIENTE
+    // VISIVILIDAD PARA EL CLIENTE
     // =========================================================
 
     fun debeMostrarse(

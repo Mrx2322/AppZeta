@@ -1,4 +1,4 @@
-package com.example.appzetar.usuario
+package com.example.appzetar.usuario.perfilusuario
 
 import com.example.appzetar.usuario.navegacionUsuario.NavegacionUsuario
 import com.example.appzetar.usuario.extras.ActivityExtras
@@ -23,9 +23,11 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import android.annotation.SuppressLint
+import com.example.appzetar.usuario.ActivityMenuUsuario
 import com.example.appzetar.usuario.carrito.ActivityPedido
 import com.example.appzetar.usuario.carrito.PedidoManager
 import com.example.appzetar.usuario.login.LoginActivity
+import com.example.appzetar.usuario.pedidos.ActivityPedidosUsuario
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityPerfilUsuario : AppCompatActivity() {

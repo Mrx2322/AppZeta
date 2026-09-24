@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
 import com.example.appzetar.usuario.ActivityMenuUsuario
-import com.example.appzetar.usuario.ActivityPedidosUsuario
-import com.example.appzetar.usuario.ActivityPerfilUsuario
+import com.example.appzetar.usuario.pedidos.ActivityPedidosUsuario
+import com.example.appzetar.usuario.perfilusuario.ActivityPerfilUsuario
 import com.example.appzetar.usuario.navegacionUsuario.NavegacionUsuario
 import com.example.appzetar.usuario.carrito.ActivityPedido
 import com.example.appzetar.usuario.carrito.PedidoItem

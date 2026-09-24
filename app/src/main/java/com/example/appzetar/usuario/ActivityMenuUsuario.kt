@@ -51,6 +51,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.example.appzetar.usuario.navegacionUsuario.NavegacionUsuario
+import com.example.appzetar.usuario.pedidos.ActivityPedidosUsuario
+import com.example.appzetar.usuario.perfilusuario.ActivityPerfilUsuario
 import kotlin.math.abs
 
 class ActivityMenuUsuario : AppCompatActivity() {

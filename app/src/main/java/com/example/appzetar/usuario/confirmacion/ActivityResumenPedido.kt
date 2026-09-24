@@ -14,7 +14,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
-import com.example.appzetar.usuario.ActivityConfirmarPedido
+import com.example.appzetar.usuario.pedidos.ActivityConfirmarPedido
 import com.example.appzetar.usuario.carrito.PedidoManager
 import com.google.firebase.auth.FirebaseAuth
 

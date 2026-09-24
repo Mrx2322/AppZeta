@@ -21,8 +21,8 @@ import com.example.appzetar.R
 import com.example.appzetar.usuario.entregas.ActivityEntrega
 import com.example.appzetar.usuario.extras.ActivityExtras
 import com.example.appzetar.usuario.ActivityMenuUsuario
-import com.example.appzetar.usuario.ActivityPedidosUsuario
-import com.example.appzetar.usuario.ActivityPerfilUsuario
+import com.example.appzetar.usuario.pedidos.ActivityPedidosUsuario
+import com.example.appzetar.usuario.perfilusuario.ActivityPerfilUsuario
 import com.example.appzetar.usuario.navegacionUsuario.NavegacionUsuario
 import com.google.android.material.button.MaterialButton
 

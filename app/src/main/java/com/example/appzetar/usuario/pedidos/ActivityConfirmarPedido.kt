@@ -1,4 +1,4 @@
-package com.example.appzetar.usuario
+package com.example.appzetar.usuario.pedidos
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.appzetar.R
+import com.example.appzetar.usuario.ActivityMenuUsuario
 import com.example.appzetar.usuario.carrito.PedidoItem
 import com.example.appzetar.usuario.carrito.PedidoManager
 import com.example.appzetar.usuario.carrito.TipoPedido

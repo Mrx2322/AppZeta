@@ -1,4 +1,4 @@
-package com.example.appzetar.usuario
+package com.example.appzetar.usuario.pedidos
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -14,6 +14,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
+import com.example.appzetar.usuario.pedidos.PedidoUsuarioItem
 import com.google.android.material.card.MaterialCardView
 import java.text.SimpleDateFormat
 import java.util.Date

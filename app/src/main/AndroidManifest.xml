@@ -13,10 +13,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppZetaR">
         <activity
-            android:name=".usuario.ActivityPerfilUsuario"
+            android:name=".usuario.perfilusuario.ActivityPerfilUsuario"
             android:exported="false" />
         <activity
-            android:name=".usuario.ActivityPedidosUsuario"
+            android:name=".usuario.pedidos.ActivityPedidosUsuario"
             android:exported="false" />
         <activity
             android:name=".usuario.extras.ActivityExtras"
@@ -29,7 +29,7 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".usuario.ActivityConfirmarPedido"
+            android:name=".usuario.pedidos.ActivityConfirmarPedido"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity

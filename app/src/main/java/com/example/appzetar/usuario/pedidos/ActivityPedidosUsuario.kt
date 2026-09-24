@@ -1,4 +1,4 @@
-package com.example.appzetar.usuario
+package com.example.appzetar.usuario.pedidos
 
 import com.example.appzetar.usuario.navegacionUsuario.NavegacionUsuario
 import com.example.appzetar.usuario.extras.ActivityExtras
@@ -18,8 +18,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
+import com.example.appzetar.usuario.ActivityMenuUsuario
 import com.example.appzetar.usuario.carrito.ActivityPedido
 import com.example.appzetar.usuario.carrito.PedidoManager
+import com.example.appzetar.usuario.perfilusuario.ActivityPerfilUsuario
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
