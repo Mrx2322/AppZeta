@@ -41,4 +41,14 @@
     <color name="menu_stock_agotado">#D32F2F</color>
     <color name="menu_stock_bajo">#E65100</color>
     <color name="menu_stock_disponible">#757575</color>
+
+    <color name="pedido_naranja">#E87520</color>
+    <color name="pedido_naranja_claro">#FFF3E0</color>
+    <color name="pedido_gris">#E0E0E0</color>
+    <color name="pedido_texto_gris">#888888</color>
+    <color name="pedido_verde">#2E7D32</color>
+    <color name="pedido_verde_claro">#E8F5E9</color>
+    <color name="pedido_rojo">#C62828</color>
+    <color name="pedido_rojo_claro">#FFEBEE</color>
+    <color name="pedido_blanco">#FFFFFF</color>
 </resources>

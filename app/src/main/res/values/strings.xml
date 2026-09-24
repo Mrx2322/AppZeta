@@ -26,7 +26,23 @@
     <string name="Nombre_del_extra">Nombre del extra</string>
     <string name="precios_static">S/ 0.00</string>
     <string name="Description_extra">Eliminar extra</string>
-
+    <!--pedidosAdapter-->
+    <string name="pedido_numero_formato">Pedido #%1$s</string>
+    <string name="pedido_estado_en_camino">En camino</string>
+    <string name="pedido_estado_listo_recoger">Listo para recoger</string>
+    <string name="pedido_mensaje_recibido">Recibimos tu pedido</string>
+    <string name="pedido_mensaje_confirmado">El restaurante confirmó tu pedido</string>
+    <string name="pedido_mensaje_preparacion">Estamos preparando tu comida</string>
+    <string name="pedido_mensaje_en_camino">Tu pedido está en camino</string>
+    <string name="pedido_mensaje_listo_recoger">Tu pedido está listo para recoger</string>
+    <string name="pedido_mensaje_entregado">¡Pedido entregado! Buen provecho</string>
+    <string name="pedido_mensaje_recogido">¡Pedido recogido! Buen provecho</string>
+    <string name="pedido_mensaje_cancelado">Este pedido fue cancelado</string>
+    <string name="pedido_mensaje_revision">Estamos revisando tu pedido</string>
+    <string name="pedido_fecha_no_disponible">Fecha no disponible</string>
+    <string name="pedido_formato_fecha" translatable="false">dd/MM/yyyy HH:mm</string>
+    <string name="simbolo_check" translatable="false">✓</string>
+    <string name="pedido_paso_numero" translatable="false">%1$d</string>
     <!--Confirma pedidos-->
     <string name="Confirmar_pedido">Confirmar pedido</string>
     <string name="datos_confirmar">Revisa los datos antes de confirmar</string>

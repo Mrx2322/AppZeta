@@ -4,7 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.graphics.Color
+import android.content.Context
 import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
@@ -12,9 +12,11 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appzetar.R
-import com.example.appzetar.usuario.pedidos.PedidoUsuarioItem
 import com.google.android.material.card.MaterialCardView
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -27,32 +29,32 @@ class PedidoUsuarioAdapter :
     // COLORES
     // =========================================================
 
-    private val colorNaranja =
-        Color.parseColor("#E87520")
+    @ColorRes
+    private val colorNaranja = R.color.pedido_naranja
 
-    private val colorNaranjaClaro =
-        Color.parseColor("#FFF3E0")
+    @ColorRes
+    private val colorNaranjaClaro = R.color.pedido_naranja_claro
 
-    private val colorGris =
-        Color.parseColor("#E0E0E0")
+    @ColorRes
+    private val colorGris = R.color.pedido_gris
 
-    private val colorTextoGris =
-        Color.parseColor("#888888")
+    @ColorRes
+    private val colorTextoGris = R.color.pedido_texto_gris
 
-    private val colorVerde =
-        Color.parseColor("#2E7D32")
+    @ColorRes
+    private val colorVerde = R.color.pedido_verde
 
-    private val colorVerdeClaro =
-        Color.parseColor("#E8F5E9")
+    @ColorRes
+    private val colorVerdeClaro = R.color.pedido_verde_claro
 
-    private val colorRojo =
-        Color.parseColor("#C62828")
+    @ColorRes
+    private val colorRojo = R.color.pedido_rojo
 
-    private val colorRojoClaro =
-        Color.parseColor("#FFEBEE")
+    @ColorRes
+    private val colorRojoClaro = R.color.pedido_rojo_claro
 
-    private val colorBlanco =
-        Color.WHITE
+    @ColorRes
+    private val colorBlanco = R.color.pedido_blanco
 
     // =========================================================
     // LISTA
@@ -174,17 +176,23 @@ class PedidoUsuarioAdapter :
 
         detenerAnimaciones(holder)
 
-        holder.tvNumeroPedido.text =
-            "Pedido #${pedido.numeroPedidoFormateado()}"
+        val contexto = holder.itemView.context
+
+        holder.tvNumeroPedido.text = contexto.getString(
+            R.string.pedido_numero_formato,
+            pedido.numeroPedidoFormateado()
+        )
 
         holder.tvFechaPedido.text =
-            formatearFecha(pedido.fecha)
-
-        holder.tvTotalPedido.text =
-            "S/ %.2f".format(
-                Locale.US,
-                pedido.total
+            formatearFecha(
+                fecha = pedido.fecha,
+                context = contexto
             )
+
+        holder.tvTotalPedido.text = contexto.getString(
+            R.string.pedido_total_formato,
+            pedido.total
+        )
 
         val estado =
             pedido.estadoNormalizado()
@@ -194,9 +202,9 @@ class PedidoUsuarioAdapter :
 
         holder.tvEtiquetaDespacho.text =
             if (pedido.esDelivery()) {
-                "En camino"
+                contexto.getString(R.string.pedido_estado_en_camino)
             } else {
-                "Listo para recoger"
+                contexto.getString(R.string.pedido_estado_listo_recoger)
             }
 
         configurarEstadoGeneral(
@@ -236,7 +244,7 @@ class PedidoUsuarioAdapter :
                 )
 
                 holder.tvMensajeEstado.text =
-                    "Recibimos tu pedido"
+                    holder.itemView.context.getString(R.string.pedido_mensaje_recibido)
             }
 
             "Confirmado" -> {
@@ -248,7 +256,7 @@ class PedidoUsuarioAdapter :
                 )
 
                 holder.tvMensajeEstado.text =
-                    "El restaurante confirmó tu pedido"
+                    holder.itemView.context.getString(R.string.pedido_mensaje_confirmado)
             }
 
             "En preparación" -> {
@@ -260,7 +268,7 @@ class PedidoUsuarioAdapter :
                 )
 
                 holder.tvMensajeEstado.text =
-                    "Estamos preparando tu comida"
+                    holder.itemView.context.getString(R.string.pedido_mensaje_preparacion)
             }
 
             "En camino" -> {
@@ -272,7 +280,7 @@ class PedidoUsuarioAdapter :
                 )
 
                 holder.tvMensajeEstado.text =
-                    "Tu pedido está en camino"
+                    holder.itemView.context.getString(R.string.pedido_mensaje_en_camino)
             }
 
             "Listo para recoger" -> {
@@ -284,7 +292,7 @@ class PedidoUsuarioAdapter :
                 )
 
                 holder.tvMensajeEstado.text =
-                    "Tu pedido está listo para recoger"
+                    holder.itemView.context.getString(R.string.pedido_mensaje_listo_recoger)
             }
 
             "Entregado" -> {
@@ -297,9 +305,9 @@ class PedidoUsuarioAdapter :
 
                 holder.tvMensajeEstado.text =
                     if (pedido.esDelivery()) {
-                        "¡Pedido entregado! Buen provecho"
+                        holder.itemView.context.getString(R.string.pedido_mensaje_entregado)
                     } else {
-                        "¡Pedido recogido! Buen provecho"
+                        holder.itemView.context.getString(R.string.pedido_mensaje_recogido)
                     }
             }
 
@@ -312,7 +320,7 @@ class PedidoUsuarioAdapter :
                 )
 
                 holder.tvMensajeEstado.text =
-                    "Este pedido fue cancelado"
+                    holder.itemView.context.getString(R.string.pedido_mensaje_cancelado)
             }
 
             else -> {
@@ -324,7 +332,7 @@ class PedidoUsuarioAdapter :
                 )
 
                 holder.tvMensajeEstado.text =
-                    "Estamos revisando tu pedido"
+                    holder.itemView.context.getString(R.string.pedido_mensaje_revision)
             }
         }
     }
@@ -336,11 +344,11 @@ class PedidoUsuarioAdapter :
     ) {
 
         holder.cardEstadoPedido.setCardBackgroundColor(
-            colorFondo
+            obtenerColor(holder, colorFondo)
         )
 
         holder.tvEstadoPedido.setTextColor(
-            colorTexto
+            obtenerColor(holder, colorTexto)
         )
     }
 
@@ -391,18 +399,18 @@ class PedidoUsuarioAdapter :
                 indice < estadoActual -> {
 
                     indicador.setCardBackgroundColor(
-                        colorNaranja
+                        obtenerColor(holder, colorNaranja)
                     )
 
                     textoIndicador.text =
-                        "✓"
+                        holder.itemView.context.getString(R.string.simbolo_check)
 
                     textoIndicador.setTextColor(
-                        colorBlanco
+                        obtenerColor(holder, colorBlanco)
                     )
 
                     etiqueta.setTextColor(
-                        colorNaranja
+                        obtenerColor(holder, colorNaranja)
                     )
 
                     etiqueta.setTypeface(
@@ -419,9 +427,9 @@ class PedidoUsuarioAdapter :
                             pedido.estadoNormalizado() ==
                             "Entregado"
                         ) {
-                            colorVerde
+                            obtenerColor(holder, colorVerde)
                         } else {
-                            colorNaranja
+                            obtenerColor(holder, colorNaranja)
                         }
 
                     indicador.setCardBackgroundColor(
@@ -433,13 +441,16 @@ class PedidoUsuarioAdapter :
                             pedido.estadoNormalizado() ==
                             "Entregado"
                         ) {
-                            "✓"
+                            holder.itemView.context.getString(R.string.simbolo_check)
                         } else {
-                            (indice + 1).toString()
+                            holder.itemView.context.getString(
+                                R.string.pedido_paso_numero,
+                                indice + 1
+                            )
                         }
 
                     textoIndicador.setTextColor(
-                        colorBlanco
+                        obtenerColor(holder, colorBlanco)
                     )
 
                     etiqueta.setTextColor(
@@ -456,18 +467,21 @@ class PedidoUsuarioAdapter :
                 else -> {
 
                     indicador.setCardBackgroundColor(
-                        colorGris
+                        obtenerColor(holder, colorGris)
                     )
 
                     textoIndicador.text =
-                        (indice + 1).toString()
+                        holder.itemView.context.getString(
+                            R.string.pedido_paso_numero,
+                            indice + 1
+                        )
 
                     textoIndicador.setTextColor(
-                        colorTextoGris
+                        obtenerColor(holder, colorTextoGris)
                     )
 
                     etiqueta.setTextColor(
-                        colorTextoGris
+                        obtenerColor(holder, colorTextoGris)
                     )
 
                     etiqueta.setTypeface(
@@ -524,9 +538,9 @@ class PedidoUsuarioAdapter :
 
                 linea.setBackgroundColor(
                     if (entregado) {
-                        colorVerde
+                        obtenerColor(holder, colorVerde)
                     } else {
-                        colorNaranja
+                        obtenerColor(holder, colorNaranja)
                     }
                 )
 
@@ -567,7 +581,7 @@ class PedidoUsuarioAdapter :
                     1f
 
                 linea.setBackgroundColor(
-                    colorGris
+                    obtenerColor(holder, colorGris)
                 )
             }
         }
@@ -688,7 +702,7 @@ class PedidoUsuarioAdapter :
         holder.indicadores.forEach { indicador ->
 
             indicador.setCardBackgroundColor(
-                colorGris
+                obtenerColor(holder, colorGris)
             )
 
             indicador.scaleX =
@@ -703,10 +717,13 @@ class PedidoUsuarioAdapter :
                 texto ->
 
             texto.text =
-                (indice + 1).toString()
+                holder.itemView.context.getString(
+                    R.string.pedido_paso_numero,
+                    indice + 1
+                )
 
             texto.setTextColor(
-                colorTextoGris
+                obtenerColor(holder, colorTextoGris)
             )
         }
 
@@ -716,14 +733,14 @@ class PedidoUsuarioAdapter :
                 1f
 
             linea.setBackgroundColor(
-                colorGris
+                obtenerColor(holder, colorGris)
             )
         }
 
         holder.etiquetas.forEach { etiqueta ->
 
             etiqueta.setTextColor(
-                colorTextoGris
+                obtenerColor(holder, colorTextoGris)
             )
 
             etiqueta.setTypeface(
@@ -738,16 +755,17 @@ class PedidoUsuarioAdapter :
     // =========================================================
 
     private fun formatearFecha(
-        fecha: Long
+        fecha: Long,
+        context: Context
     ): String {
 
         if (fecha <= 0L) {
-            return "Fecha no disponible"
+            return context.getString(R.string.pedido_fecha_no_disponible)
         }
 
         val formato =
             SimpleDateFormat(
-                "dd/MM/yyyy HH:mm",
+                context.getString(R.string.pedido_formato_fecha),
                 Locale.getDefault()
             )
 
@@ -764,17 +782,31 @@ class PedidoUsuarioAdapter :
         nuevosPedidos: List<PedidoUsuarioItem>
     ) {
 
-        pedidos.clear()
+        val pedidosAnteriores = pedidos.toList()
+        val resultado = DiffUtil.calculateDiff(
+            object : DiffUtil.Callback() {
+                override fun getOldListSize() = pedidosAnteriores.size
 
-        pedidos.addAll(
-            nuevosPedidos
+                override fun getNewListSize() = nuevosPedidos.size
+
+                override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                    return pedidosAnteriores[oldItemPosition].numeroPedido ==
+                            nuevosPedidos[newItemPosition].numeroPedido
+                }
+
+                override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                    return pedidosAnteriores[oldItemPosition] == nuevosPedidos[newItemPosition]
+                }
+            }
         )
 
-        notifyDataSetChanged()
+        pedidos.clear()
+        pedidos.addAll(nuevosPedidos)
+        resultado.dispatchUpdatesTo(this)
     }
 
     // =========================================================
-    // DETENER ANIMACIONES
+    // DETENER ANIMACION
     // =========================================================
 
     private fun detenerAnimaciones(
@@ -821,4 +853,10 @@ class PedidoUsuarioAdapter :
 
         super.onViewRecycled(holder)
     }
+
+    private fun obtenerColor(
+        holder: PedidoViewHolder,
+        @ColorRes color: Int
+    ): Int = ContextCompat.getColor(holder.itemView.context, color)
+
 }
