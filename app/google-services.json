@@ -7,6 +7,64 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:195727566384:android:c75d6473636526a3a52ff5",
+        "android_client_info": {
+          "package_name": "com.deiapp.appzeta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "195727566384-in6u70au2ib67kmfduj0s19qu7fshiei.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJIO-beZMW_80leMyMj6AOLSVYOJBCTgM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "195727566384-in6u70au2ib67kmfduj0s19qu7fshiei.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:195727566384:android:9faf2457bfa94dcea52ff5",
+        "android_client_info": {
+          "package_name": "com.example.appzetaadmin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "195727566384-in6u70au2ib67kmfduj0s19qu7fshiei.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJIO-beZMW_80leMyMj6AOLSVYOJBCTgM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "195727566384-in6u70au2ib67kmfduj0s19qu7fshiei.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:195727566384:android:b3b792a0e8679a02a52ff5",
         "android_client_info": {
           "package_name": "com.example.appzetar"

@@ -14,80 +14,80 @@
         android:theme="@style/Theme.AppZetaR">
 
         <activity
-            android:name=".usuario.perfilusuario.ActivityPerfilUsuario"
+            android:name="com.deiapp.appzetar.usuario.perfilusuario.ActivityPerfilUsuario"
             android:exported="false" />
 
         <activity
-            android:name=".usuario.pedidos.ActivityPedidosUsuario"
+            android:name="com.deiapp.appzetar.usuario.pedidos.ActivityPedidosUsuario"
             android:exported="false" />
 
         <activity
-            android:name=".usuario.extras.ActivityExtras"
+            android:name="com.deiapp.appzetar.usuario.extras.ActivityExtras"
             android:exported="false" />
 
         <activity
-            android:name=".usuario.entregas.ActivityDireccion"
+            android:name="com.deiapp.appzetar.usuario.entregas.ActivityDireccion"
             android:exported="false" />
 
         <activity
-            android:name=".usuario.entregas.ActivityEntrega"
+            android:name="com.deiapp.appzetar.usuario.entregas.ActivityEntrega"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".usuario.pedidos.ActivityConfirmarPedido"
+            android:name="com.deiapp.appzetar.usuario.pedidos.ActivityConfirmarPedido"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".usuario.login.RegistroActivity"
+            android:name="com.deiapp.appzetar.usuario.login.RegistroActivity"
             android:exported="false" />
 
         <activity
-            android:name=".usuario.login.LoginActivity"
+            android:name="com.deiapp.appzetar.usuario.login.LoginActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".usuario.pagos.ActivityPagoYape"
+            android:name="com.deiapp.appzetar.usuario.pagos.ActivityPagoYape"
             android:exported="false" />
 
         <activity
-            android:name=".usuario.confirmacion.ActivityResumenPedido"
+            android:name="com.deiapp.appzetar.usuario.confirmacion.ActivityResumenPedido"
             android:exported="false" />
 
         <activity
-            android:name=".usuario.confirmacion.ActivityDatosPedido"
+            android:name="com.deiapp.appzetar.usuario.confirmacion.ActivityDatosPedido"
             android:exported="false" />
 
         <activity
-            android:name=".usuario.carrito.ActivityPedido"
+            android:name="com.deiapp.appzetar.usuario.carrito.ActivityPedido"
             android:exported="false" />
 
         <activity
-            android:name=".usuario.ActivityMenuUsuario"
+            android:name="com.deiapp.appzetar.usuario.ActivityMenuUsuario"
             android:exported="false"
             android:theme="@style/Theme.AppZetaR.MenuUsuario"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".usuario.menus.ActivityTodosLosMenus"
+            android:name="com.deiapp.appzetar.usuario.menus.ActivityTodosLosMenus"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".splash.SplashActivity"
+            android:name="com.deiapp.appzetar.splash.SplashActivity"
             android:exported="false"
             android:theme="@style/Theme.AppZetaR.Splash"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.deiapp.appzetar.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".splash.IntroVideoActivity"
+            android:name="com.deiapp.appzetar.splash.IntroVideoActivity"
             android:exported="true"
             android:theme="@style/Theme.AppZetaR.Intro">
 

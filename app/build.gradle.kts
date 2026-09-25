@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.appzetar"
+    namespace = "com.deiapp.appzeta"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
-        applicationId = "com.example.appzetar"
+        applicationId = "com.deiapp.appzeta"
         minSdk = 24
         targetSdk = 37
         versionCode = 1
