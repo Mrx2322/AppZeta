@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.AppZetaR.Intro" parent="Theme.AppZetaR">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">#0B1420</item>
+        <item name="android:windowSplashScreenBackground">#0B1420</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/intro_transparent</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
+    </style>
+</resources>

@@ -31,4 +31,10 @@
 
     </style>
 
+    <style name="Theme.AppZetaR.Intro" parent="Theme.AppZetaR">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">#0B1420</item>
+    </style>
+
 </resources>

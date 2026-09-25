@@ -12,69 +12,92 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppZetaR">
+
         <activity
             android:name=".usuario.perfilusuario.ActivityPerfilUsuario"
             android:exported="false" />
+
         <activity
             android:name=".usuario.pedidos.ActivityPedidosUsuario"
             android:exported="false" />
+
         <activity
             android:name=".usuario.extras.ActivityExtras"
             android:exported="false" />
+
         <activity
             android:name=".usuario.entregas.ActivityDireccion"
             android:exported="false" />
+
         <activity
             android:name=".usuario.entregas.ActivityEntrega"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".usuario.pedidos.ActivityConfirmarPedido"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".usuario.login.RegistroActivity"
             android:exported="false" />
+
         <activity
             android:name=".usuario.login.LoginActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".usuario.pagos.ActivityPagoYape"
             android:exported="false" />
+
         <activity
             android:name=".usuario.confirmacion.ActivityResumenPedido"
             android:exported="false" />
+
         <activity
             android:name=".usuario.confirmacion.ActivityDatosPedido"
             android:exported="false" />
+
         <activity
             android:name=".usuario.carrito.ActivityPedido"
             android:exported="false" />
+
         <activity
             android:name=".usuario.ActivityMenuUsuario"
             android:exported="false"
             android:theme="@style/Theme.AppZetaR.MenuUsuario"
             android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".usuario.menus.ActivityTodosLosMenus"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".splash.SplashActivity"
             android:exported="false"
             android:theme="@style/Theme.AppZetaR.Splash"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".usuario.menus.ActivityTodosLosMenus"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".splash.IntroVideoActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppZetaR.Intro">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
     </application>
 
 </manifest>
