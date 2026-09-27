@@ -139,15 +139,21 @@ class EntradasUsuarioAdapter(
 
     fun limpiarSeleccion() {
 
-        if (
-            cantidadesSeleccionadas.isEmpty()
-        ) {
+        if (cantidadesSeleccionadas.isEmpty()) {
             return
         }
 
+        val entradasSeleccionadas =
+            cantidadesSeleccionadas.keys.toSet()
+
         cantidadesSeleccionadas.clear()
 
-        notifyDataSetChanged()
+        entradas.forEachIndexed { index, entrada ->
+
+            if (entrada.id in entradasSeleccionadas) {
+                notifyItemChanged(index)
+            }
+        }
     }
 
 
