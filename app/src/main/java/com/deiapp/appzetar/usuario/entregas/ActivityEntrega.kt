@@ -4,7 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.RadioButton
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import com.deiapp.appzeta.R
 import com.deiapp.appzetar.usuario.pedidos.ActivityConfirmarPedido
 import com.google.android.material.button.MaterialButton
@@ -29,7 +33,27 @@ class ActivityEntrega : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        enableEdgeToEdge()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContentView(R.layout.activity_entrega)
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+            findViewById(R.id.main)
+        ) { view, insets ->
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+            )
+
+            view.setPadding(
+                systemBars.left,
+                systemBars.top,
+                systemBars.right,
+                systemBars.bottom
+            )
+
+            insets
+        }
 
         inicializarVistas()
         configurarInterfaz()
@@ -199,6 +223,8 @@ class ActivityEntrega : AppCompatActivity() {
     }
 
     private fun abrirDelivery() {
+        btnContinuar.isEnabled = false
+
         val intent =
             Intent(
                 this,
@@ -224,6 +250,8 @@ class ActivityEntrega : AppCompatActivity() {
     }
 
     private fun abrirRecojo() {
+        btnContinuar.isEnabled = false
+
         val intent =
             Intent(
                 this,
@@ -246,6 +274,13 @@ class ActivityEntrega : AppCompatActivity() {
             }
 
         startActivity(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (::btnContinuar.isInitialized) {
+            btnContinuar.isEnabled = true
+        }
     }
 
     companion object {

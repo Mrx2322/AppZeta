@@ -49,16 +49,21 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.SetOptions
-import com.deiapp.appzetar.usuario.navegacionUsuario.NavegacionUsuario
 import com.deiapp.appzetar.usuario.pedidos.ActivityPedidosUsuario
 import com.deiapp.appzetar.usuario.perfilusuario.ActivityPerfilUsuario
+import com.deiapp.appzetar.usuario.navegacionUsuario.NavegacionUsuario
 import kotlin.math.abs
 
 class ActivityMenuUsuario : AppCompatActivity() {
 
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
+
+    private var extrasListener: ListenerRegistration? = null
+    private var entradasListener: ListenerRegistration? = null
+    private var menuListener: ListenerRegistration? = null
 
     private lateinit var rvCategorias: RecyclerView
     private lateinit var categoriaAdapter: CategoriaAdapter
@@ -178,7 +183,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         cargarNombreUsuario()
         cargarCategorias()
-        cargarDatosDesdeFirebase()
     }
 
     private fun initComponent() {
@@ -1301,7 +1305,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
     private fun cargarExtrasDesdeFirebase() {
-        db.collection("extras")
+        if (extrasListener != null) return
+
+        extrasListener = db.collection("extras")
             .addSnapshotListener { resultado, error ->
 
                 if (error != null) {
@@ -1372,7 +1378,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
     private fun cargarEntradas() {
-        db.collection("entradas")
+        if (entradasListener != null) return
+
+        entradasListener = db.collection("entradas")
             .addSnapshotListener { resultado, error ->
 
                 if (error != null) {
@@ -1460,7 +1468,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
     }
 
     private fun cargarMenu() {
-        db.collection("menu")
+        if (menuListener != null) return
+
+        menuListener = db.collection("menu")
             .addSnapshotListener { resultado, error ->
 
                 if (error != null) {
@@ -1555,6 +1565,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        cargarDatosDesdeFirebase()
+    }
+
     override fun onResume() {
         super.onResume()
 
@@ -1573,6 +1588,19 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 listaMenuCarrusel.size
             )
         }
+    }
+
+    override fun onStop() {
+        extrasListener?.remove()
+        extrasListener = null
+
+        entradasListener?.remove()
+        entradasListener = null
+
+        menuListener?.remove()
+        menuListener = null
+
+        super.onStop()
     }
 
     companion object {

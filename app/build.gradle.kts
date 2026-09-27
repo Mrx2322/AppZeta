@@ -39,7 +39,6 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.material3)
     implementation(libs.material)
     implementation(libs.androidx.recyclerview)
 

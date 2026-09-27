@@ -624,4 +624,26 @@
 
     <string name="pedidos_usuario_volver">Volver</string>
 
+    <!-- ===================================================== -->
+    <!-- MENSAJES DE ERROR Y TOASTS EN KOTLIN -->
+    <!-- ===================================================== -->
+    <string name="registro_error_ingresa_nombre">Ingresa tu nombre</string>
+    <string name="registro_error_ingresa_correo">Ingresa tu correo</string>
+    <string name="registro_error_ingresa_contrasena">Ingresa una contraseña</string>
+    <string name="registro_error_minimo_caracteres">Mínimo 6 caracteres</string>
+    <string name="registro_error_confirma_contrasena">Confirma tu contraseña</string>
+    <string name="registro_error_contrasenas_no_coinciden">Las contraseñas no coinciden</string>
+    <string name="registro_cuenta_creada_exito">Cuenta creada correctamente</string>
+    <string name="registro_error_guardar_datos">Cuenta creada, pero hubo un error guardando los datos</string>
+    <string name="registro_error_crear_cuenta">No se pudo crear la cuenta</string>
+
+    <string name="perfil_error_cargar_datos">No se pudieron cargar todos los datos</string>
+    <string name="perfil_actualizado_exito">Perfil actualizado</string>
+    <string name="perfil_error_actualizar">No se pudo actualizar el perfil</string>
+    <string name="perfil_dialogo_cerrar_sesion_titulo">Cerrar sesión</string>
+    <string name="perfil_dialogo_cerrar_sesion_mensaje">¿Deseas cerrar tu sesión?</string>
+
+    <string name="pedidos_error_sesion_requerida">Debes iniciar sesión para ver tus pedidos</string>
+    <string name="pedidos_error_cargar_pedidos">No se pudieron cargar los pedidos</string>
+
 </resources>

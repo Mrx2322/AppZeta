@@ -1,5 +1,7 @@
 package com.deiapp.appzetar.usuario.extras
 
+import com.deiapp.appzetar.usuario.pedidos.ActivityPedidosUsuario
+import com.deiapp.appzetar.usuario.perfilusuario.ActivityPerfilUsuario
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
@@ -24,8 +26,6 @@ import com.deiapp.appzetar.usuario.carrito.PedidoItem
 import com.deiapp.appzetar.usuario.carrito.PedidoManager
 import com.deiapp.appzetar.usuario.carrito.TipoPedido
 import com.deiapp.appzetar.usuario.navegacionUsuario.NavegacionUsuario
-import com.deiapp.appzetar.usuario.pedidos.ActivityPedidosUsuario
-import com.deiapp.appzetar.usuario.perfilusuario.ActivityPerfilUsuario
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityExtras : AppCompatActivity() {

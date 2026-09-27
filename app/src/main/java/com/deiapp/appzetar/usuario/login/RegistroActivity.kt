@@ -2,9 +2,14 @@ package com.deiapp.appzetar.usuario.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import com.deiapp.appzeta.R
 import com.deiapp.appzetar.usuario.ActivityMenuUsuario
 import com.google.android.material.textfield.TextInputEditText
@@ -29,9 +34,18 @@ class RegistroActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        enableEdgeToEdge()
+
+        WindowCompat.setDecorFitsSystemWindows(
+            window,
+            false
+        )
+
         setContentView(
             R.layout.activity_registro
         )
+
+        configurarInsets()
 
 
         auth =
@@ -57,6 +71,50 @@ class RegistroActivity : AppCompatActivity() {
         btnRegistrarse.setOnClickListener {
 
             registrarUsuario()
+        }
+    }
+
+
+    // =========================================================
+    // INSETS
+    // =========================================================
+
+    private fun configurarInsets() {
+
+        val root =
+            findViewById<View>(
+                R.id.main
+            )
+
+        val paddingInicialIzquierdo =
+            root.paddingLeft
+
+        val paddingInicialSuperior =
+            root.paddingTop
+
+        val paddingInicialDerecho =
+            root.paddingRight
+
+        val paddingInicialInferior =
+            root.paddingBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+            root
+        ) { view, insets ->
+
+            val systemBars =
+                insets.getInsets(
+                    WindowInsetsCompat.Type.systemBars()
+                )
+
+            view.setPadding(
+                paddingInicialIzquierdo + systemBars.left,
+                paddingInicialSuperior + systemBars.top,
+                paddingInicialDerecho + systemBars.right,
+                paddingInicialInferior + systemBars.bottom
+            )
+
+            insets
         }
     }
 
@@ -99,7 +157,7 @@ class RegistroActivity : AppCompatActivity() {
         if (nombre.isEmpty()) {
 
             etNombre.error =
-                "Ingresa tu nombre"
+                getString(R.string.registro_error_ingresa_nombre)
 
             return
         }
@@ -108,7 +166,7 @@ class RegistroActivity : AppCompatActivity() {
         if (correo.isEmpty()) {
 
             etCorreo.error =
-                "Ingresa tu correo"
+                getString(R.string.registro_error_ingresa_correo)
 
             return
         }
@@ -117,7 +175,7 @@ class RegistroActivity : AppCompatActivity() {
         if (contrasena.isEmpty()) {
 
             etContrasena.error =
-                "Ingresa una contraseña"
+                getString(R.string.registro_error_ingresa_contrasena)
 
             return
         }
@@ -126,7 +184,7 @@ class RegistroActivity : AppCompatActivity() {
         if (contrasena.length < 6) {
 
             etContrasena.error =
-                "Mínimo 6 caracteres"
+                getString(R.string.registro_error_minimo_caracteres)
 
             return
         }
@@ -135,7 +193,7 @@ class RegistroActivity : AppCompatActivity() {
         if (confirmar.isEmpty()) {
 
             etConfirmarContrasena.error =
-                "Confirma tu contraseña"
+                getString(R.string.registro_error_confirma_contrasena)
 
             return
         }
@@ -144,7 +202,7 @@ class RegistroActivity : AppCompatActivity() {
         if (contrasena != confirmar) {
 
             etConfirmarContrasena.error =
-                "Las contraseñas no coinciden"
+                getString(R.string.registro_error_contrasenas_no_coinciden)
 
             return
         }
@@ -207,7 +265,7 @@ class RegistroActivity : AppCompatActivity() {
 
                         Toast.makeText(
                             this,
-                            "Cuenta creada correctamente",
+                            getString(R.string.registro_cuenta_creada_exito),
                             Toast.LENGTH_SHORT
                         ).show()
 
@@ -235,7 +293,7 @@ class RegistroActivity : AppCompatActivity() {
 
                         Toast.makeText(
                             this,
-                            "Cuenta creada, pero hubo un error guardando los datos",
+                            getString(R.string.registro_error_guardar_datos),
                             Toast.LENGTH_LONG
                         ).show()
                     }
@@ -249,7 +307,7 @@ class RegistroActivity : AppCompatActivity() {
                 Toast.makeText(
                     this,
                     error.message
-                        ?: "No se pudo crear la cuenta",
+                        ?: getString(R.string.registro_error_crear_cuenta),
                     Toast.LENGTH_LONG
                 ).show()
             }

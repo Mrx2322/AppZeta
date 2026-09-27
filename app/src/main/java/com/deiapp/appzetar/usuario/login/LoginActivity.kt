@@ -2,12 +2,17 @@ package com.deiapp.appzetar.usuario.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
 import androidx.credentials.CredentialManagerCallback
@@ -61,9 +66,18 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        enableEdgeToEdge()
+
+        WindowCompat.setDecorFitsSystemWindows(
+            window,
+            false
+        )
+
         setContentView(
             R.layout.activity_login
         )
+
+        configurarInsets()
 
         auth =
             FirebaseAuth.getInstance()
@@ -73,6 +87,49 @@ class LoginActivity : AppCompatActivity() {
 
         inicializarVistas()
         configurarEventos()
+    }
+
+    // =========================================================
+    // INSETS
+    // =========================================================
+
+    private fun configurarInsets() {
+
+        val root =
+            findViewById<View>(
+                R.id.main
+            )
+
+        val paddingInicialIzquierdo =
+            root.paddingLeft
+
+        val paddingInicialSuperior =
+            root.paddingTop
+
+        val paddingInicialDerecho =
+            root.paddingRight
+
+        val paddingInicialInferior =
+            root.paddingBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+            root
+        ) { view, insets ->
+
+            val systemBars =
+                insets.getInsets(
+                    WindowInsetsCompat.Type.systemBars()
+                )
+
+            view.setPadding(
+                paddingInicialIzquierdo + systemBars.left,
+                paddingInicialSuperior + systemBars.top,
+                paddingInicialDerecho + systemBars.right,
+                paddingInicialInferior + systemBars.bottom
+            )
+
+            insets
+        }
     }
 
     // =========================================================

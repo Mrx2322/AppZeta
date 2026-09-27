@@ -1,5 +1,6 @@
 package com.deiapp.appzetar.usuario.pedidos
 
+import com.deiapp.appzetar.usuario.perfilusuario.ActivityPerfilUsuario
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
@@ -25,7 +26,6 @@ import com.deiapp.appzetar.usuario.carrito.ActivityPedido
 import com.deiapp.appzetar.usuario.carrito.PedidoManager
 import com.deiapp.appzetar.usuario.extras.ActivityExtras
 import com.deiapp.appzetar.usuario.navegacionUsuario.NavegacionUsuario
-import com.deiapp.appzetar.usuario.perfilusuario.ActivityPerfilUsuario
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -450,7 +450,7 @@ class ActivityPedidosUsuario : AppCompatActivity() {
 
             Toast.makeText(
                 this,
-                "Debes iniciar sesión para ver tus pedidos",
+                getString(R.string.pedidos_error_sesion_requerida),
                 Toast.LENGTH_SHORT
             ).show()
 
@@ -490,7 +490,7 @@ class ActivityPedidosUsuario : AppCompatActivity() {
 
                         Toast.makeText(
                             this,
-                            "No se pudieron cargar los pedidos",
+                            getString(R.string.pedidos_error_cargar_pedidos),
                             Toast.LENGTH_SHORT
                         ).show()
 

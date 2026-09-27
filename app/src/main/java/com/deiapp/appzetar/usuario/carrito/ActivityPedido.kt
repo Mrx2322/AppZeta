@@ -1,5 +1,7 @@
 package com.deiapp.appzetar.usuario.carrito
 
+import com.deiapp.appzetar.usuario.pedidos.ActivityPedidosUsuario
+import com.deiapp.appzetar.usuario.perfilusuario.ActivityPerfilUsuario
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.StateListAnimator
@@ -21,8 +23,6 @@ import com.deiapp.appzeta.R
 import com.deiapp.appzetar.usuario.entregas.ActivityEntrega
 import com.deiapp.appzetar.usuario.extras.ActivityExtras
 import com.deiapp.appzetar.usuario.ActivityMenuUsuario
-import com.deiapp.appzetar.usuario.pedidos.ActivityPedidosUsuario
-import com.deiapp.appzetar.usuario.perfilusuario.ActivityPerfilUsuario
 import com.deiapp.appzetar.usuario.navegacionUsuario.NavegacionUsuario
 import com.google.android.material.button.MaterialButton
 

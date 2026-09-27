@@ -1,5 +1,6 @@
 package com.deiapp.appzetar.usuario.perfilusuario
 
+import com.deiapp.appzetar.usuario.login.LoginActivity
 import com.deiapp.appzetar.usuario.navegacionUsuario.NavegacionUsuario
 import com.deiapp.appzetar.usuario.extras.ActivityExtras
 import android.animation.AnimatorSet
@@ -26,7 +27,6 @@ import com.deiapp.appzeta.R
 import com.deiapp.appzetar.usuario.ActivityMenuUsuario
 import com.deiapp.appzetar.usuario.carrito.ActivityPedido
 import com.deiapp.appzetar.usuario.carrito.PedidoManager
-import com.deiapp.appzetar.usuario.login.LoginActivity
 import com.deiapp.appzetar.usuario.pedidos.ActivityPedidosUsuario
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -346,7 +346,7 @@ class ActivityPerfilUsuario : AppCompatActivity() {
                 if (documento.exists()) {
                     nombreActual =
                         documento.getString("nombre")
-                            ?: "Usuario"
+                            ?: getString(R.string.perfil_nombre_default)
 
                     correoActual =
                         documento.getString("correo")
@@ -355,7 +355,7 @@ class ActivityPerfilUsuario : AppCompatActivity() {
                 } else {
                     nombreActual =
                         usuario.displayName
-                            ?: "Usuario"
+                            ?: getString(R.string.perfil_nombre_default)
 
                     correoActual =
                         usuario.email
@@ -368,7 +368,7 @@ class ActivityPerfilUsuario : AppCompatActivity() {
             .addOnFailureListener {
                 nombreActual =
                     usuario.displayName
-                        ?: "Usuario"
+                        ?: getString(R.string.perfil_nombre_default)
 
                 correoActual =
                     usuario.email
@@ -379,7 +379,7 @@ class ActivityPerfilUsuario : AppCompatActivity() {
 
                 Toast.makeText(
                     this,
-                    "No se pudieron cargar todos los datos",
+                    getString(R.string.perfil_error_cargar_datos),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -394,7 +394,7 @@ class ActivityPerfilUsuario : AppCompatActivity() {
             .firstOrNull()
             ?.uppercaseChar()
             ?.toString()
-            ?: "U"
+            ?: getString(R.string.perfil_inicial_default)
 
         tvInicialPerfil.text = inicial
     }
@@ -439,7 +439,8 @@ class ActivityPerfilUsuario : AppCompatActivity() {
                 ?: ""
 
             if (nuevoNombre.isEmpty()) {
-                etNombreEditar.error = "Ingresa tu nombre"
+                etNombreEditar.error =
+                    getString(R.string.registro_error_ingresa_nombre)
                 return@setOnClickListener
             }
 
@@ -474,7 +475,7 @@ class ActivityPerfilUsuario : AppCompatActivity() {
 
                 Toast.makeText(
                     this,
-                    "Perfil actualizado",
+                    getString(R.string.perfil_actualizado_exito),
                     Toast.LENGTH_SHORT
                 ).show()
 
@@ -485,7 +486,7 @@ class ActivityPerfilUsuario : AppCompatActivity() {
 
                 Toast.makeText(
                     this,
-                    "No se pudo actualizar el perfil",
+                    getString(R.string.perfil_error_actualizar),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -493,16 +494,17 @@ class ActivityPerfilUsuario : AppCompatActivity() {
 
     private fun mostrarConfirmacionCerrarSesion() {
         AlertDialog.Builder(this)
-            .setTitle("Cerrar sesión")
-            .setMessage("¿Deseas cerrar tu sesión?")
-            .setNegativeButton("Cancelar", null)
-            .setPositiveButton("Cerrar sesión") { _, _ ->
+            .setTitle(R.string.perfil_dialogo_cerrar_sesion_titulo)
+            .setMessage(R.string.perfil_dialogo_cerrar_sesion_mensaje)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.perfil_cerrar_sesion) { _, _ ->
                 cerrarSesion()
             }
             .show()
     }
 
     private fun cerrarSesion() {
+        PedidoManager.limpiar()
         auth.signOut()
         regresarLogin()
     }

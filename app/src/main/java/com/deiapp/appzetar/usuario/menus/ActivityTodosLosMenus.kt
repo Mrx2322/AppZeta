@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.deiapp.appzeta.R
@@ -191,55 +192,24 @@ class ActivityTodosLosMenus : AppCompatActivity() {
     private fun actualizarMenus(
         nuevosMenus: List<TaskMenu>
     ) {
-        val listaAnterior =
-            listaMenu.toList()
+        val listaAnterior = listaMenu.toList()
+
+        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize(): Int = listaAnterior.size
+            override fun getNewListSize(): Int = nuevosMenus.size
+
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return listaAnterior[oldItemPosition].id == nuevosMenus[newItemPosition].id
+            }
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return listaAnterior[oldItemPosition] == nuevosMenus[newItemPosition]
+            }
+        })
 
         listaMenu.clear()
-        listaMenu.addAll(
-            nuevosMenus
-        )
-
-        if (
-            listaAnterior.isEmpty() &&
-            listaMenu.isNotEmpty()
-        ) {
-            menuAdapter.notifyItemRangeInserted(
-                0,
-                listaMenu.size
-            )
-
-        } else if (
-            listaAnterior.isNotEmpty() &&
-            listaMenu.isEmpty()
-        ) {
-            menuAdapter.notifyItemRangeRemoved(
-                0,
-                listaAnterior.size
-            )
-
-        } else {
-            menuAdapter.notifyItemRangeChanged(
-                0,
-                minOf(
-                    listaAnterior.size,
-                    listaMenu.size
-                )
-            )
-
-            if (listaMenu.size > listaAnterior.size) {
-                menuAdapter.notifyItemRangeInserted(
-                    listaAnterior.size,
-                    listaMenu.size - listaAnterior.size
-                )
-            }
-
-            if (listaAnterior.size > listaMenu.size) {
-                menuAdapter.notifyItemRangeRemoved(
-                    listaMenu.size,
-                    listaAnterior.size - listaMenu.size
-                )
-            }
-        }
+        listaMenu.addAll(nuevosMenus)
+        diffResult.dispatchUpdatesTo(menuAdapter)
 
         mostrarEstadoVacio()
     }

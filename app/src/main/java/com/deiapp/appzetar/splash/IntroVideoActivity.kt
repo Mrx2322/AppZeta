@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.deiapp.appzeta.R
 import com.deiapp.appzetar.MainActivity
+import com.google.firebase.auth.FirebaseAuth
 import kotlin.math.max
 
 class IntroVideoActivity : AppCompatActivity(),
@@ -129,7 +130,17 @@ class IntroVideoActivity : AppCompatActivity(),
         if (navegando) return
         navegando = true
 
-        startActivity(Intent(this, MainActivity::class.java))
+        val usuarioActual = FirebaseAuth.getInstance().currentUser
+
+        val intent = if (usuarioActual != null) {
+            Intent(this, SplashActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+        } else {
+            Intent(this, MainActivity::class.java)
+        }
+
+        startActivity(intent)
         finish()
     }
 

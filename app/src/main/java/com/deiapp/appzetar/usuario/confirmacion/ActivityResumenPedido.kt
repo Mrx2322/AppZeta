@@ -270,6 +270,8 @@ class ActivityResumenPedido : AppCompatActivity() {
             return
         }
 
+        btnConfirmarPedido.isEnabled = false
+
         val intent = Intent(
             this,
             ActivityConfirmarPedido::class.java
@@ -286,6 +288,13 @@ class ActivityResumenPedido : AppCompatActivity() {
         }
 
         startActivity(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (::btnConfirmarPedido.isInitialized) {
+            btnConfirmarPedido.isEnabled = true
+        }
     }
 
     companion object {

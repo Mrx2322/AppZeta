@@ -7,9 +7,13 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import com.deiapp.appzeta.R
 import com.deiapp.appzetar.usuario.pedidos.ActivityConfirmarPedido
 import com.google.android.gms.location.LocationServices
@@ -56,7 +60,27 @@ class ActivityDireccion : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        enableEdgeToEdge()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContentView(R.layout.activity_direccion)
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+            findViewById(R.id.main)
+        ) { view, insets ->
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+            )
+
+            view.setPadding(
+                systemBars.left,
+                systemBars.top,
+                systemBars.right,
+                systemBars.bottom
+            )
+
+            insets
+        }
 
         inicializarVistas()
         configurarEventos()
@@ -300,6 +324,7 @@ class ActivityDireccion : AppCompatActivity() {
         referencia: String,
         telefono: String
     ) {
+        btnContinuar.isEnabled = false
 
         val intentConfirmacion =
             Intent(
@@ -355,6 +380,13 @@ class ActivityDireccion : AppCompatActivity() {
             }
 
         startActivity(intentConfirmacion)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (::btnContinuar.isInitialized) {
+            btnContinuar.isEnabled = true
+        }
     }
 
     companion object {

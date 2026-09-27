@@ -103,7 +103,7 @@ class ActivityDatosPedido : AppCompatActivity() {
             if (nombre.isEmpty()) {
 
                 etNombre.error =
-                    "Ingresa tu nombre"
+                    getString(R.string.error_nombre_invitado)
 
                 etNombre.requestFocus()
 
@@ -113,7 +113,7 @@ class ActivityDatosPedido : AppCompatActivity() {
             if (telefono.isEmpty()) {
 
                 etTelefono.error =
-                    "Ingresa tu teléfono"
+                    getString(R.string.error_telefono_vacio)
 
                 etTelefono.requestFocus()
 
@@ -123,7 +123,7 @@ class ActivityDatosPedido : AppCompatActivity() {
             if (direccion.isEmpty()) {
 
                 etDireccion.error =
-                    "Ingresa tu dirección"
+                    getString(R.string.error_direccion_vacia)
 
                 etDireccion.requestFocus()
 
@@ -133,6 +133,8 @@ class ActivityDatosPedido : AppCompatActivity() {
             // ---------------------------------------------
             // IR AL RESUMEN DEL PEDIDO
             // ---------------------------------------------
+
+            btnConfirmar.isEnabled = false
 
             val intent =
                 Intent(
@@ -161,6 +163,13 @@ class ActivityDatosPedido : AppCompatActivity() {
             )
 
             startActivity(intent)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (::btnConfirmar.isInitialized) {
+            btnConfirmar.isEnabled = true
         }
     }
 }
