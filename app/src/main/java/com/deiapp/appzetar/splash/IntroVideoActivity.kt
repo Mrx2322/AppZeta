@@ -127,18 +127,41 @@ class IntroVideoActivity : AppCompatActivity(),
     }
 
     private fun abrirMainActivity() {
+
         if (navegando) return
         navegando = true
 
-        val usuarioActual = FirebaseAuth.getInstance().currentUser
+        val usuarioActual =
+            FirebaseAuth.getInstance().currentUser
 
-        val intent = if (usuarioActual != null) {
-            Intent(this, SplashActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        val intent =
+            if (
+                usuarioActual != null &&
+                !usuarioActual.isAnonymous
+            ) {
+
+                Intent(
+                    this,
+                    SplashActivity::class.java
+                ).apply {
+
+                    flags =
+                        Intent.FLAG_ACTIVITY_NEW_TASK or
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+
+            } else {
+
+                Intent(
+                    this,
+                    MainActivity::class.java
+                ).apply {
+
+                    flags =
+                        Intent.FLAG_ACTIVITY_NEW_TASK or
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
             }
-        } else {
-            Intent(this, MainActivity::class.java)
-        }
 
         startActivity(intent)
         finish()

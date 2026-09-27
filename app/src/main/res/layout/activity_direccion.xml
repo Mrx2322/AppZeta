@@ -135,7 +135,12 @@
 
                         android:hint="@string/direccion_entrega_hint_direccion"
 
+                        app:boxBackgroundColor="#FFFFFF"
+
                         app:boxBackgroundMode="outline"
+
+                        app:boxStrokeColor="#E87520"
+                        app:hintTextColor="#E87520"
 
                         app:boxCornerRadiusBottomEnd="12dp"
                         app:boxCornerRadiusBottomStart="12dp"
@@ -150,7 +155,11 @@
 
                             android:inputType="textPostalAddress|textCapSentences"
 
-                            android:maxLines="2" />
+                            android:maxLines="2"
+
+                            android:textColor="#202020"
+                            android:textColorHint="#8A8A8A"
+                            android:textSize="16sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 

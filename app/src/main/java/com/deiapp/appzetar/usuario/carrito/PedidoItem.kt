@@ -1,7 +1,7 @@
 package com.deiapp.appzetar.usuario.carrito
 
 /**
- * Entrada que queda asociada a una unidad del menú.
+ * Entrada asociada a una unidad del menú.
  */
 data class EntradaPedido(
     val id: Int,
@@ -13,21 +13,32 @@ data class EntradaPedido(
 data class PedidoItem(
     val id: Int,
     val nombre: String,
+
     // Precio final por unidad que verá y pagará el cliente.
     val precio: Double,
+
     var cantidad: Int = 1,
+
     val tipo: TipoPedido = TipoPedido.MENU,
-    // Solo se usa para los productos de tipo MENU.
+
+    // Solo se utiliza para productos de tipo MENU.
     val precioBaseMenu: Double? = null,
+
     val entradas: List<EntradaPedido> = emptyList()
 ) {
-    fun subtotal(): Double = precio * cantidad
 
-    fun cantidadEntradas(): Int = entradas.sumOf { entrada ->
-        entrada.cantidad
-    }
+    fun subtotal(): Double =
+        precio * cantidad
+
+
+    fun cantidadEntradas(): Int =
+        entradas.sumOf { entrada ->
+            entrada.cantidad
+        }
+
 
     fun descripcionEntradas(): String {
+
         if (tipo != TipoPedido.MENU) {
             return ""
         }
@@ -36,14 +47,21 @@ data class PedidoItem(
             return "Sin entrada"
         }
 
-        return entradas.joinToString(separator = ", ") { entrada ->
+        return entradas.joinToString(
+            separator = ", "
+        ) { entrada ->
+
             if (entrada.cantidad > 1) {
+
                 "${entrada.cantidad} x ${entrada.nombre}"
+
             } else {
+
                 entrada.nombre
             }
         }
     }
+
 
     /**
      * Permite agrupar cantidades únicamente cuando el producto
@@ -52,6 +70,7 @@ data class PedidoItem(
     fun tieneMismaConfiguracionQue(
         otro: PedidoItem
     ): Boolean {
+
         if (
             id != otro.id ||
             tipo != otro.tipo ||
@@ -64,21 +83,30 @@ data class PedidoItem(
             return true
         }
 
-        return firmaEntradas() == otro.firmaEntradas()
+        return firmaEntradas() ==
+                otro.firmaEntradas()
     }
 
-    private fun firmaEntradas(): List<Triple<Int, Int, Double>> {
+
+    private fun firmaEntradas():
+            List<Triple<Int, Int, Double>> {
+
         return entradas
             .groupBy { entrada ->
                 entrada.id
             }
             .map { (entradaId, coincidencias) ->
+
                 Triple(
                     entradaId,
+
                     coincidencias.sumOf { entrada ->
                         entrada.cantidad
                     },
-                    coincidencias.first().precioUnitario
+
+                    coincidencias
+                        .first()
+                        .precioUnitario
                 )
             }
             .sortedBy { firma ->
@@ -87,31 +115,71 @@ data class PedidoItem(
     }
 }
 
+
 enum class TipoPedido {
     MENU,
     ENTRADA,
     EXTRA
 }
 
+
 /**
- * El precio guardado para un menú representa el precio comercial
- * con una entrada. La interfaz solo muestra precios finales.
+ * Reglas comerciales del menú.
+ *
+ * Sin entrada:
+ * precio del menú con entrada - S/1.
+ *
+ * Con una entrada:
+ * se mantiene el precio normal del menú.
+ *
+ * Cada entrada adicional:
+ * + S/5.
  */
 object ReglasPrecioPedido {
-    const val PRECIO_ENTRADA = 2.0
-    const val DESCUENTO_SIN_ENTRADA = 1.0
+
+    /**
+     * Valor interno de la entrada incluida.
+     * Se mantiene en S/2 para no alterar la estructura
+     * existente de los pedidos.
+     */
+    const val PRECIO_ENTRADA =
+        2.0
+
+    /**
+     * Precio cobrado al cliente por cada entrada adicional.
+     */
+    const val PRECIO_ENTRADA_ADICIONAL =
+        5.0
+
+    /**
+     * Descuento cuando el cliente pide el menú sin entrada.
+     */
+    const val DESCUENTO_SIN_ENTRADA =
+        1.0
+
 
     fun calcularPrecioMenu(
         precioMenuConEntrada: Double,
         cantidadEntradas: Int
     ): Double {
+
         return if (cantidadEntradas <= 0) {
-            (precioMenuConEntrada - DESCUENTO_SIN_ENTRADA)
-                .coerceAtLeast(0.0)
-        } else {
-            precioMenuConEntrada + (
-                    PRECIO_ENTRADA * (cantidadEntradas - 1)
+
+            (
+                    precioMenuConEntrada -
+                            DESCUENTO_SIN_ENTRADA
                     )
+                .coerceAtLeast(
+                    0.0
+                )
+
+        } else {
+
+            precioMenuConEntrada +
+                    (
+                            PRECIO_ENTRADA_ADICIONAL *
+                                    (cantidadEntradas - 1)
+                            )
         }
     }
 }

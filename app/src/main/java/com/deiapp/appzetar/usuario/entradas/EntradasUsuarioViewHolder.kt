@@ -2,6 +2,7 @@ package com.deiapp.appzetar.usuario.entradas
 
 import android.content.res.ColorStateList
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -26,17 +27,43 @@ class EntradasUsuarioViewHolder(
     private val btnAgregarEntrada: MaterialButton =
         view.findViewById(R.id.btnAgregarEntrada)
 
+    private val layoutCantidadEntrada: LinearLayout =
+        view.findViewById(R.id.layoutCantidadEntrada)
+
+    private val btnRestarEntrada: MaterialButton =
+        view.findViewById(R.id.btnRestarEntrada)
+
+    private val tvCantidadEntrada: TextView =
+        view.findViewById(R.id.tvCantidadEntrada)
+
+    private val btnSumarEntrada: MaterialButton =
+        view.findViewById(R.id.btnSumarEntrada)
+
+
     fun render(
         taskEntradas: TaskEntradas,
         cantidadSeleccionada: Int,
         maximoSeleccionable: Int,
-        onAlternarClick: () -> Unit
+        onSumarClick: () -> Unit,
+        onRestarClick: () -> Unit
     ) {
-        tvEntradasName.text = taskEntradas.nombre
 
-        val seleccionada = cantidadSeleccionada > 0
+        tvEntradasName.text =
+            taskEntradas.nombre
 
-        mostrarEstadoSeleccion(seleccionada)
+
+        // =========================================================
+        // ESTADO DE SELECCIÓN
+        // =========================================================
+
+        mostrarEstadoSeleccion(
+            cantidadSeleccionada
+        )
+
+
+        // =========================================================
+        // STOCK
+        // =========================================================
 
         val agotada =
             !taskEntradas.disponible ||
@@ -47,51 +74,126 @@ class EntradasUsuarioViewHolder(
             agotada = agotada
         )
 
-        val puedeInteractuar =
-            seleccionada ||
-                    (!agotada && maximoSeleccionable > 0)
 
-        btnAgregarEntrada.isEnabled = puedeInteractuar
+        // =========================================================
+        // CONTROL PARA SUMAR
+        // =========================================================
+
+        val puedeSumar =
+            !agotada &&
+                    cantidadSeleccionada < maximoSeleccionable
+
+        btnAgregarEntrada.isEnabled =
+            puedeSumar
 
         btnAgregarEntrada.alpha =
-            if (puedeInteractuar) 1f else 0.45f
+            if (puedeSumar) {
+                1f
+            } else {
+                0.45f
+            }
+
+        btnSumarEntrada.isEnabled =
+            puedeSumar
+
+        btnSumarEntrada.alpha =
+            if (puedeSumar) {
+                1f
+            } else {
+                0.45f
+            }
+
+
+        // =========================================================
+        // CONTROL PARA RESTAR
+        // =========================================================
+
+        val puedeRestar =
+            cantidadSeleccionada > 0
+
+        btnRestarEntrada.isEnabled =
+            puedeRestar
+
+        btnRestarEntrada.alpha =
+            if (puedeRestar) {
+                1f
+            } else {
+                0.45f
+            }
+
+
+        // =========================================================
+        // CLICS
+        // =========================================================
 
         btnAgregarEntrada.setOnClickListener {
-            onAlternarClick()
+
+            if (puedeSumar) {
+                onSumarClick()
+            }
+        }
+
+        btnSumarEntrada.setOnClickListener {
+
+            if (puedeSumar) {
+                onSumarClick()
+            }
+        }
+
+        btnRestarEntrada.setOnClickListener {
+
+            if (puedeRestar) {
+                onRestarClick()
+            }
         }
 
         itemView.setOnClickListener(null)
     }
 
+
+    // =============================================================
+    // ESTADO DEL STOCK
+    // =============================================================
+
     private fun mostrarEstadoStock(
         taskEntradas: TaskEntradas,
         agotada: Boolean
     ) {
+
         when {
 
             agotada -> {
+
                 tvStockEntrada.text =
                     itemView.context.getString(
                         R.string.entrada_estado_agotado
                     )
 
                 tvStockEntrada.setTextColor(
-                    color(R.color.entrada_stock_agotado)
+                    color(
+                        R.color.entrada_stock_agotado
+                    )
                 )
             }
 
+
             taskEntradas.stock == 1 -> {
+
                 tvStockEntrada.text =
                     itemView.context.getString(
                         R.string.entrada_ultima_unidad
                     )
 
                 tvStockEntrada.setTextColor(
-                    color(R.color.entrada_stock_bajo)
+                    color(
+                        R.color.entrada_stock_bajo
+                    )
                 )
             }
 
+
             taskEntradas.stock in 2..3 -> {
+
                 tvStockEntrada.text =
                     itemView.context.getString(
                         R.string.entrada_ultimas_unidades,
@@ -99,27 +201,53 @@ class EntradasUsuarioViewHolder(
                     )
 
                 tvStockEntrada.setTextColor(
-                    color(R.color.entrada_stock_bajo)
+                    color(
+                        R.color.entrada_stock_bajo
+                    )
                 )
             }
 
+
             else -> {
+
                 tvStockEntrada.text =
                     itemView.context.getString(
                         R.string.entrada_estado_disponible
                     )
 
                 tvStockEntrada.setTextColor(
-                    color(R.color.entrada_stock_disponible)
+                    color(
+                        R.color.entrada_stock_disponible
+                    )
                 )
             }
         }
     }
 
+
+    // =============================================================
+    // ESTADO VISUAL DE LA SELECCIÓN
+    // =============================================================
+
     private fun mostrarEstadoSeleccion(
-        seleccionada: Boolean
+        cantidadSeleccionada: Int
     ) {
+
+        val seleccionada =
+            cantidadSeleccionada > 0
+
         if (seleccionada) {
+
+            // Oculta completamente "Agregar"
+            btnAgregarEntrada.visibility =
+                View.GONE
+
+            // Muestra solamente - 1 +
+            layoutCantidadEntrada.visibility =
+                View.VISIBLE
+
+            tvCantidadEntrada.text =
+                cantidadSeleccionada.toString()
 
             cardEntrada.setCardBackgroundColor(
                 color(R.color.entrada_card_seleccionada)
@@ -131,21 +259,15 @@ class EntradasUsuarioViewHolder(
             cardEntrada.strokeWidth =
                 dpToPx(2)
 
-            btnAgregarEntrada.text =
-                itemView.context.getString(
-                    R.string.entrada_quitar
-                )
-
-            btnAgregarEntrada.setTextColor(
-                color(R.color.entrada_boton_texto_seleccionado)
-            )
-
-            btnAgregarEntrada.backgroundTintList =
-                ColorStateList.valueOf(
-                    color(R.color.entrada_boton_fondo_seleccionado)
-                )
-
         } else {
+
+            // Muestra solamente "Agregar"
+            btnAgregarEntrada.visibility =
+                View.VISIBLE
+
+            // Oculta completamente - 1 +
+            layoutCantidadEntrada.visibility =
+                View.GONE
 
             cardEntrada.setCardBackgroundColor(
                 color(R.color.entrada_card_normal)
@@ -173,18 +295,30 @@ class EntradasUsuarioViewHolder(
         }
     }
 
+
+    // =============================================================
+    // COLOR
+    // =============================================================
+
     private fun color(
         colorRes: Int
     ): Int {
+
         return ContextCompat.getColor(
             itemView.context,
             colorRes
         )
     }
 
+
+    // =============================================================
+    // DP → PX
+    // =============================================================
+
     private fun dpToPx(
         dp: Int
     ): Int {
+
         return (
                 dp *
                         itemView.resources

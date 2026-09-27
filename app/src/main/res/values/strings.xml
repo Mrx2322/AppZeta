@@ -37,6 +37,12 @@
     <string name="Nombre_del_extra">Nombre del extra</string>
     <string name="precios_static">S/ 0.00</string>
     <string name="Description_extra">Eliminar extra</string>
+
+
+    <string name="entrada_restar_simbolo">−</string>
+    <string name="entrada_sumar_simbolo">+</string>
+    <string name="entrada_restar_descripcion">Quitar una entrada</string>
+    <string name="entrada_sumar_descripcion">Agregar otra entrada</string>
     <!--pedidosAdapter-->
     <string name="pedido_numero_formato">Pedido #%1$s</string>
     <string name="pedido_estado_en_camino">En camino</string>

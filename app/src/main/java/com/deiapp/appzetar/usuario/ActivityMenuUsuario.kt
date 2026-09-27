@@ -470,52 +470,173 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
     }
 
-    private fun solicitarNombreInvitado(claveNombre: String) {
-        val vistaDialogo = layoutInflater.inflate(
-            R.layout.dialog_nombre_invitado,
-            null
-        )
-        val campoNombre = vistaDialogo.findViewById<AppCompatEditText>(
-            R.id.etNombreInvitado
-        )
+    private fun solicitarNombreInvitado(
+        claveNombre: String
+    ) {
 
-        val dialogo = AlertDialog.Builder(this)
-            .setTitle(R.string.titulo_nombre_invitado)
-            .setMessage(R.string.mensaje_nombre_invitado)
-            .setView(vistaDialogo)
-            .setCancelable(false)
-            .setPositiveButton(R.string.continuar_nombre_invitado, null)
-            .create()
+        val vistaDialogo =
+            layoutInflater.inflate(
+                R.layout.dialog_nombre_invitado,
+                null
+            )
 
-        dialogo.setOnShowListener {
-            dialogo.getButton(AlertDialog.BUTTON_POSITIVE)
-                .setOnClickListener {
-                    val nombre = campoNombre.text
-                        ?.toString()
-                        ?.trim()
-                        .orEmpty()
+        val campoNombre =
+            vistaDialogo.findViewById<AppCompatEditText>(
+                R.id.etNombreInvitado
+            )
 
-                    if (nombre.isBlank()) {
-                        campoNombre.error = getString(
-                            R.string.error_nombre_invitado
-                        )
-                        return@setOnClickListener
-                    }
+        val btnContinuar =
+            vistaDialogo.findViewById<Button>(
+                R.id.btnContinuarInvitado
+            )
 
-                    getSharedPreferences(
-                        PREFERENCIAS_INVITADO,
-                        MODE_PRIVATE
-                    ).edit {
-                        putString(claveNombre, nombre)
-                    }
+        val dialogo =
+            AlertDialog.Builder(this)
+                .setView(vistaDialogo)
+                .setCancelable(false)
+                .create()
 
-                    guardarNombreInvitadoEnFirebase(nombre)
-                    mostrarSaludo(nombre)
+
+        // =========================================================
+        // ESTADO INICIAL DE LA ANIMACIÓN
+        // =========================================================
+
+        vistaDialogo.alpha = 0f
+
+        vistaDialogo.scaleX = 0.92f
+        vistaDialogo.scaleY = 0.92f
+
+        vistaDialogo.translationY = 35f
+
+
+        // =========================================================
+        // BOTÓN CONTINUAR
+        // =========================================================
+
+        btnContinuar.setOnClickListener {
+
+            val nombre =
+                campoNombre.text
+                    ?.toString()
+                    ?.trim()
+                    .orEmpty()
+
+            if (nombre.isBlank()) {
+
+                campoNombre.error =
+                    getString(
+                        R.string.error_nombre_invitado
+                    )
+
+                campoNombre.requestFocus()
+
+                return@setOnClickListener
+            }
+
+
+            // Evita doble toque
+            btnContinuar.isEnabled = false
+
+
+            // =====================================================
+            // GUARDAR NOMBRE
+            // =====================================================
+
+            getSharedPreferences(
+                PREFERENCIAS_INVITADO,
+                MODE_PRIVATE
+            ).edit {
+
+                putString(
+                    claveNombre,
+                    nombre
+                )
+            }
+
+
+            guardarNombreInvitadoEnFirebase(
+                nombre
+            )
+
+            mostrarSaludo(
+                nombre
+            )
+
+
+            // =====================================================
+            // ANIMACIÓN DE SALIDA
+            // =====================================================
+
+            vistaDialogo.animate()
+                .alpha(0f)
+                .scaleX(0.96f)
+                .scaleY(0.96f)
+                .translationY(18f)
+                .setDuration(180)
+                .setInterpolator(
+                    DecelerateInterpolator()
+                )
+                .withEndAction {
+
                     dialogo.dismiss()
                 }
+                .start()
         }
 
+
+        // =========================================================
+        // MOSTRAR DIÁLOGO
+        // =========================================================
+
         dialogo.show()
+
+
+        // =========================================================
+        // FONDO TRANSPARENTE
+        // =========================================================
+
+        dialogo.window?.setBackgroundDrawable(
+            Color.TRANSPARENT.toDrawable()
+        )
+
+
+        // =========================================================
+        // ANCHO DEL DIÁLOGO
+        // =========================================================
+
+        dialogo.window?.setLayout(
+            (
+                    resources.displayMetrics.widthPixels
+                            * 0.90f
+                    ).toInt(),
+
+            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+
+        // =========================================================
+        // ANIMACIÓN DE ENTRADA
+        // =========================================================
+
+        vistaDialogo.post {
+
+            vistaDialogo.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .translationY(0f)
+                .setDuration(320)
+                .setInterpolator(
+                    DecelerateInterpolator()
+                )
+                .start()
+        }
+
+
+        // =========================================================
+        // FOCO
+        // =========================================================
+
         campoNombre.requestFocus()
     }
 
@@ -1054,7 +1175,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
         tvPrecioEntradaAdicional.text =
             getString(
                 R.string.precio_entrada_adicional,
-                ReglasPrecioPedido.PRECIO_ENTRADA
+                ReglasPrecioPedido.PRECIO_ENTRADA_ADICIONAL
             )
 
         tvEntradasSeleccionadas.text =
