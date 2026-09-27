@@ -80,6 +80,19 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     private var telefono =
         ""
 
+    // =========================================================
+    // UBICACIÓN GPS OPCIONAL
+    // =========================================================
+
+    private var latitud: Double? =
+        null
+
+    private var longitud: Double? =
+        null
+
+    private var ubicacionMaps =
+        ""
+
     private var observacion =
         ""
 
@@ -221,6 +234,34 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     TIPO_ENTREGA_DELIVERY
                 }
 
+        // =========================================================
+        // RECIBIR UBICACIÓN GPS OPCIONAL
+        // =========================================================
+
+        latitud =
+            if (intent.hasExtra(EXTRA_LATITUD)) {
+                intent.getDoubleExtra(
+                    EXTRA_LATITUD,
+                    0.0
+                )
+            } else {
+                null
+            }
+
+        longitud =
+            if (intent.hasExtra(EXTRA_LONGITUD)) {
+                intent.getDoubleExtra(
+                    EXTRA_LONGITUD,
+                    0.0
+                )
+            } else {
+                null
+            }
+
+        ubicacionMaps =
+            intent.getStringExtra(EXTRA_UBICACION_MAPS)
+                ?.trim()
+                .orEmpty()
     }
 
     // =========================================================
@@ -390,9 +431,8 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
     private fun configurarEntrega() {
 
-        radioGroupEntrega.setOnCheckedChangeListener {
-                _,
-                checkedId ->
+        radioGroupEntrega.setOnCheckedChangeListener { _,
+                                                       checkedId ->
 
             when (checkedId) {
 
@@ -840,6 +880,34 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                             FieldValue.serverTimestamp()
                 )
 
+            // =========================================================
+            // UBICACIÓN GPS OPCIONAL
+            // Solo se guarda cuando es Delivery y el cliente la compartió.
+            // =========================================================
+
+            val latitudPedido =
+                latitud
+
+            val longitudPedido =
+                longitud
+
+            if (
+                tipoEntrega == TIPO_ENTREGA_DELIVERY &&
+                latitudPedido != null &&
+                longitudPedido != null &&
+                ubicacionMaps.isNotBlank()
+            ) {
+
+                datosPedido["latitud"] =
+                    latitudPedido
+
+                datosPedido["longitud"] =
+                    longitudPedido
+
+                datosPedido["ubicacionMaps"] =
+                    ubicacionMaps
+            }
+
             transaction.set(
                 referenciaPedido,
                 datosPedido
@@ -956,6 +1024,14 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         const val EXTRA_OBSERVACION = "observacion"
         const val EXTRA_REFERENCIA = "referencia"
         const val EXTRA_TIPO_ENTREGA = "tipoEntrega"
+
+        // =========================================================
+        // UBICACIÓN GPS
+        // =========================================================
+
+        const val EXTRA_LATITUD = "latitud"
+        const val EXTRA_LONGITUD = "longitud"
+        const val EXTRA_UBICACION_MAPS = "ubicacionMaps"
 
         const val TIPO_ENTREGA_DELIVERY = "Delivery"
         const val TIPO_ENTREGA_RECOJO = "Recojo en tienda"

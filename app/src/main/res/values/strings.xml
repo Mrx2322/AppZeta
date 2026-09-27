@@ -21,6 +21,17 @@
     <string name="texto_eliminar">Eliminar</string>
     <string name="txt_plato">PLATO</string>
 
+    <!--Ubicacion en tiempo actual-->
+    <string name="usar_ubicacion_actual">Usar mi ubicación actual</string>
+    <string name="actualizar_ubicacion">Actualizar ubicación</string>
+    <string name="ubicacion_opcional_descripcion">Opcional. Tu ubicación solo se utilizará para facilitar la entrega de este pedido.</string>
+    <string name="ubicacion_obteniendo">Obteniendo tu ubicación…</string>
+    <string name="ubicacion_agregada">✓ Ubicación agregada correctamente al pedido</string>
+    <string name="ubicacion_permiso_denegado">No compartiste tu ubicación. Puedes continuar ingresando tu dirección manualmente.</string>
+    <string name="ubicacion_opcional">Compartir tu ubicación es opcional.</string>
+    <string name="ubicacion_no_disponible">No se pudo obtener tu ubicación.</string>
+    <string name="ubicacion_activa_gps">Activa la ubicación de tu teléfono e inténtalo nuevamente.</string>
+
     <!--Card de Extras-->
     <string name="Editar_extra">Editar Extra</string>
     <string name="Nombre_del_extra">Nombre del extra</string>
