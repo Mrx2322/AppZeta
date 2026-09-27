@@ -1557,7 +1557,22 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
         actualizarContadorCarrito()
+
+        if (::entradasAdapter.isInitialized && entradas.isNotEmpty()) {
+            entradasAdapter.notifyItemRangeChanged(
+                0,
+                entradas.size
+            )
+        }
+
+        if (::menuAdapter.isInitialized && listaMenuCarrusel.isNotEmpty()) {
+            menuAdapter.notifyItemRangeChanged(
+                0,
+                listaMenuCarrusel.size
+            )
+        }
     }
 
     companion object {
