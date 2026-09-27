@@ -10,18 +10,22 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.deiapp.appzeta.R
 import com.deiapp.appzetar.usuario.ActivityMenuUsuario
-import com.deiapp.appzetar.usuario.pedidos.ActivityPedidosUsuario
-import com.deiapp.appzetar.usuario.perfilusuario.ActivityPerfilUsuario
-import com.deiapp.appzetar.usuario.navegacionUsuario.NavegacionUsuario
 import com.deiapp.appzetar.usuario.carrito.ActivityPedido
 import com.deiapp.appzetar.usuario.carrito.PedidoItem
 import com.deiapp.appzetar.usuario.carrito.PedidoManager
 import com.deiapp.appzetar.usuario.carrito.TipoPedido
+import com.deiapp.appzetar.usuario.navegacionUsuario.NavegacionUsuario
+import com.deiapp.appzetar.usuario.pedidos.ActivityPedidosUsuario
+import com.deiapp.appzetar.usuario.perfilusuario.ActivityPerfilUsuario
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityExtras : AppCompatActivity() {
@@ -57,10 +61,25 @@ class ActivityExtras : AppCompatActivity() {
     private var categoriaSeleccionadaId =
         CATEGORIA_TODOS
 
+    // =========================================================
+    // ON CREATE
+    // =========================================================
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_extras)
+        enableEdgeToEdge()
+
+        WindowCompat.setDecorFitsSystemWindows(
+            window,
+            false
+        )
+
+        setContentView(
+            R.layout.activity_extras
+        )
+
+        configurarInsets()
 
         inicializarVistas()
         configurarInterfaz()
@@ -68,13 +87,48 @@ class ActivityExtras : AppCompatActivity() {
         cargarExtras()
     }
 
+    // =========================================================
+    // INSETS
+    // =========================================================
+
+    private fun configurarInsets() {
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+            findViewById(R.id.main)
+        ) { view, insets ->
+
+            val systemBars =
+                insets.getInsets(
+                    WindowInsetsCompat.Type.systemBars()
+                )
+
+            view.setPadding(
+                systemBars.left,
+                systemBars.top,
+                systemBars.right,
+                systemBars.bottom
+            )
+
+            insets
+        }
+    }
+
+    // =========================================================
+    // ON RESUME
+    // =========================================================
+
     override fun onResume() {
         super.onResume()
 
         actualizarContadorCarrito()
     }
 
+    // =========================================================
+    // VISTAS
+    // =========================================================
+
     private fun inicializarVistas() {
+
         rvCategorias =
             findViewById(R.id.rvCategorias)
 
@@ -109,7 +163,12 @@ class ActivityExtras : AppCompatActivity() {
             findViewById(R.id.navPerfil)
     }
 
+    // =========================================================
+    // INTERFAZ
+    // =========================================================
+
     private fun configurarInterfaz() {
+
         categoriaAdapter =
             CategoriaAdapter(
                 listaCategorias
@@ -138,7 +197,9 @@ class ActivityExtras : AppCompatActivity() {
                 listaExtras
             ) { extra ->
 
-                agregarExtraAlPedido(extra)
+                agregarExtraAlPedido(
+                    extra
+                )
             }
 
         rvExtras.layoutManager =
@@ -155,8 +216,14 @@ class ActivityExtras : AppCompatActivity() {
         actualizarContadorCarrito()
     }
 
+    // =========================================================
+    // NAVEGACIÓN
+    // =========================================================
+
     private fun configurarNavegacion() {
+
         navInicio.setOnClickListener {
+
             NavegacionUsuario.abrir(
                 this,
                 ActivityMenuUsuario::class.java
@@ -168,6 +235,7 @@ class ActivityExtras : AppCompatActivity() {
         }
 
         navPedidos.setOnClickListener {
+
             NavegacionUsuario.abrir(
                 this,
                 ActivityPedidosUsuario::class.java
@@ -175,6 +243,7 @@ class ActivityExtras : AppCompatActivity() {
         }
 
         navCarrito.setOnClickListener {
+
             NavegacionUsuario.abrir(
                 this,
                 ActivityPedido::class.java
@@ -182,6 +251,7 @@ class ActivityExtras : AppCompatActivity() {
         }
 
         navPerfil.setOnClickListener {
+
             NavegacionUsuario.abrir(
                 this,
                 ActivityPerfilUsuario::class.java
@@ -189,8 +259,13 @@ class ActivityExtras : AppCompatActivity() {
         }
     }
 
+    // =========================================================
+    // ANIMACIÓN BARRA
+    // =========================================================
+
     @SuppressLint("ClickableViewAccessibility")
     private fun configurarAnimacionesBarra() {
+
         val opciones =
             listOf(
                 navInicio,
@@ -207,6 +282,7 @@ class ActivityExtras : AppCompatActivity() {
                 when (evento.actionMasked) {
 
                     MotionEvent.ACTION_DOWN -> {
+
                         vista.animate()
                             .scaleX(ESCALA_PRESIONADA)
                             .scaleY(ESCALA_PRESIONADA)
@@ -224,11 +300,31 @@ class ActivityExtras : AppCompatActivity() {
 
                     MotionEvent.ACTION_UP,
                     MotionEvent.ACTION_CANCEL -> {
+
+                        val esActivo =
+                            vista === navExtras
+
                         vista.animate()
-                            .scaleX(ESCALA_NORMAL)
-                            .scaleY(ESCALA_NORMAL)
+                            .scaleX(
+                                if (esActivo) {
+                                    ESCALA_ACTIVA
+                                } else {
+                                    ESCALA_NORMAL
+                                }
+                            )
+                            .scaleY(
+                                if (esActivo) {
+                                    ESCALA_ACTIVA
+                                } else {
+                                    ESCALA_NORMAL
+                                }
+                            )
                             .translationY(
-                                TRASLACION_NORMAL
+                                if (esActivo) {
+                                    TRASLACION_ACTIVA
+                                } else {
+                                    TRASLACION_NORMAL
+                                }
                             )
                             .setDuration(
                                 DURACION_RETORNO
@@ -245,8 +341,14 @@ class ActivityExtras : AppCompatActivity() {
         }
     }
 
+    // =========================================================
+    // EXTRAS ACTIVO
+    // =========================================================
+
     private fun marcarExtrasActivo() {
+
         navExtras.post {
+
             navExtras.animate()
                 .scaleX(ESCALA_ACTIVA)
                 .scaleY(ESCALA_ACTIVA)
@@ -263,7 +365,12 @@ class ActivityExtras : AppCompatActivity() {
         }
     }
 
+    // =========================================================
+    // CONTADOR CARRITO
+    // =========================================================
+
     private fun actualizarContadorCarrito() {
+
         val cantidad =
             PedidoManager.cantidadTotal()
 
@@ -278,29 +385,42 @@ class ActivityExtras : AppCompatActivity() {
             }
     }
 
+    // =========================================================
+    // CATEGORÍAS
+    // =========================================================
+
     private fun cargarCategorias() {
+
         listaCategorias.clear()
 
         listaCategorias.addAll(
             listOf(
                 CategoriaItem(
                     CATEGORIA_TODOS,
-                    getString(R.string.categoria_todos),
+                    getString(
+                        R.string.categoria_todos
+                    ),
                     R.drawable.ic_extra
                 ),
                 CategoriaItem(
                     CATEGORIA_GASEOSAS,
-                    getString(R.string.categoria_gaseosas),
+                    getString(
+                        R.string.categoria_gaseosas
+                    ),
                     R.drawable.ic_gaseosa
                 ),
                 CategoriaItem(
                     CATEGORIA_TORTAS,
-                    getString(R.string.categoria_tortas),
+                    getString(
+                        R.string.categoria_tortas
+                    ),
                     R.drawable.ic_torta
                 ),
                 CategoriaItem(
                     CATEGORIA_PLATOS,
-                    getString(R.string.categoria_platos),
+                    getString(
+                        R.string.categoria_platos
+                    ),
                     R.drawable.ic_plato
                 )
             )
@@ -312,17 +432,25 @@ class ActivityExtras : AppCompatActivity() {
         )
     }
 
+    // =========================================================
+    // FIREBASE EXTRAS
+    // =========================================================
+
     private fun cargarExtras() {
+
         progressBar.visibility =
             View.VISIBLE
 
-        db.collection(COLECCION_EXTRAS)
+        db.collection(
+            COLECCION_EXTRAS
+        )
             .addSnapshotListener { resultado, error ->
 
                 progressBar.visibility =
                     View.GONE
 
                 if (error != null) {
+
                     Log.e(
                         TAG_EXTRAS,
                         LOG_ERROR_CARGAR,
@@ -343,6 +471,7 @@ class ActivityExtras : AppCompatActivity() {
                 }
 
                 if (resultado == null) {
+
                     mostrarEstadoLista(0)
 
                     return@addSnapshotListener
@@ -354,13 +483,17 @@ class ActivityExtras : AppCompatActivity() {
 
                     val id =
                         documento
-                            .getLong(CAMPO_ID)
+                            .getLong(
+                                CAMPO_ID
+                            )
                             ?.toInt()
                             ?: continue
 
                     val nombre =
                         documento
-                            .getString(CAMPO_NOMBRE)
+                            .getString(
+                                CAMPO_NOMBRE
+                            )
                             ?.takeIf {
                                 it.isNotBlank()
                             }
@@ -370,12 +503,16 @@ class ActivityExtras : AppCompatActivity() {
 
                     val precio =
                         documento
-                            .getDouble(CAMPO_PRECIO)
+                            .getDouble(
+                                CAMPO_PRECIO
+                            )
                             ?: 0.0
 
                     val categoriaId =
                         documento
-                            .getLong(CAMPO_CATEGORIA_ID)
+                            .getLong(
+                                CAMPO_CATEGORIA_ID
+                            )
                             ?.toInt()
                             ?: CATEGORIA_TODOS
 
@@ -406,9 +543,14 @@ class ActivityExtras : AppCompatActivity() {
             }
     }
 
+    // =========================================================
+    // ICONO CATEGORÍA
+    // =========================================================
+
     private fun obtenerIconoCategoria(
         categoriaId: Int
     ): Int {
+
         return when (categoriaId) {
 
             CATEGORIA_GASEOSAS ->
@@ -425,9 +567,14 @@ class ActivityExtras : AppCompatActivity() {
         }
     }
 
+    // =========================================================
+    // FILTRO
+    // =========================================================
+
     private fun filtrarExtras(
         categoriaId: Int
     ) {
+
         extraAdapter.filtrarPorCategoria(
             categoriaId
         )
@@ -437,9 +584,14 @@ class ActivityExtras : AppCompatActivity() {
         )
     }
 
+    // =========================================================
+    // ESTADO LISTA
+    // =========================================================
+
     private fun mostrarEstadoLista(
         cantidad: Int
     ) {
+
         val estaVacia =
             cantidad == 0
 
@@ -465,9 +617,14 @@ class ActivityExtras : AppCompatActivity() {
             )
     }
 
+    // =========================================================
+    // AGREGAR EXTRA
+    // =========================================================
+
     private fun agregarExtraAlPedido(
         extra: ExtraItem
     ) {
+
         PedidoManager.agregarProducto(
             PedidoItem(
                 id = extra.id,
@@ -490,24 +647,50 @@ class ActivityExtras : AppCompatActivity() {
         ).show()
     }
 
+    // =========================================================
+    // CONSTANTES
+    // =========================================================
+
     companion object {
 
-        private const val CATEGORIA_TODOS = 0
-        private const val CATEGORIA_GASEOSAS = 1
-        private const val CATEGORIA_TORTAS = 2
-        private const val CATEGORIA_PLATOS = 3
+        private const val CATEGORIA_TODOS =
+            0
 
-        private const val ESCALA_NORMAL = 1f
-        private const val ESCALA_PRESIONADA = 1.12f
-        private const val ESCALA_ACTIVA = 1.08f
+        private const val CATEGORIA_GASEOSAS =
+            1
 
-        private const val TRASLACION_NORMAL = 0f
-        private const val TRASLACION_PRESIONADA = -9f
-        private const val TRASLACION_ACTIVA = -5f
+        private const val CATEGORIA_TORTAS =
+            2
 
-        private const val DURACION_PRESION = 150L
-        private const val DURACION_RETORNO = 180L
-        private const val DURACION_ACTIVA = 280L
+        private const val CATEGORIA_PLATOS =
+            3
+
+        private const val ESCALA_NORMAL =
+            1f
+
+        private const val ESCALA_PRESIONADA =
+            1.12f
+
+        private const val ESCALA_ACTIVA =
+            1.08f
+
+        private const val TRASLACION_NORMAL =
+            0f
+
+        private const val TRASLACION_PRESIONADA =
+            -9f
+
+        private const val TRASLACION_ACTIVA =
+            -5f
+
+        private const val DURACION_PRESION =
+            150L
+
+        private const val DURACION_RETORNO =
+            180L
+
+        private const val DURACION_ACTIVA =
+            280L
 
         private const val COLECCION_EXTRAS =
             "extras"

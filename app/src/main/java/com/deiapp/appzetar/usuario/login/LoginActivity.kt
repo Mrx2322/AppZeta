@@ -17,7 +17,7 @@ import androidx.credentials.GetCredentialResponse
 import androidx.credentials.exceptions.GetCredentialException
 import com.deiapp.appzeta.R
 import com.deiapp.appzetar.splash.SplashActivity
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -31,32 +31,80 @@ class LoginActivity : AppCompatActivity() {
         const val TAG = "LoginActivity"
     }
 
+    // =========================================================
+    // COMPONENTES
+    // =========================================================
+
     private lateinit var etCorreo: TextInputEditText
     private lateinit var etContrasena: TextInputEditText
+
     private lateinit var btnIniciarSesion: Button
     private lateinit var btnGoogle: MaterialButton
     private lateinit var btnInvitado: MaterialButton
+
     private lateinit var tvRegistrarse: TextView
+
+    // =========================================================
+    // FIREBASE / CREDENTIAL MANAGER
+    // =========================================================
 
     private lateinit var auth: FirebaseAuth
     private lateinit var credentialManager: CredentialManager
 
-    private val db = FirebaseFirestore.getInstance()
+    private val db =
+        FirebaseFirestore.getInstance()
+
+    // =========================================================
+    // ON CREATE
+    // =========================================================
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_login)
+        setContentView(
+            R.layout.activity_login
+        )
 
-        auth = FirebaseAuth.getInstance()
-        credentialManager = CredentialManager.create(this)
+        auth =
+            FirebaseAuth.getInstance()
 
-        etCorreo = findViewById(R.id.etCorreo)
-        etContrasena = findViewById(R.id.etContrasena)
-        btnIniciarSesion = findViewById(R.id.btnIniciarSesion)
-        btnGoogle = findViewById(R.id.btnGoogle)
-        btnInvitado = findViewById(R.id.btnInvitado)
-        tvRegistrarse = findViewById(R.id.tvRegistrarse)
+        credentialManager =
+            CredentialManager.create(this)
+
+        inicializarVistas()
+        configurarEventos()
+    }
+
+    // =========================================================
+    // INICIALIZAR VISTAS
+    // =========================================================
+
+    private fun inicializarVistas() {
+
+        etCorreo =
+            findViewById(R.id.etCorreo)
+
+        etContrasena =
+            findViewById(R.id.etContrasena)
+
+        btnIniciarSesion =
+            findViewById(R.id.btnIniciarSesion)
+
+        btnGoogle =
+            findViewById(R.id.btnGoogle)
+
+        btnInvitado =
+            findViewById(R.id.btnInvitado)
+
+        tvRegistrarse =
+            findViewById(R.id.tvRegistrarse)
+    }
+
+    // =========================================================
+    // EVENTOS
+    // =========================================================
+
+    private fun configurarEventos() {
 
         btnIniciarSesion.setOnClickListener {
             iniciarSesion()
@@ -71,6 +119,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         tvRegistrarse.setOnClickListener {
+
             startActivity(
                 Intent(
                     this,
@@ -80,145 +129,262 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    // =========================================================
+    // LOGIN CORREO Y CONTRASEÑA
+    // =========================================================
+
     private fun iniciarSesion() {
 
-        val correo = etCorreo.text?.toString()?.trim().orEmpty()
-        val contrasena = etContrasena.text?.toString()?.trim().orEmpty()
+        val correo =
+            etCorreo.text
+                ?.toString()
+                ?.trim()
+                .orEmpty()
+
+        val contrasena =
+            etContrasena.text
+                ?.toString()
+                ?.trim()
+                .orEmpty()
 
         if (correo.isEmpty()) {
-            etCorreo.error = getString(R.string.login_error_ingresa_correo)
+
+            etCorreo.error =
+                getString(
+                    R.string.login_error_ingresa_correo
+                )
+
             return
         }
 
         if (contrasena.isEmpty()) {
-            etContrasena.error = getString(R.string.login_error_ingresa_contrasena)
+
+            etContrasena.error =
+                getString(
+                    R.string.login_error_ingresa_contrasena
+                )
+
             return
         }
 
-        btnIniciarSesion.isEnabled = false
+        btnIniciarSesion.isEnabled =
+            false
 
         auth.signInWithEmailAndPassword(
             correo,
             contrasena
         )
             .addOnSuccessListener {
-                abrirMenuUsuario(getString(R.string.login_inicio_correcto))
+
+                abrirMenuUsuario(
+                    getString(
+                        R.string.login_inicio_correcto
+                    )
+                )
             }
-            .addOnFailureListener {
-                btnIniciarSesion.isEnabled = true
+            .addOnFailureListener { error ->
+
+                btnIniciarSesion.isEnabled =
+                    true
+
+                Log.e(
+                    TAG,
+                    "Error al iniciar sesión con correo",
+                    error
+                )
 
                 Toast.makeText(
                     this,
-                    getString(R.string.login_error_credenciales),
+                    getString(
+                        R.string.login_error_credenciales
+                    ),
                     Toast.LENGTH_SHORT
                 ).show()
             }
     }
 
+    // =========================================================
+    // INVITADO
+    // =========================================================
+
     private fun continuarComoInvitado() {
 
-        btnInvitado.isEnabled = false
+        btnInvitado.isEnabled =
+            false
 
-        val usuarioActual = auth.currentUser
+        val usuarioActual =
+            auth.currentUser
 
         if (usuarioActual?.isAnonymous == true) {
+
             crearPerfilInvitadoSiNoExiste()
+
             return
         }
 
         auth.signInAnonymously()
             .addOnSuccessListener {
+
                 crearPerfilInvitadoSiNoExiste()
             }
-            .addOnFailureListener {
-                btnInvitado.isEnabled = true
+            .addOnFailureListener { error ->
+
+                btnInvitado.isEnabled =
+                    true
+
+                Log.e(
+                    TAG,
+                    "Error al iniciar como invitado",
+                    error
+                )
 
                 Toast.makeText(
                     this,
-                    getString(R.string.login_error_ingreso_invitado),
+                    getString(
+                        R.string.login_error_ingreso_invitado
+                    ),
                     Toast.LENGTH_SHORT
                 ).show()
             }
     }
 
+    // =========================================================
+    // PERFIL INVITADO
+    // =========================================================
+
     private fun crearPerfilInvitadoSiNoExiste() {
 
-        val usuario = auth.currentUser ?: run {
-            btnInvitado.isEnabled = true
-            return
-        }
+        val usuario =
+            auth.currentUser
+                ?: run {
 
-        val referencia = db.collection("usuarios")
-            .document(usuario.uid)
+                    btnInvitado.isEnabled =
+                        true
+
+                    return
+                }
+
+        val referencia =
+            db.collection("usuarios")
+                .document(usuario.uid)
 
         referencia.get()
             .addOnSuccessListener { documento ->
 
                 if (documento.exists()) {
-                    abrirMenuUsuario(getString(R.string.login_bienvenida_zeta))
+
+                    abrirMenuUsuario(
+                        getString(
+                            R.string.login_bienvenida_zeta
+                        )
+                    )
+
                     return@addOnSuccessListener
                 }
 
-                val datos = hashMapOf(
-                    "uid" to usuario.uid,
-                    "nombre" to getString(R.string.login_nombre_invitado),
-                    "correo" to "",
-                    "esInvitado" to true
-                )
+                val datos =
+                    hashMapOf(
+                        "uid" to usuario.uid,
+                        "nombre" to getString(
+                            R.string.login_nombre_invitado
+                        ),
+                        "correo" to "",
+                        "esInvitado" to true
+                    )
 
                 referencia.set(datos)
                     .addOnSuccessListener {
-                        abrirMenuUsuario(getString(R.string.login_bienvenida_zeta))
+
+                        abrirMenuUsuario(
+                            getString(
+                                R.string.login_bienvenida_zeta
+                            )
+                        )
                     }
-                    .addOnFailureListener {
-                        btnInvitado.isEnabled = true
+                    .addOnFailureListener { error ->
+
+                        btnInvitado.isEnabled =
+                            true
+
+                        Log.e(
+                            TAG,
+                            "Error creando perfil invitado",
+                            error
+                        )
 
                         Toast.makeText(
                             this,
-                            getString(R.string.login_error_preparar_perfil_invitado),
+                            getString(
+                                R.string.login_error_preparar_perfil_invitado
+                            ),
                             Toast.LENGTH_SHORT
                         ).show()
                     }
             }
-            .addOnFailureListener {
-                btnInvitado.isEnabled = true
+            .addOnFailureListener { error ->
+
+                btnInvitado.isEnabled =
+                    true
+
+                Log.e(
+                    TAG,
+                    "Error verificando perfil invitado",
+                    error
+                )
 
                 Toast.makeText(
                     this,
-                    getString(R.string.login_error_verificar_perfil_invitado),
+                    getString(
+                        R.string.login_error_verificar_perfil_invitado
+                    ),
                     Toast.LENGTH_SHORT
                 ).show()
             }
     }
 
+    // =========================================================
+    // GOOGLE SIGN-IN
+    // =========================================================
+
     private fun iniciarSesionConGoogle() {
 
-        btnGoogle.isEnabled = false
+        btnGoogle.isEnabled =
+            false
 
-        val googleIdOption = GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(false)
-            .setServerClientId(
-                getString(R.string.default_web_client_id)
+        /*
+         * Para un botón explícito "Continuar con Google"
+         * utilizamos GetSignInWithGoogleOption.
+         */
+        val googleOption =
+            GetSignInWithGoogleOption.Builder(
+                getString(
+                    R.string.default_web_client_id
+                )
             )
-            .build()
+                .build()
 
-        val solicitud = GetCredentialRequest.Builder()
-            .addCredentialOption(googleIdOption)
-            .build()
+        val solicitud =
+            GetCredentialRequest.Builder()
+                .addCredentialOption(
+                    googleOption
+                )
+                .build()
 
         credentialManager.getCredentialAsync(
             this,
             solicitud,
             null,
             ContextCompat.getMainExecutor(this),
-            object : CredentialManagerCallback<
-                    GetCredentialResponse,
-                    GetCredentialException
-                    > {
+            object :
+                CredentialManagerCallback<
+                        GetCredentialResponse,
+                        GetCredentialException
+                        > {
 
                 override fun onResult(
                     result: GetCredentialResponse
                 ) {
+
                     procesarCredencialGoogle(
                         result.credential
                     )
@@ -227,18 +393,32 @@ class LoginActivity : AppCompatActivity() {
                 override fun onError(
                     e: GetCredentialException
                 ) {
-                    btnGoogle.isEnabled = true
-                    Log.w(TAG, "Google Credential Manager error", e)
+
+                    btnGoogle.isEnabled =
+                        true
+
+                    Log.e(
+                        TAG,
+                        "Google Credential Manager error: " +
+                                "${e.javaClass.simpleName} - ${e.message}",
+                        e
+                    )
 
                     Toast.makeText(
                         this@LoginActivity,
-                        getString(R.string.login_error_google),
+                        getString(
+                            R.string.login_error_google
+                        ),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
             }
         )
     }
+
+    // =========================================================
+    // PROCESAR CREDENCIAL GOOGLE
+    // =========================================================
 
     private fun procesarCredencialGoogle(
         credential: Credential
@@ -249,95 +429,211 @@ class LoginActivity : AppCompatActivity() {
             credential.type ==
             GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
         ) {
-            val googleCredential =
-                GoogleIdTokenCredential.createFrom(
-                    credential.data
+
+            try {
+
+                val googleCredential =
+                    GoogleIdTokenCredential.createFrom(
+                        credential.data
+                    )
+
+                autenticarConFirebase(
+                    googleCredential.idToken
                 )
 
-            autenticarConFirebase(
-                googleCredential.idToken
-            )
+            } catch (error: Exception) {
+
+                btnGoogle.isEnabled =
+                    true
+
+                Log.e(
+                    TAG,
+                    "Error procesando credencial Google",
+                    error
+                )
+
+                Toast.makeText(
+                    this,
+                    getString(
+                        R.string.login_error_obtener_cuenta_google
+                    ),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
         } else {
-            btnGoogle.isEnabled = true
+
+            btnGoogle.isEnabled =
+                true
+
+            Log.e(
+                TAG,
+                "Tipo de credencial Google no reconocido: ${credential.type}"
+            )
 
             Toast.makeText(
                 this,
-                getString(R.string.login_error_obtener_cuenta_google),
+                getString(
+                    R.string.login_error_obtener_cuenta_google
+                ),
                 Toast.LENGTH_SHORT
             ).show()
         }
     }
 
+    // =========================================================
+    // FIREBASE GOOGLE
+    // =========================================================
+
     private fun autenticarConFirebase(
         idToken: String
     ) {
 
-        val credential = GoogleAuthProvider.getCredential(
-            idToken,
-            null
-        )
+        val firebaseCredential =
+            GoogleAuthProvider.getCredential(
+                idToken,
+                null
+            )
 
-        auth.signInWithCredential(credential)
+        auth.signInWithCredential(
+            firebaseCredential
+        )
             .addOnSuccessListener {
+
                 crearPerfilGoogleSiNoExiste()
             }
-            .addOnFailureListener {
-                btnGoogle.isEnabled = true
+            .addOnFailureListener { error ->
+
+                btnGoogle.isEnabled =
+                    true
+
+                Log.e(
+                    TAG,
+                    "ERROR FIREBASE GOOGLE: " +
+                            "${error.javaClass.simpleName} - ${error.message}",
+                    error
+                )
 
                 Toast.makeText(
                     this,
-                    getString(R.string.login_error_google),
+                    getString(
+                        R.string.login_error_google
+                    ),
                     Toast.LENGTH_SHORT
                 ).show()
             }
     }
 
+    // =========================================================
+    // PERFIL GOOGLE
+    // =========================================================
+
     private fun crearPerfilGoogleSiNoExiste() {
 
-        val usuario = auth.currentUser ?: return
+        val usuario =
+            auth.currentUser
+                ?: run {
 
-        val referencia = db.collection("usuarios")
-            .document(usuario.uid)
+                    btnGoogle.isEnabled =
+                        true
+
+                    return
+                }
+
+        val referencia =
+            db.collection("usuarios")
+                .document(usuario.uid)
 
         referencia.get()
             .addOnSuccessListener { documento ->
 
                 if (documento.exists()) {
-                    abrirMenuUsuario(getString(R.string.login_inicio_correcto))
+
+                    abrirMenuUsuario(
+                        getString(
+                            R.string.login_inicio_correcto
+                        )
+                    )
+
                     return@addOnSuccessListener
                 }
 
-                val datos = hashMapOf(
-                    "uid" to usuario.uid,
-                    "nombre" to (usuario.displayName
-                        ?: getString(R.string.login_nombre_cliente)),
-                    "correo" to (usuario.email ?: "")
-                )
+                val datos =
+                    hashMapOf(
+                        "uid" to usuario.uid,
+
+                        "nombre" to (
+                                usuario.displayName
+                                    ?: getString(
+                                        R.string.login_nombre_cliente
+                                    )
+                                ),
+
+                        "correo" to (
+                                usuario.email
+                                    ?: ""
+                                ),
+
+                        /*
+                         * Importante para que coincida con
+                         * las reglas actuales de usuarios.
+                         */
+                        "esInvitado" to false
+                    )
 
                 referencia.set(datos)
                     .addOnSuccessListener {
-                        abrirMenuUsuario(getString(R.string.login_inicio_correcto))
+
+                        abrirMenuUsuario(
+                            getString(
+                                R.string.login_inicio_correcto
+                            )
+                        )
                     }
-                    .addOnFailureListener {
-                        btnGoogle.isEnabled = true
+                    .addOnFailureListener { error ->
+
+                        btnGoogle.isEnabled =
+                            true
+
+                        Log.e(
+                            TAG,
+                            "Error creando perfil Google",
+                            error
+                        )
 
                         Toast.makeText(
                             this,
-                            getString(R.string.login_error_crear_perfil),
+                            getString(
+                                R.string.login_error_crear_perfil
+                            ),
                             Toast.LENGTH_LONG
                         ).show()
                     }
             }
-            .addOnFailureListener {
-                btnGoogle.isEnabled = true
+            .addOnFailureListener { error ->
+
+                btnGoogle.isEnabled =
+                    true
+
+                Log.e(
+                    TAG,
+                    "Error verificando perfil Google",
+                    error
+                )
 
                 Toast.makeText(
                     this,
-                    getString(R.string.login_error_verificar_perfil),
+                    getString(
+                        R.string.login_error_verificar_perfil
+                    ),
                     Toast.LENGTH_SHORT
                 ).show()
             }
     }
+
+    // =========================================================
+    // ABRIR APP
+    // =========================================================
 
     private fun abrirMenuUsuario(
         mensaje: String
@@ -349,16 +645,19 @@ class LoginActivity : AppCompatActivity() {
             Toast.LENGTH_SHORT
         ).show()
 
-        val intent = Intent(
-            this,
-            SplashActivity::class.java
-        )
+        val intent =
+            Intent(
+                this,
+                SplashActivity::class.java
+            ).apply {
 
-        intent.flags =
-            Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK
+                flags =
+                    Intent.FLAG_ACTIVITY_NEW_TASK or
+                            Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
 
         startActivity(intent)
+
         finish()
     }
 }

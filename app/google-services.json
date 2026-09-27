@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "195727566384-3geq18hv5mkt3khrt4cm1j77hciebgrj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.deiapp.appzeta",
+            "certificate_hash": "0c5185fa7eb3fc1076d68fba2d845cf465676aee"
+          }
+        },
+        {
+          "client_id": "195727566384-dbbjfluhdkv8tdj4aqvid5941s2eo228.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.deiapp.appzeta",
+            "certificate_hash": "300a192d3461b995f046f7b5b732ad2d813cc669"
+          }
+        },
+        {
           "client_id": "195727566384-in6u70au2ib67kmfduj0s19qu7fshiei.apps.googleusercontent.com",
           "client_type": 3
         }
