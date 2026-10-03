@@ -1289,31 +1289,31 @@ class ActivityMenuUsuario : AppCompatActivity() {
             return
         }
 
-        for (entradaSeleccionada in seleccionEntradas) {
-            val entradaActual =
-                entradas.find { entrada ->
-                    entrada.id == entradaSeleccionada.id
-                }
+        for ((id, nombre, cantidad) in seleccionEntradas) {
+
+            val entradaActual = entradas.find {
+                it.id == id
+            }
 
             val cantidadEnCarrito =
                 PedidoManager.cantidadEntradaEnPedido(
-                    entradaSeleccionada.id
+                    id
                 )
 
             val cantidadNecesaria =
-                cantidadEnCarrito +
-                        entradaSeleccionada.cantidad
+                cantidadEnCarrito + cantidad
 
             if (
                 entradaActual == null ||
                 !entradaActual.disponible ||
                 cantidadNecesaria > entradaActual.stock
             ) {
+
                 Toast.makeText(
                     this,
                     getString(
                         R.string.stock_entrada_insuficiente,
-                        entradaSeleccionada.nombre
+                        nombre
                     ),
                     Toast.LENGTH_SHORT
                 ).show()
@@ -1324,6 +1324,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
                         entradas.size
                     )
                 }
+
                 onError()
                 return
             }
