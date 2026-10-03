@@ -39,6 +39,7 @@
     <string name="Description_extra">Eliminar extra</string>
 
 
+    <string name="menu_usuario_sin_entradas">Aún no hay entradas disponibles</string>
     <string name="entrada_restar_simbolo">−</string>
     <string name="entrada_sumar_simbolo">+</string>
     <string name="entrada_restar_descripcion">Quitar una entrada</string>

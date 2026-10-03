@@ -12,7 +12,7 @@
 
     android:background="#F7F7F7"
 
-    tools:context=".usuario.ActivityMenuUsuario">
+    tools:context="com.deiapp.appzetar.usuario.ActivityMenuUsuario">
 
 
     <!-- ===================================================== -->

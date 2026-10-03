@@ -93,6 +93,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
     private lateinit var btnCarrito: FloatingActionButton
     private lateinit var tvSaludo: TextView
     private lateinit var tvVerTodo: TextView
+    private lateinit var tvEstadoVacio: TextView
 
     private lateinit var tvSubtituloMenu: TextView
     private lateinit var tvTituloEntradas: TextView
@@ -196,6 +197,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
         btnCarrito = findViewById(R.id.btnCarrito)
         tvSaludo = findViewById(R.id.tvSaludo)
         tvVerTodo = findViewById(R.id.tvVerTodo)
+        tvEstadoVacio = findViewById(R.id.tvEstadoVacio)
 
         tvSubtituloMenu = findViewById(R.id.tvSubtituloMenu)
         tvTituloEntradas = findViewById(R.id.tvTituloEntradas)
@@ -1290,10 +1292,10 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
 
         for ((id, nombre, cantidad) in seleccionEntradas) {
-
-            val entradaActual = entradas.find {
-                it.id == id
-            }
+            val entradaActual =
+                entradas.find { entrada ->
+                    entrada.id == id
+                }
 
             val cantidadEnCarrito =
                 PedidoManager.cantidadEntradaEnPedido(
@@ -1301,14 +1303,14 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 )
 
             val cantidadNecesaria =
-                cantidadEnCarrito + cantidad
+                cantidadEnCarrito +
+                        cantidad
 
             if (
                 entradaActual == null ||
                 !entradaActual.disponible ||
                 cantidadNecesaria > entradaActual.stock
             ) {
-
                 Toast.makeText(
                     this,
                     getString(
@@ -1324,7 +1326,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
                         entradas.size
                     )
                 }
-
                 onError()
                 return
             }
@@ -1420,6 +1421,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
         rvEntradas.isVisible = false
         rvMenu.isVisible = false
         rvExtras.isVisible = false
+        tvEstadoVacio.isVisible = false
 
         cargarEntradas()
         cargarMenu()
@@ -1586,6 +1588,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
                         entradas.size
                     )
                 }
+
+                mostrarContenido()
             }
     }
 
@@ -1677,13 +1681,23 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
     private fun mostrarContenido() {
         progressBarMenu.isVisible = false
-        rvEntradas.isVisible = true
-        rvMenu.isVisible = true
+
+        val noHayEntradas = entradas.isEmpty()
+        val noHayMenu = listaMenu.isEmpty()
+        val contenidoVacio = noHayEntradas && noHayMenu
+
+        tvEstadoVacio.isVisible = contenidoVacio
+
+        rvEntradas.isVisible = entradas.isNotEmpty()
+        rvMenu.isVisible = listaMenuCarrusel.isNotEmpty()
+        tvVerTodo.isVisible = listaMenu.isNotEmpty()
 
         ejecutarAnimacionInicial()
 
-        rvMenu.post {
-            animarTarjetasCarrusel(rvMenu)
+        if (rvMenu.isVisible) {
+            rvMenu.post {
+                animarTarjetasCarrusel(rvMenu)
+            }
         }
     }
 
