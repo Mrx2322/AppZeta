@@ -35,9 +35,29 @@ class CenasUsuarioViewHolder(
     ) {
         tvNombreCena.text = cena.name
 
-        imgCena.setImageResource(
-            R.drawable.fondo_menu
-        )
+        val nombreCena = cena.name
+            .lowercase(Locale.ROOT)
+            .replace("á", "a")
+            .replace("é", "e")
+            .replace("í", "i")
+            .replace("ó", "o")
+            .replace("ú", "u")
+
+        val imagenCena = when {
+            "chaufa" in nombreCena ->
+                R.drawable.cena_chaufa_pollo
+
+            "broaster" in nombreCena || "broasther" in nombreCena ->
+                R.drawable.cena_pollo_broasther
+
+            "caldo" in nombreCena && "gallina" in nombreCena ->
+                R.drawable.cena_caldo_gallina
+
+            else ->
+                R.drawable.fondo_menu
+        }
+
+        imgCena.setImageResource(imagenCena)
 
         tvPrecio.text = String.format(
             Locale.forLanguageTag("es-PE"),
