@@ -47,6 +47,17 @@ object PedidoManager {
             }
     }
 
+    fun cantidadCenaEnPedido(cenaId: Int): Int {
+        return pedido
+            .filter { item ->
+                item.tipo == TipoPedido.CENA &&
+                        item.id == cenaId
+            }
+            .sumOf { item ->
+                item.cantidad
+            }
+    }
+
     fun cantidadEntradaEnPedido(entradaId: Int): Int {
         val entradasAsociadas = pedido
             .filter { item ->

@@ -1,3 +1,4 @@
+
 package com.deiapp.appzetar.usuario
 
 import android.animation.AnimatorSet
@@ -42,7 +43,9 @@ import com.deiapp.appzetar.usuario.carrito.PedidoItem
 import com.deiapp.appzetar.usuario.carrito.PedidoManager
 import com.deiapp.appzetar.usuario.carrito.ReglasPrecioPedido
 import com.deiapp.appzetar.usuario.carrito.TipoPedido
+import com.deiapp.appzetar.usuario.cenas.CenasUsuarioAdapter
 import com.deiapp.appzetar.usuario.entradas.EntradasUsuarioAdapter
+import com.deiapp.appzetar.usuario.modelos.TaskCenas
 import com.deiapp.appzetar.usuario.modelos.TaskEntradas
 import com.deiapp.appzetar.usuario.modelos.TaskMenu
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -58,12 +61,22 @@ import kotlin.math.abs
 
 class ActivityMenuUsuario : AppCompatActivity() {
 
+    // =========================================================
+    // FIREBASE
+    // =========================================================
+
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
     private var extrasListener: ListenerRegistration? = null
     private var entradasListener: ListenerRegistration? = null
     private var menuListener: ListenerRegistration? = null
+    private var cenasListener: ListenerRegistration? = null
+
+
+    // =========================================================
+    // CATEGORÍAS Y EXTRAS
+    // =========================================================
 
     private lateinit var rvCategorias: RecyclerView
     private lateinit var categoriaAdapter: CategoriaAdapter
@@ -75,18 +88,41 @@ class ActivityMenuUsuario : AppCompatActivity() {
     private val todosLosExtras = mutableListOf<ExtraItem>()
     private val listaExtras = mutableListOf<ExtraItem>()
 
+
+    // =========================================================
+    // ENTRADAS
+    // =========================================================
+
     private val entradas = mutableListOf<TaskEntradas>()
     private lateinit var rvEntradas: RecyclerView
     private lateinit var entradasAdapter: EntradasUsuarioAdapter
 
-    // Conserva todos los menús recibidos desde Firebase.
-    // Se usa para recuperar el plato seleccionado en "Ver todo".
-    private val listaMenu = mutableListOf<TaskMenu>()
 
-    // El carrusel de Inicio muestra como máximo el límite configurado.
+    // =========================================================
+    // MENÚ
+    // =========================================================
+
+    private val listaMenu = mutableListOf<TaskMenu>()
     private val listaMenuCarrusel = mutableListOf<TaskMenu>()
+
     private lateinit var rvMenu: RecyclerView
     private lateinit var menuAdapter: MenuUsuarioAdapter
+
+
+    // =========================================================
+    // CENAS
+    // =========================================================
+
+    private val listaCenas = mutableListOf<TaskCenas>()
+
+    private lateinit var rvCenas: RecyclerView
+    private lateinit var tvTituloCenas: TextView
+    private lateinit var cenasAdapter: CenasUsuarioAdapter
+
+
+    // =========================================================
+    // COMPONENTES GENERALES
+    // =========================================================
 
     private lateinit var progressBarMenu: ProgressBar
     private lateinit var tvCantidadCarrito: TextView
@@ -108,6 +144,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
     private lateinit var navPedidos: LinearLayout
     private lateinit var navCarrito: LinearLayout
     private lateinit var navPerfil: LinearLayout
+
+
+    // =========================================================
+    // RESULTADO DE "VER TODO"
+    // =========================================================
 
     private val launcherTodosLosMenus =
         registerForActivityResult(
@@ -139,6 +180,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 ).show()
             }
         }
+
+
+    // =========================================================
+    // ON CREATE
+    // =========================================================
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -186,11 +232,19 @@ class ActivityMenuUsuario : AppCompatActivity() {
         cargarCategorias()
     }
 
+
+    // =========================================================
+    // INICIALIZAR COMPONENTES
+    // =========================================================
+
     private fun initComponent() {
         rvCategorias = findViewById(R.id.rvCategorias)
         rvEntradas = findViewById(R.id.rvEntradas)
         rvExtras = findViewById(R.id.rvExtras)
         rvMenu = findViewById(R.id.rvMenu)
+
+        rvCenas = findViewById(R.id.rvCenas)
+        tvTituloCenas = findViewById(R.id.tvTituloCenas)
 
         progressBarMenu = findViewById(R.id.progressBarMenu)
         tvCantidadCarrito = findViewById(R.id.tvCantidadCarrito)
@@ -212,6 +266,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
         navPerfil = findViewById(R.id.navPerfil)
     }
 
+
+    // =========================================================
+    // ESTADO INICIAL DE ANIMACIONES
+    // =========================================================
+
     private fun prepararAnimaciones() {
         tvSaludo.alpha = 0f
         tvSaludo.translationY = 25f
@@ -231,9 +290,21 @@ class ActivityMenuUsuario : AppCompatActivity() {
         rvMenu.alpha = 0f
         rvMenu.translationY = 30f
 
+        // Estado inicial de la sección Cenas.
+        tvTituloCenas.alpha = 0f
+        tvTituloCenas.translationY = 20f
+
+        rvCenas.alpha = 0f
+        rvCenas.translationY = 30f
+
         bottomNavigation.alpha = 0f
         bottomNavigation.translationY = 90f
     }
+
+
+    // =========================================================
+    // ANIMACIÓN INICIAL
+    // =========================================================
 
     private fun ejecutarAnimacionInicial() {
         if (animacionInicialEjecutada) return
@@ -331,6 +402,38 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 0f
             )
 
+        val tituloCenasAlpha =
+            ObjectAnimator.ofFloat(
+                tvTituloCenas,
+                View.ALPHA,
+                0f,
+                1f
+            )
+
+        val tituloCenasMovimiento =
+            ObjectAnimator.ofFloat(
+                tvTituloCenas,
+                View.TRANSLATION_Y,
+                20f,
+                0f
+            )
+
+        val cenasAlpha =
+            ObjectAnimator.ofFloat(
+                rvCenas,
+                View.ALPHA,
+                0f,
+                1f
+            )
+
+        val cenasMovimiento =
+            ObjectAnimator.ofFloat(
+                rvCenas,
+                View.TRANSLATION_Y,
+                30f,
+                0f
+            )
+
         val barraAlpha =
             ObjectAnimator.ofFloat(
                 bottomNavigation,
@@ -361,6 +464,10 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 tituloMenuMovimiento,
                 menuAlpha,
                 menuMovimiento,
+                tituloCenasAlpha,
+                tituloCenasMovimiento,
+                cenasAlpha,
+                cenasMovimiento,
                 barraAlpha,
                 barraMovimiento
             )
@@ -372,16 +479,38 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         crearAnimacion(saludoAlpha, saludoMovimiento, 80)
         crearAnimacion(subtituloAlpha, subtituloMovimiento, 160)
+
         crearAnimacion(
             tituloEntradasAlpha,
             tituloEntradasMovimiento,
             240
         )
+
         crearAnimacion(entradasAlpha, entradasMovimiento, 320)
-        crearAnimacion(tituloMenuAlpha, tituloMenuMovimiento, 400)
+
+        crearAnimacion(
+            tituloMenuAlpha,
+            tituloMenuMovimiento,
+            400
+        )
+
         crearAnimacion(menuAlpha, menuMovimiento, 480)
-        crearAnimacion(barraAlpha, barraMovimiento, 600)
+
+        crearAnimacion(
+            tituloCenasAlpha,
+            tituloCenasMovimiento,
+            560
+        )
+
+        crearAnimacion(
+            cenasAlpha,
+            cenasMovimiento,
+            640
+        )
+
+        crearAnimacion(barraAlpha, barraMovimiento, 700)
     }
+
 
     private fun crearAnimacion(
         alpha: ObjectAnimator,
@@ -394,6 +523,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
             start()
         }
     }
+
+
+    // =========================================================
+    // ANIMACIÓN DEL CONTADOR
+    // =========================================================
 
     private fun animarBadgeCarrito() {
         if (!tvCantidadCarrito.isVisible) return
@@ -412,6 +546,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
             .start()
     }
 
+
+    // =========================================================
+    // CARGAR NOMBRE DE USUARIO
+    // =========================================================
+
     private fun cargarNombreUsuario() {
         val usuarioActual = auth.currentUser
 
@@ -420,7 +559,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
             return
         }
 
-        // Usuario registrado
         db.collection("usuarios")
             .document(usuarioActual.uid)
             .get()
@@ -452,6 +590,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
             }
     }
 
+
     private fun cargarNombreInvitado(usuario: FirebaseUser?) {
         val preferencias = getSharedPreferences(
             PREFERENCIAS_INVITADO,
@@ -459,6 +598,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
         )
 
         val claveNombre = obtenerClaveNombreInvitado(usuario)
+
         val nombreGuardado = preferencias
             .getString(claveNombre, null)
             ?.trim()
@@ -472,10 +612,14 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
     }
 
+
+    // =========================================================
+    // DIÁLOGO NOMBRE INVITADO
+    // =========================================================
+
     private fun solicitarNombreInvitado(
         claveNombre: String
     ) {
-
         val vistaDialogo =
             layoutInflater.inflate(
                 R.layout.dialog_nombre_invitado,
@@ -498,22 +642,10 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 .setCancelable(false)
                 .create()
 
-
-        // =========================================================
-        // ESTADO INICIAL DE LA ANIMACIÓN
-        // =========================================================
-
         vistaDialogo.alpha = 0f
-
         vistaDialogo.scaleX = 0.92f
         vistaDialogo.scaleY = 0.92f
-
         vistaDialogo.translationY = 35f
-
-
-        // =========================================================
-        // BOTÓN CONTINUAR
-        // =========================================================
 
         btnContinuar.setOnClickListener {
 
@@ -524,50 +656,24 @@ class ActivityMenuUsuario : AppCompatActivity() {
                     .orEmpty()
 
             if (nombre.isBlank()) {
-
                 campoNombre.error =
-                    getString(
-                        R.string.error_nombre_invitado
-                    )
+                    getString(R.string.error_nombre_invitado)
 
                 campoNombre.requestFocus()
-
                 return@setOnClickListener
             }
 
-
-            // Evita doble toque
             btnContinuar.isEnabled = false
-
-
-            // =====================================================
-            // GUARDAR NOMBRE
-            // =====================================================
 
             getSharedPreferences(
                 PREFERENCIAS_INVITADO,
                 MODE_PRIVATE
             ).edit {
-
-                putString(
-                    claveNombre,
-                    nombre
-                )
+                putString(claveNombre, nombre)
             }
 
-
-            guardarNombreInvitadoEnFirebase(
-                nombre
-            )
-
-            mostrarSaludo(
-                nombre
-            )
-
-
-            // =====================================================
-            // ANIMACIÓN DE SALIDA
-            // =====================================================
+            guardarNombreInvitadoEnFirebase(nombre)
+            mostrarSaludo(nombre)
 
             vistaDialogo.animate()
                 .alpha(0f)
@@ -575,72 +681,38 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 .scaleY(0.96f)
                 .translationY(18f)
                 .setDuration(180)
-                .setInterpolator(
-                    DecelerateInterpolator()
-                )
+                .setInterpolator(DecelerateInterpolator())
                 .withEndAction {
-
                     dialogo.dismiss()
                 }
                 .start()
         }
 
-
-        // =========================================================
-        // MOSTRAR DIÁLOGO
-        // =========================================================
-
         dialogo.show()
-
-
-        // =========================================================
-        // FONDO TRANSPARENTE
-        // =========================================================
 
         dialogo.window?.setBackgroundDrawable(
             Color.TRANSPARENT.toDrawable()
         )
 
-
-        // =========================================================
-        // ANCHO DEL DIÁLOGO
-        // =========================================================
-
         dialogo.window?.setLayout(
-            (
-                    resources.displayMetrics.widthPixels
-                            * 0.90f
-                    ).toInt(),
-
+            (resources.displayMetrics.widthPixels * 0.90f).toInt(),
             android.view.ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
-
-        // =========================================================
-        // ANIMACIÓN DE ENTRADA
-        // =========================================================
-
         vistaDialogo.post {
-
             vistaDialogo.animate()
                 .alpha(1f)
                 .scaleX(1f)
                 .scaleY(1f)
                 .translationY(0f)
                 .setDuration(320)
-                .setInterpolator(
-                    DecelerateInterpolator()
-                )
+                .setInterpolator(DecelerateInterpolator())
                 .start()
         }
 
-
-        // =========================================================
-        // FOCO
-        // =========================================================
-
         campoNombre.requestFocus()
     }
+
 
     private fun mostrarSaludo(nombre: String) {
         tvSaludo.text = getString(
@@ -648,6 +720,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
             nombre
         )
     }
+
 
     private fun guardarNombreInvitadoEnFirebase(nombre: String) {
         val usuarioActual = auth.currentUser ?: return
@@ -670,12 +743,23 @@ class ActivityMenuUsuario : AppCompatActivity() {
             }
     }
 
-    private fun obtenerClaveNombreInvitado(usuario: FirebaseUser?): String {
+
+    private fun obtenerClaveNombreInvitado(
+        usuario: FirebaseUser?
+    ): String {
         val identificador = usuario?.uid ?: INVITADO_SIN_UID
         return "$CLAVE_NOMBRE_INVITADO$identificador"
     }
 
+
+    // =========================================================
+    // CONFIGURAR INTERFAZ
+    // =========================================================
+
     private fun initUI() {
+
+        // ENTRADAS
+
         entradasAdapter =
             EntradasUsuarioAdapter(entradas)
 
@@ -688,6 +772,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         rvEntradas.adapter = entradasAdapter
 
+
+        // MENÚ
+
         menuAdapter =
             MenuUsuarioAdapter(listaMenuCarrusel) { plato ->
                 mostrarAlertaAgregar(plato)
@@ -695,6 +782,27 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         configurarCarruselMenu()
         rvMenu.adapter = menuAdapter
+
+
+        // CENAS
+
+        cenasAdapter =
+            CenasUsuarioAdapter(listaCenas) { cena ->
+                agregarCenaAlPedido(cena)
+            }
+
+        rvCenas.layoutManager =
+            LinearLayoutManager(
+                this,
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+
+        rvCenas.adapter = cenasAdapter
+        configurarCarruselCenas()
+
+
+        // EXTRAS
 
         extraAdapter =
             ExtraAdapter(listaExtras) { extra ->
@@ -705,6 +813,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
             LinearLayoutManager(this)
 
         rvExtras.adapter = extraAdapter
+
+
+        // VER TODO
 
         tvVerTodo.setOnClickListener {
             val intent =
@@ -726,9 +837,15 @@ class ActivityMenuUsuario : AppCompatActivity() {
             )
         }
 
+
+        // CARRITO
+
         btnCarrito.setOnClickListener {
             abrirCarrito()
         }
+
+
+        // NAVEGACIÓN
 
         configurarClickNavegacion(navInicio) {
             // Ya estamos en Inicio.
@@ -763,12 +880,18 @@ class ActivityMenuUsuario : AppCompatActivity() {
         actualizarContadorCarrito()
     }
 
+
+    // =========================================================
+    // NAVEGACIÓN INFERIOR
+    // =========================================================
+
     private fun configurarClickNavegacion(
         item: View,
         accion: () -> Unit
     ) {
         item.setOnClickListener { vista ->
             vista.animate().cancel()
+
             vista.animate()
                 .scaleX(1.12f)
                 .scaleY(1.12f)
@@ -791,6 +914,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
     }
 
+
     private fun marcarInicioActivo() {
         navInicio.post {
             navInicio.animate()
@@ -798,12 +922,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 .scaleY(1.08f)
                 .translationY(-5f)
                 .setDuration(280)
-                .setInterpolator(
-                    DecelerateInterpolator()
-                )
+                .setInterpolator(DecelerateInterpolator())
                 .start()
         }
     }
+
 
     private fun abrirCarrito() {
         NavegacionUsuario.abrir(
@@ -811,6 +934,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
             ActivityPedido::class.java
         )
     }
+
+
+    // =========================================================
+    // CARRUSEL MENÚ
+    // =========================================================
 
     private fun configurarCarruselMenu() {
         val layoutManager =
@@ -866,6 +994,72 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
     }
 
+
+    // =========================================================
+    // CARRUSEL CENAS
+    // MISMA CONFIGURACIÓN Y ANIMACIÓN QUE MENÚ
+    // =========================================================
+
+    private fun configurarCarruselCenas() {
+        val layoutManager =
+            LinearLayoutManager(
+                this,
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+
+        rvCenas.layoutManager = layoutManager
+        rvCenas.clipToPadding = false
+        rvCenas.clipChildren = false
+        rvCenas.setPadding(90, 0, 90, 0)
+        rvCenas.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+        rvCenas.itemAnimator = null
+
+        LinearSnapHelper()
+            .attachToRecyclerView(rvCenas)
+
+        rvCenas.addOnScrollListener(
+            object : RecyclerView.OnScrollListener() {
+
+                override fun onScrolled(
+                    recyclerView: RecyclerView,
+                    dx: Int,
+                    dy: Int
+                ) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    animarTarjetasCarrusel(recyclerView)
+                }
+
+                override fun onScrollStateChanged(
+                    recyclerView: RecyclerView,
+                    newState: Int
+                ) {
+                    super.onScrollStateChanged(
+                        recyclerView,
+                        newState
+                    )
+
+                    if (
+                        newState ==
+                        RecyclerView.SCROLL_STATE_IDLE
+                    ) {
+                        animarTarjetaCentral(recyclerView)
+                    }
+                }
+            }
+        )
+
+        rvCenas.post {
+            animarTarjetasCarrusel(rvCenas)
+        }
+    }
+
+
+    // =========================================================
+    // ANIMACIÓN COMPARTIDA DE LAS TARJETAS
+    // =========================================================
+
     private fun animarTarjetasCarrusel(
         recyclerView: RecyclerView
     ) {
@@ -900,6 +1094,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
     }
 
+
+    // =========================================================
+    // ANIMAR TARJETA CENTRAL
+    // =========================================================
+
     private fun animarTarjetaCentral(
         recyclerView: RecyclerView
     ) {
@@ -933,9 +1132,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 .translationY(-2f)
                 .translationZ(30f)
                 .setDuration(180)
-                .setInterpolator(
-                    DecelerateInterpolator()
-                )
+                .setInterpolator(DecelerateInterpolator())
                 .withEndAction {
                     tarjeta.animate()
                         .scaleX(1f)
@@ -943,14 +1140,17 @@ class ActivityMenuUsuario : AppCompatActivity() {
                         .translationY(0f)
                         .translationZ(25f)
                         .setDuration(220)
-                        .setInterpolator(
-                            DecelerateInterpolator()
-                        )
+                        .setInterpolator(DecelerateInterpolator())
                         .start()
                 }
                 .start()
         }
     }
+
+
+    // =========================================================
+    // CATEGORÍAS
+    // =========================================================
 
     private fun cargarCategorias() {
         categorias.clear()
@@ -1003,11 +1203,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
         rvCategorias.adapter = categoriaAdapter
     }
 
+
     private fun mostrarExtrasPorCategoria(
         categoriaId: Int
     ) {
-        val cantidadAnterior =
-            listaExtras.size
+        val cantidadAnterior = listaExtras.size
 
         if (cantidadAnterior > 0) {
             listaExtras.clear()
@@ -1032,9 +1232,13 @@ class ActivityMenuUsuario : AppCompatActivity() {
             )
         }
 
-        rvExtras.isVisible =
-            listaExtras.isNotEmpty()
+        rvExtras.isVisible = listaExtras.isNotEmpty()
     }
+
+
+    // =========================================================
+    // AGREGAR EXTRA AL PEDIDO
+    // =========================================================
 
     private fun agregarExtraAlPedido(
         extra: ExtraItem
@@ -1061,13 +1265,65 @@ class ActivityMenuUsuario : AppCompatActivity() {
         ).show()
     }
 
+
+    // =========================================================
+    // AGREGAR CENA AL PEDIDO
+    // =========================================================
+
+    private fun agregarCenaAlPedido(cena: TaskCenas) {
+
+        val cantidadEnCarrito =
+            PedidoManager.cantidadCenaEnPedido(cena.id)
+
+        if (
+            cena.stock <= 0 ||
+            cantidadEnCarrito >= cena.stock
+        ) {
+            Toast.makeText(
+                this,
+                R.string.cena_stock_limite,
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
+
+        PedidoManager.agregarProducto(
+            PedidoItem(
+                id = cena.id,
+                nombre = cena.name,
+                precio = cena.precio,
+                cantidad = 1,
+                tipo = TipoPedido.CENA
+            )
+        )
+
+        actualizarContadorCarrito()
+
+        Toast.makeText(
+            this,
+            getString(
+                R.string.cena_agregada_carrito,
+                cena.name,
+                getString(
+                    R.string.formato_precio_soles,
+                    cena.precio
+                )
+            ),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+
+    // =========================================================
+    // DIÁLOGO AGREGAR MENÚ CON ENTRADAS
+    // =========================================================
+
     private fun mostrarAlertaAgregar(
         plato: TaskMenu
     ) {
         val cantidadMenuEnCarrito =
-            PedidoManager.cantidadMenuEnPedido(
-                plato.id
-            )
+            PedidoManager.cantidadMenuEnPedido(plato.id)
 
         if (
             plato.stock <= 0 ||
@@ -1083,8 +1339,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
 
         val seleccionActual =
-            entradasAdapter
-                .obtenerEntradasSeleccionadas()
+            entradasAdapter.obtenerEntradasSeleccionadas()
 
         val cantidadEntradas =
             seleccionActual.sumOf { entrada ->
@@ -1181,9 +1436,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
             )
 
         tvEntradasSeleccionadas.text =
-            descripcionSeleccionEntradas(
-                seleccionActual
-            )
+            descripcionSeleccionEntradas(seleccionActual)
 
         tvTotalSeleccion.text =
             getString(
@@ -1228,10 +1481,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
 
         btnAgregar.setOnClickListener {
+
             val cantidadActualEnCarrito =
-                PedidoManager.cantidadMenuEnPedido(
-                    plato.id
-                )
+                PedidoManager.cantidadMenuEnPedido(plato.id)
 
             if (
                 plato.stock <= 0 ||
@@ -1265,6 +1517,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
     }
 
+
+    // =========================================================
+    // VALIDAR Y AGREGAR MENÚ AL PEDIDO
+    // =========================================================
+
     private fun agregarAlPedido(
         plato: TaskMenu,
         seleccionEntradas: List<EntradaPedido>,
@@ -1273,9 +1530,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
         onError: () -> Unit
     ) {
         val cantidadMenuEnCarrito =
-            PedidoManager.cantidadMenuEnPedido(
-                plato.id
-            )
+            PedidoManager.cantidadMenuEnPedido(plato.id)
 
         if (
             plato.stock <= 0 ||
@@ -1292,19 +1547,17 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
 
         for ((id, nombre, cantidad) in seleccionEntradas) {
+
             val entradaActual =
                 entradas.find { entrada ->
                     entrada.id == id
                 }
 
             val cantidadEnCarrito =
-                PedidoManager.cantidadEntradaEnPedido(
-                    id
-                )
+                PedidoManager.cantidadEntradaEnPedido(id)
 
             val cantidadNecesaria =
-                cantidadEnCarrito +
-                        cantidad
+                cantidadEnCarrito + cantidad
 
             if (
                 entradaActual == null ||
@@ -1326,6 +1579,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
                         entradas.size
                     )
                 }
+
                 onError()
                 return
             }
@@ -1358,6 +1612,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
         onCompletado()
     }
+
 
     private fun descripcionSeleccionEntradas(
         seleccionEntradas: List<EntradaPedido>
@@ -1401,6 +1656,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
     }
 
+
+    // =========================================================
+    // ACTUALIZAR CONTADOR DEL CARRITO
+    // =========================================================
+
     private fun actualizarContadorCarrito() {
         val cantidadTotal =
             PedidoManager.cantidadTotal()
@@ -1416,17 +1676,34 @@ class ActivityMenuUsuario : AppCompatActivity() {
         }
     }
 
+
+    // =========================================================
+    // CARGAR TODOS LOS DATOS DESDE FIREBASE
+    // =========================================================
+
     private fun cargarDatosDesdeFirebase() {
         progressBarMenu.isVisible = true
+
         rvEntradas.isVisible = false
         rvMenu.isVisible = false
         rvExtras.isVisible = false
+
+        // La sección Cenas se mostrará cuando se carguen sus datos.
+        rvCenas.isVisible = false
+        tvTituloCenas.isVisible = false
+
         tvEstadoVacio.isVisible = false
 
         cargarEntradas()
         cargarMenu()
         cargarExtrasDesdeFirebase()
+        cargarCenasDesdeFirebase()
     }
+
+
+    // =========================================================
+    // CARGAR EXTRAS DESDE FIRESTORE
+    // =========================================================
 
     private fun cargarExtrasDesdeFirebase() {
         if (extrasListener != null) return
@@ -1460,12 +1737,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
                         documento.getString("nombre").orEmpty()
 
                     val precio =
-                        documento.getDouble("precio") ?: 0.0
+                        (documento.get("precio") as? Number)
+                            ?.toDouble() ?: 0.0
 
                     val categoriaId =
-                        documento
-                            .getLong("categoriaId")
-                            ?.toInt()
+                        documento.getLong("categoriaId")?.toInt()
                             ?: 0
 
                     val icono =
@@ -1500,6 +1776,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 }
             }
     }
+
+
+    // =========================================================
+    // CARGAR ENTRADAS DESDE FIRESTORE
+    // =========================================================
 
     private fun cargarEntradas() {
         if (entradasListener != null) return
@@ -1543,8 +1824,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
                         documento.getString("nombre").orEmpty()
 
                     val disponible =
-                        documento.getBoolean("disponible")
-                            ?: true
+                        documento.getBoolean("disponible") ?: true
 
                     val stock =
                         documento.getLong("stock")?.toInt()
@@ -1593,6 +1873,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
             }
     }
 
+
+    // =========================================================
+    // CARGAR MENÚ DESDE FIRESTORE
+    // =========================================================
+
     private fun cargarMenu() {
         if (menuListener != null) return
 
@@ -1626,7 +1911,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
                         documento.getString("nombre").orEmpty()
 
                     val precio =
-                        documento.getDouble("precio") ?: 0.0
+                        (documento.get("precio") as? Number)
+                            ?.toDouble() ?: 0.0
 
                     val stock =
                         documento.getLong("stock")?.toInt()
@@ -1644,7 +1930,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
                     }
                 }
 
-                // Orden estable para mostrar primero los menús con menor id.
                 listaMenu.sortBy { plato ->
                     plato.id
                 }
@@ -1679,18 +1964,137 @@ class ActivityMenuUsuario : AppCompatActivity() {
             }
     }
 
+
+    // =========================================================
+    // CENAS: CARGAR DESDE FIRESTORE
+    // =========================================================
+
+    private fun cargarCenasDesdeFirebase() {
+        if (cenasListener != null) return
+
+        cenasListener =
+            db.collection("cenas")
+                .addSnapshotListener { resultado, error ->
+
+                    if (error != null) {
+                        Log.e(
+                            "USUARIO_FIREBASE",
+                            "Error escuchando cenas",
+                            error
+                        )
+
+                        return@addSnapshotListener
+                    }
+
+                    if (resultado == null) {
+                        return@addSnapshotListener
+                    }
+
+                    val nuevasCenas =
+                        mutableListOf<TaskCenas>()
+
+                    for (documento in resultado) {
+                        val id =
+                            documento.getLong("id")?.toInt()
+                                ?: documento.id.toIntOrNull()
+                                ?: 0
+
+                        val nombre =
+                            documento.getString("nombre").orEmpty()
+
+                        val precio =
+                            (documento.get("precio") as? Number)
+                                ?.toDouble() ?: 0.0
+
+                        val stock =
+                            documento.getLong("stock")?.toInt()
+                                ?: 0
+
+                        if (
+                            id > 0 &&
+                            nombre.isNotBlank() &&
+                            precio > 0
+                        ) {
+                            nuevasCenas.add(
+                                TaskCenas(
+                                    id = id,
+                                    name = nombre,
+                                    precio = precio,
+                                    stock = stock
+                                )
+                            )
+                        }
+                    }
+
+                    nuevasCenas.sortBy { cena ->
+                        cena.id
+                    }
+
+                    val cantidadAnterior =
+                        listaCenas.size
+
+                    listaCenas.clear()
+
+                    if (cantidadAnterior > 0) {
+                        cenasAdapter.notifyItemRangeRemoved(
+                            0,
+                            cantidadAnterior
+                        )
+                    }
+
+                    listaCenas.addAll(nuevasCenas)
+
+                    if (nuevasCenas.isNotEmpty()) {
+                        cenasAdapter.notifyItemRangeInserted(
+                            0,
+                            nuevasCenas.size
+                        )
+                    }
+
+                    val hayCenas =
+                        listaCenas.isNotEmpty()
+
+                    tvTituloCenas.isVisible = hayCenas
+                    rvCenas.isVisible = hayCenas
+
+                    mostrarContenido()
+
+                    if (hayCenas) {
+                        rvCenas.post {
+                            animarTarjetasCarrusel(rvCenas)
+                        }
+                    }
+
+                    Log.d(
+                        "USUARIO_FIREBASE",
+                        "Cenas actualizadas: ${listaCenas.size}"
+                    )
+                }
+    }
+
+
+    // =========================================================
+    // MOSTRAR CONTENIDO
+    // =========================================================
+
     private fun mostrarContenido() {
         progressBarMenu.isVisible = false
 
         val noHayEntradas = entradas.isEmpty()
         val noHayMenu = listaMenu.isEmpty()
-        val contenidoVacio = noHayEntradas && noHayMenu
+        val noHayCenas = listaCenas.isEmpty()
+
+        val contenidoVacio =
+            noHayEntradas && noHayMenu && noHayCenas
 
         tvEstadoVacio.isVisible = contenidoVacio
 
         rvEntradas.isVisible = entradas.isNotEmpty()
         rvMenu.isVisible = listaMenuCarrusel.isNotEmpty()
         tvVerTodo.isVisible = listaMenu.isNotEmpty()
+
+        tvTituloCenas.isVisible = listaCenas.isNotEmpty()
+        rvCenas.isVisible = listaCenas.isNotEmpty()
 
         ejecutarAnimacionInicial()
 
@@ -1699,12 +2103,24 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 animarTarjetasCarrusel(rvMenu)
             }
         }
+
+        if (rvCenas.isVisible) {
+            rvCenas.post {
+                animarTarjetasCarrusel(rvCenas)
+            }
+        }
     }
+
+
+    // =========================================================
+    // CICLO DE VIDA
+    // =========================================================
 
     override fun onStart() {
         super.onStart()
         cargarDatosDesdeFirebase()
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -1718,13 +2134,31 @@ class ActivityMenuUsuario : AppCompatActivity() {
             )
         }
 
-        if (::menuAdapter.isInitialized && listaMenuCarrusel.isNotEmpty()) {
+        if (
+            ::menuAdapter.isInitialized &&
+            listaMenuCarrusel.isNotEmpty()
+        ) {
             menuAdapter.notifyItemRangeChanged(
                 0,
                 listaMenuCarrusel.size
             )
         }
+
+        if (
+            ::cenasAdapter.isInitialized &&
+            listaCenas.isNotEmpty()
+        ) {
+            cenasAdapter.notifyItemRangeChanged(
+                0,
+                listaCenas.size
+            )
+
+            rvCenas.post {
+                animarTarjetasCarrusel(rvCenas)
+            }
+        }
     }
+
 
     override fun onStop() {
         extrasListener?.remove()
@@ -1736,13 +2170,24 @@ class ActivityMenuUsuario : AppCompatActivity() {
         menuListener?.remove()
         menuListener = null
 
+        cenasListener?.remove()
+        cenasListener = null
+
         super.onStop()
     }
 
+
+    // =========================================================
+    // CONSTANTES
+    // =========================================================
+
     companion object {
         private const val LIMITE_MENU_CARRUSEL = 3
-        private const val PREFERENCIAS_INVITADO = "preferencias_invitado"
-        private const val CLAVE_NOMBRE_INVITADO = "nombre_invitado_"
-        private const val INVITADO_SIN_UID = "sin_uid"
+        private const val PREFERENCIAS_INVITADO =
+            "preferencias_invitado"
+        private const val CLAVE_NOMBRE_INVITADO =
+            "nombre_invitado_"
+        private const val INVITADO_SIN_UID =
+            "sin_uid"
     }
 }

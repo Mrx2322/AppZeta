@@ -653,4 +653,15 @@
     <string name="pedidos_error_sesion_requerida">Debes iniciar sesión para ver tus pedidos</string>
     <string name="pedidos_error_cargar_pedidos">No se pudieron cargar los pedidos</string>
 
+    <string name="menu_usuario_cenas">Nuestras cenas</string>
+
+    <string name="cena_precio_formato">S/ %1$.2f</string>
+    <string name="cena_estado_agotado">Agotado</string>
+    <string name="cena_ultima_unidad">¡Última unidad!</string>
+    <string name="cena_ultimas_unidades">Solo quedan %1$d unidades</string>
+    <string name="cena_estado_disponible">Disponible</string>
+
+    <string name="cena_stock_limite">No quedan más unidades disponibles de esta cena para agregar al carrito.</string>
+    <string name="cena_agregada_carrito">%1$s se agregó al carrito por %2$s</string>
+
 </resources>

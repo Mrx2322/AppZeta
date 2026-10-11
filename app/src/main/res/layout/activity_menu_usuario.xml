@@ -4,18 +4,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:background="@drawable/fondo_usuario"
-
     android:clipChildren="false"
     android:clipToPadding="false"
-
     tools:context="com.deiapp.appzetar.usuario.ActivityMenuUsuario">
-
 
     <!-- ===================================================== -->
     <!-- CONTENIDO PRINCIPAL -->
@@ -23,32 +18,23 @@
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollMenuUsuario"
-
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         android:fillViewport="true"
         android:clipToPadding="false"
-
         android:paddingTop="38dp"
         android:paddingBottom="108dp"
-
         android:overScrollMode="never"
         android:scrollbars="none">
 
-
         <LinearLayout
             android:id="@+id/contenidoMenuUsuario"
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:orientation="vertical"
-
             android:paddingStart="18dp"
             android:paddingEnd="18dp"
             android:paddingBottom="20dp">
-
 
             <!-- ================================================= -->
             <!-- SALUDO -->
@@ -56,35 +42,24 @@
 
             <TextView
                 android:id="@+id/tvSaludo"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:layout_marginTop="8dp"
-
                 android:ellipsize="end"
                 android:maxLines="2"
-
                 android:text="@string/menu_usuario_saludo_default"
-
                 android:textColor="#222222"
                 android:textSize="26sp"
                 android:textStyle="bold" />
 
-
             <TextView
                 android:id="@+id/tvSubtituloMenu"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:layout_marginTop="3dp"
-
                 android:text="@string/menu_usuario_subtitulo"
-
                 android:textColor="#777777"
                 android:textSize="15sp" />
-
 
             <!-- ================================================= -->
             <!-- ENTRADAS -->
@@ -92,37 +67,25 @@
 
             <TextView
                 android:id="@+id/tvTituloEntradas"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:layout_marginTop="24dp"
-
                 android:text="@string/menu_usuario_entradas"
-
                 android:textColor="#222222"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvEntradas"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:layout_marginTop="10dp"
-
                 android:clipToPadding="false"
-
                 android:minHeight="105dp"
                 android:nestedScrollingEnabled="false"
-
                 android:paddingStart="2dp"
                 android:paddingEnd="2dp"
-
                 android:overScrollMode="never" />
-
 
             <!-- ================================================= -->
             <!-- ESTADO VACÍO -->
@@ -130,30 +93,21 @@
 
             <TextView
                 android:id="@+id/tvEstadoVacio"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:layout_marginTop="14dp"
                 android:layout_marginBottom="4dp"
-
                 android:gravity="center"
-
                 android:paddingStart="16dp"
                 android:paddingTop="18dp"
                 android:paddingEnd="16dp"
                 android:paddingBottom="18dp"
-
                 android:text="@string/menu_usuario_sin_entradas"
-
                 android:textColor="#777777"
                 android:textSize="15sp"
                 android:textStyle="bold"
-
                 android:visibility="gone"
-
                 tools:visibility="visible" />
-
 
             <!-- ================================================= -->
             <!-- NUESTRO MENÚ -->
@@ -161,7 +115,6 @@
 
             <LinearLayout
                 android:id="@+id/layoutTituloMenu"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
@@ -169,47 +122,34 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-
                 <TextView
                     android:id="@+id/tvTituloMenu"
-
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-
                     android:layout_weight="1"
-
                     android:ellipsize="end"
                     android:maxLines="2"
-
                     android:text="@string/menu_usuario_nuestro_menu"
-
                     android:textColor="#222222"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
-
                 <TextView
                     android:id="@+id/tvVerTodo"
-
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
-
                     android:clickable="true"
                     android:focusable="true"
-
                     android:paddingStart="8dp"
                     android:paddingTop="5dp"
                     android:paddingEnd="4dp"
                     android:paddingBottom="5dp"
-
                     android:text="@string/menu_usuario_ver_todo"
-
                     android:textColor="#E87520"
                     android:textSize="17sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
-
 
             <!-- ================================================= -->
             <!-- CARRUSEL DEL MENÚ -->
@@ -217,22 +157,41 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvMenu"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:layout_marginTop="15dp"
-
                 android:clipToPadding="false"
-
                 android:minHeight="250dp"
                 android:nestedScrollingEnabled="false"
-
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp"
-
                 android:overScrollMode="never" />
 
+            <!-- ================================================= -->
+            <!-- CENAS: NUEVA SECCIÓN -->
+            <!-- ================================================= -->
+
+            <TextView
+                android:id="@+id/tvTituloCenas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="@string/menu_usuario_cenas"
+                android:textColor="#222222"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCenas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:clipToPadding="false"
+                android:minHeight="250dp"
+                android:nestedScrollingEnabled="false"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:overScrollMode="never" />
 
             <!-- ================================================= -->
             <!-- EXTRAS OCULTOS -->
@@ -240,40 +199,28 @@
 
             <TextView
                 android:id="@+id/tvTituloExtras"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:text="@string/menu_usuario_extras"
-
                 android:visibility="gone" />
-
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvCategorias"
-
                 android:layout_width="match_parent"
                 android:layout_height="82dp"
-
                 android:visibility="gone"
-
                 android:overScrollMode="never" />
-
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvExtras"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:visibility="gone"
-
                 android:overScrollMode="never" />
 
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
-
 
     <!-- ===================================================== -->
     <!-- PROGRESS -->
@@ -281,14 +228,10 @@
 
     <ProgressBar
         android:id="@+id/progressBarMenu"
-
         android:layout_width="45dp"
         android:layout_height="45dp"
-
         android:layout_gravity="center"
-
         android:visibility="gone" />
-
 
     <!-- ===================================================== -->
     <!-- BARRA INFERIOR -->
@@ -296,47 +239,33 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/bottomNavigation"
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:minHeight="76dp"
-
         android:layout_gravity="bottom"
-
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="12dp"
-
         android:clipChildren="false"
         android:clipToPadding="false"
-
         app:cardBackgroundColor="#FFFFFF"
         app:cardCornerRadius="24dp"
         app:cardElevation="8dp"
-
         app:strokeColor="#EEEEEE"
         app:strokeWidth="1dp">
 
-
         <LinearLayout
             android:id="@+id/layoutBottomNavigation"
-
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
             android:baselineAligned="false"
-
             android:gravity="center"
             android:orientation="horizontal"
-
             android:clipChildren="false"
             android:clipToPadding="false"
-
             android:paddingStart="5dp"
             android:paddingTop="2dp"
             android:paddingEnd="5dp">
-
 
             <!-- ================================================= -->
             <!-- INICIO -->
@@ -344,71 +273,48 @@
 
             <LinearLayout
                 android:id="@+id/navInicio"
-
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-
                 android:minHeight="72dp"
-
                 android:layout_weight="1"
-
                 android:gravity="center"
                 android:orientation="vertical"
-
                 android:paddingTop="9dp"
                 android:paddingBottom="7dp"
-
                 tools:ignore="UseCompoundDrawables">
-
 
                 <ImageView
                     android:id="@+id/imgNavInicio"
-
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-
                     android:src="@drawable/ic_home"
-
                     android:contentDescription="@string/cd_inicio" />
-
 
                 <TextView
                     android:id="@+id/tvNavInicio"
-
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:layout_marginTop="3dp"
-
                     android:gravity="center"
-
                     android:text="@string/nav_inicio"
-
                     android:textColor="#E87520"
                     android:textSize="11sp"
                     android:textStyle="bold"
-
                     android:ellipsize="end"
                     android:maxLines="1"
-
                     app:autoSizeMaxTextSize="11sp"
                     app:autoSizeMinTextSize="9sp"
                     app:autoSizeStepGranularity="1sp"
                     app:autoSizeTextType="uniform" />
 
-
                 <View
                     android:id="@+id/navIndicadorInicio"
-
                     android:layout_width="18dp"
                     android:layout_height="3dp"
-
                     android:layout_marginTop="3dp"
-
                     android:background="@drawable/bg_nav_indicator" />
 
             </LinearLayout>
-
 
             <!-- ================================================= -->
             <!-- EXTRAS -->
@@ -416,59 +322,40 @@
 
             <LinearLayout
                 android:id="@+id/navExtras"
-
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-
                 android:minHeight="72dp"
-
                 android:layout_weight="1"
-
                 android:gravity="center"
                 android:orientation="vertical"
-
                 android:paddingTop="9dp"
                 android:paddingBottom="7dp"
-
                 tools:ignore="UseCompoundDrawables">
-
 
                 <ImageView
                     android:id="@+id/imgNavExtras"
-
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-
                     android:src="@drawable/ic_extra"
-
                     android:contentDescription="@string/cd_extras" />
-
 
                 <TextView
                     android:id="@+id/tvNavExtras"
-
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:layout_marginTop="3dp"
-
                     android:gravity="center"
-
                     android:text="@string/nav_extras"
-
                     android:textColor="#888888"
                     android:textSize="11sp"
-
                     android:ellipsize="end"
                     android:maxLines="1"
-
                     app:autoSizeMaxTextSize="11sp"
                     app:autoSizeMinTextSize="9sp"
                     app:autoSizeStepGranularity="1sp"
                     app:autoSizeTextType="uniform" />
 
             </LinearLayout>
-
 
             <!-- ================================================= -->
             <!-- PEDIDOS -->
@@ -476,59 +363,40 @@
 
             <LinearLayout
                 android:id="@+id/navPedidos"
-
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-
                 android:minHeight="72dp"
-
                 android:layout_weight="1"
-
                 android:gravity="center"
                 android:orientation="vertical"
-
                 android:paddingTop="9dp"
                 android:paddingBottom="7dp"
-
                 tools:ignore="UseCompoundDrawables">
-
 
                 <ImageView
                     android:id="@+id/imgNavPedidos"
-
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-
                     android:src="@drawable/ic_pedidos"
-
                     android:contentDescription="@string/cd_pedidos" />
-
 
                 <TextView
                     android:id="@+id/tvNavPedidos"
-
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:layout_marginTop="3dp"
-
                     android:gravity="center"
-
                     android:text="@string/nav_pedidos"
-
                     android:textColor="#888888"
                     android:textSize="11sp"
-
                     android:ellipsize="end"
                     android:maxLines="1"
-
                     app:autoSizeMaxTextSize="11sp"
                     app:autoSizeMinTextSize="9sp"
                     app:autoSizeStepGranularity="1sp"
                     app:autoSizeTextType="uniform" />
 
             </LinearLayout>
-
 
             <!-- ================================================= -->
             <!-- CARRITO -->
@@ -536,80 +404,53 @@
 
             <LinearLayout
                 android:id="@+id/navCarrito"
-
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-
                 android:minHeight="72dp"
-
                 android:layout_weight="1"
-
                 android:gravity="center"
                 android:orientation="vertical"
-
                 android:paddingTop="9dp"
                 android:paddingBottom="7dp">
 
-
                 <FrameLayout
                     android:id="@+id/contenedorCarrito"
-
                     android:layout_width="30dp"
                     android:layout_height="30dp">
 
-
                     <ImageView
                         android:id="@+id/imgNavCarrito"
-
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-
                         android:layout_gravity="center"
-
                         android:src="@drawable/ic_carrito"
-
                         android:contentDescription="@string/cd_carrito" />
-
 
                     <TextView
                         android:id="@+id/tvCantidadCarrito"
-
                         android:layout_width="18dp"
                         android:layout_height="18dp"
-
                         android:layout_gravity="top|end"
-
                         android:background="@drawable/bg_badge_carrito"
-
                         android:gravity="center"
-
                         android:text="@string/contador_cero"
-
                         android:textColor="#FFFFFF"
                         android:textSize="11sp"
                         android:textStyle="bold" />
 
                 </FrameLayout>
 
-
                 <TextView
                     android:id="@+id/tvNavCarrito"
-
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:layout_marginTop="1dp"
-
                     android:gravity="center"
-
                     android:text="@string/nav_carrito"
-
                     android:textColor="#888888"
                     android:textSize="11sp"
-
                     android:ellipsize="end"
                     android:maxLines="1"
-
                     app:autoSizeMaxTextSize="11sp"
                     app:autoSizeMinTextSize="9sp"
                     app:autoSizeStepGranularity="1sp"
@@ -617,59 +458,40 @@
 
             </LinearLayout>
 
-
             <!-- ================================================= -->
             <!-- PERFIL -->
             <!-- ================================================= -->
 
             <LinearLayout
                 android:id="@+id/navPerfil"
-
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-
                 android:minHeight="72dp"
-
                 android:layout_weight="1"
-
                 android:gravity="center"
                 android:orientation="vertical"
-
                 android:paddingTop="9dp"
                 android:paddingBottom="7dp"
-
                 tools:ignore="UseCompoundDrawables">
-
 
                 <ImageView
                     android:id="@+id/imgNavPerfil"
-
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-
                     android:src="@drawable/ic_perfil"
-
                     android:contentDescription="@string/cd_perfil" />
-
 
                 <TextView
                     android:id="@+id/tvNavPerfil"
-
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:layout_marginTop="3dp"
-
                     android:gravity="center"
-
                     android:text="@string/nav_perfil"
-
                     android:textColor="#888888"
                     android:textSize="11sp"
-
                     android:ellipsize="end"
                     android:maxLines="1"
-
                     app:autoSizeMaxTextSize="11sp"
                     app:autoSizeMinTextSize="9sp"
                     app:autoSizeStepGranularity="1sp"
@@ -681,19 +503,15 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-
     <!-- ===================================================== -->
     <!-- FAB ANTIGUO OCULTO -->
     <!-- ===================================================== -->
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnCarrito"
-
         android:layout_width="1dp"
         android:layout_height="1dp"
-
         android:visibility="gone"
-
         tools:ignore="ContentDescription,TouchTargetSizeCheck" />
 
 </FrameLayout>

@@ -118,6 +118,7 @@ data class PedidoItem(
 
 enum class TipoPedido {
     MENU,
+    CENA,
     ENTRADA,
     EXTRA
 }

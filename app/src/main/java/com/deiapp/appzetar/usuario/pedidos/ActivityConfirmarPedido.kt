@@ -1,3 +1,4 @@
+
 package com.deiapp.appzetar.usuario.pedidos
 
 import android.content.Intent
@@ -31,18 +32,26 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         val cantidad: Int
     )
 
+    private class StockInsuficienteException(
+        val nombreProducto: String,
+        val disponible: Long,
+        val solicitado: Int
+    ) : Exception()
+
     // =========================================================
     // FIREBASE
     // =========================================================
 
-    private val auth =
+    private val auth: FirebaseAuth by lazy {
         FirebaseAuth.getInstance()
+    }
 
-    private val db =
+    private val db: FirebaseFirestore by lazy {
         FirebaseFirestore.getInstance()
+    }
 
     // =========================================================
-    // COMPONENTE
+    // COMPONENTES
     // =========================================================
 
     private lateinit var tvNombreUsuario: TextView
@@ -62,42 +71,32 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     private lateinit var btnContinuarPago: MaterialButton
 
     // =========================================================
-    // DATO DEL PEDIDO
+    // DATOS DEL PEDIDO
     // =========================================================
 
-    private var nombreUsuario =
-        ""
+    private var nombreUsuario = ""
 
-    private var tipoEntrega =
-        TIPO_ENTREGA_DELIVERY
+    private var tipoEntrega = TIPO_ENTREGA_DELIVERY
 
-    private var direccion =
-        ""
+    private var direccion = ""
 
-    private var referencia =
-        ""
+    private var referencia = ""
 
-    private var telefono =
-        ""
+    private var telefono = ""
 
     // =========================================================
     // UBICACIÓN GPS OPCIONAL
     // =========================================================
 
-    private var latitud: Double? =
-        null
+    private var latitud: Double? = null
 
-    private var longitud: Double? =
-        null
+    private var longitud: Double? = null
 
-    private var ubicacionMaps =
-        ""
+    private var ubicacionMaps = ""
 
-    private var observacion =
-        ""
+    private var observacion = ""
 
-    private var confirmandoPedido =
-        false
+    private var confirmandoPedido = false
 
     // =========================================================
     // ON CREATE
@@ -113,9 +112,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             false
         )
 
-        setContentView(
-            R.layout.activity_confirmar_pedido
-        )
+        setContentView(R.layout.activity_confirmar_pedido)
 
         aplicarInsets()
         initComponent()
@@ -132,7 +129,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     // =========================================================
 
     private fun aplicarInsets() {
-
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
         ) { view, insets ->
@@ -153,128 +149,91 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     }
 
     // =========================================================
-    // COMPONENTE
+    // INICIALIZAR COMPONENTES
     // =========================================================
 
     private fun initComponent() {
+        tvNombreUsuario = findViewById(R.id.tvNombreUsuario)
+        tvCorreoUsuario = findViewById(R.id.tvCorreoUsuario)
+        tvResumenProductos = findViewById(R.id.tvResumenProductos)
+        tvTotalPedido = findViewById(R.id.tvTotalPedido)
 
-        tvNombreUsuario =
-            findViewById(R.id.tvNombreUsuario)
+        radioGroupEntrega = findViewById(R.id.radioGroupEntrega)
+        radioDelivery = findViewById(R.id.radioDelivery)
+        radioRecojo = findViewById(R.id.radioRecojo)
 
-        tvCorreoUsuario =
-            findViewById(R.id.tvCorreoUsuario)
+        tvDireccion = findViewById(R.id.tvDireccion)
+        tvReferencia = findViewById(R.id.tvReferencia)
+        tvTelefono = findViewById(R.id.tvTelefono)
+        tvMetodoPago = findViewById(R.id.tvMetodoPago)
 
-        tvResumenProductos =
-            findViewById(R.id.tvResumenProductos)
-
-        tvTotalPedido =
-            findViewById(R.id.tvTotalPedido)
-
-        radioGroupEntrega =
-            findViewById(R.id.radioGroupEntrega)
-
-        radioDelivery =
-            findViewById(R.id.radioDelivery)
-
-        radioRecojo =
-            findViewById(R.id.radioRecojo)
-
-        tvDireccion =
-            findViewById(R.id.tvDireccion)
-
-        tvReferencia =
-            findViewById(R.id.tvReferencia)
-
-        tvTelefono =
-            findViewById(R.id.tvTelefono)
-
-        tvMetodoPago =
-            findViewById(R.id.tvMetodoPago)
-
-        btnContinuarPago =
-            findViewById(R.id.btnContinuarPago)
+        btnContinuarPago = findViewById(R.id.btnContinuarPago)
     }
 
     // =========================================================
-    // RECIBIR DATO
+    // RECIBIR DATOS DE ENTREGA
     // =========================================================
 
     private fun recibirDatos() {
+        nombreUsuario = intent
+            .getStringExtra(EXTRA_NOMBRE)
+            ?.trim()
+            .orEmpty()
 
-        nombreUsuario =
-            intent.getStringExtra(EXTRA_NOMBRE)
-                ?.trim()
-                .orEmpty()
+        telefono = intent
+            .getStringExtra(EXTRA_TELEFONO)
+            ?.trim()
+            .orEmpty()
 
-        telefono =
-            intent.getStringExtra(EXTRA_TELEFONO)
-                ?.trim()
-                .orEmpty()
+        direccion = intent
+            .getStringExtra(EXTRA_DIRECCION)
+            ?.trim()
+            .orEmpty()
 
-        direccion =
-            intent.getStringExtra(EXTRA_DIRECCION)
-                ?.trim()
-                .orEmpty()
+        observacion = intent
+            .getStringExtra(EXTRA_OBSERVACION)
+            ?.trim()
+            .orEmpty()
 
-        observacion =
-            intent.getStringExtra(EXTRA_OBSERVACION)
-                ?.trim()
-                .orEmpty()
+        referencia = intent
+            .getStringExtra(EXTRA_REFERENCIA)
+            ?.trim()
+            .orEmpty()
 
-        referencia =
-            intent.getStringExtra(EXTRA_REFERENCIA)
-                ?.trim()
-                .orEmpty()
-
-        tipoEntrega =
-            intent.getStringExtra(EXTRA_TIPO_ENTREGA)
-                ?.trim()
-                .orEmpty()
-                .ifBlank {
-                    TIPO_ENTREGA_DELIVERY
-                }
-
-        // =========================================================
-        // RECIBIR UBICACIÓN GPS OPCIONAL
-        // =========================================================
-
-        latitud =
-            if (intent.hasExtra(EXTRA_LATITUD)) {
-                intent.getDoubleExtra(
-                    EXTRA_LATITUD,
-                    0.0
-                )
-            } else {
-                null
+        tipoEntrega = intent
+            .getStringExtra(EXTRA_TIPO_ENTREGA)
+            ?.trim()
+            .orEmpty()
+            .ifBlank {
+                TIPO_ENTREGA_DELIVERY
             }
 
-        longitud =
-            if (intent.hasExtra(EXTRA_LONGITUD)) {
-                intent.getDoubleExtra(
-                    EXTRA_LONGITUD,
-                    0.0
-                )
-            } else {
-                null
-            }
+        latitud = if (intent.hasExtra(EXTRA_LATITUD)) {
+            intent.getDoubleExtra(EXTRA_LATITUD, 0.0)
+        } else {
+            null
+        }
 
-        ubicacionMaps =
-            intent.getStringExtra(EXTRA_UBICACION_MAPS)
-                ?.trim()
-                .orEmpty()
+        longitud = if (intent.hasExtra(EXTRA_LONGITUD)) {
+            intent.getDoubleExtra(EXTRA_LONGITUD, 0.0)
+        } else {
+            null
+        }
+
+        ubicacionMaps = intent
+            .getStringExtra(EXTRA_UBICACION_MAPS)
+            ?.trim()
+            .orEmpty()
     }
 
     // =========================================================
-    // DATO DEL USER
+    // CARGAR DATOS DEL USUARIO
     // =========================================================
 
     private fun cargarDatosUsuario() {
-
-        val usuario =
-            auth.currentUser
+        val usuario = auth.currentUser
 
         if (usuario == null) {
-
             Toast.makeText(
                 this,
                 getString(R.string.confirmar_pedido_sesion_no_activa),
@@ -285,14 +244,11 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             return
         }
 
-        tvCorreoUsuario.text =
-            usuario.email ?: getString(R.string.confirmar_pedido_sin_correo)
+        tvCorreoUsuario.text = usuario.email
+            ?: getString(R.string.confirmar_pedido_sin_correo)
 
         if (nombreUsuario.isNotBlank()) {
-
-            tvNombreUsuario.text =
-                nombreUsuario
-
+            tvNombreUsuario.text = nombreUsuario
             return
         }
 
@@ -300,39 +256,32 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             .document(usuario.uid)
             .get()
             .addOnSuccessListener { documento ->
+                nombreUsuario = documento
+                    .getString(CAMPO_NOMBRE)
+                    ?.trim()
+                    .orEmpty()
+                    .ifBlank {
+                        getString(R.string.confirmar_pedido_cliente)
+                    }
 
-                nombreUsuario =
-                    documento.getString(CAMPO_NOMBRE)
-                        ?.trim()
-                        .orEmpty()
-                        .ifBlank {
-                            getString(R.string.confirmar_pedido_cliente)
-                        }
-
-                tvNombreUsuario.text =
-                    nombreUsuario
+                tvNombreUsuario.text = nombreUsuario
             }
             .addOnFailureListener {
-
                 nombreUsuario =
                     getString(R.string.confirmar_pedido_cliente)
 
-                tvNombreUsuario.text =
-                    nombreUsuario
+                tvNombreUsuario.text = nombreUsuario
             }
     }
 
     // =========================================================
-    // RESUME
+    // RESUMEN DEL PEDIDO
     // =========================================================
 
     private fun cargarResumenPedido() {
-
-        val pedido =
-            PedidoManager.pedido
+        val pedido = PedidoManager.pedido
 
         if (pedido.isEmpty()) {
-
             Toast.makeText(
                 this,
                 getString(R.string.confirmar_pedido_carrito_vacio),
@@ -343,8 +292,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             return
         }
 
-        val cantidad =
-            PedidoManager.cantidadTotal()
+        val cantidad = PedidoManager.cantidadTotal()
 
         tvResumenProductos.text = resources.getQuantityString(
             R.plurals.confirmar_pedido_cantidad_productos,
@@ -352,32 +300,26 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             cantidad
         )
 
-        val total = PedidoManager.totalPedido()
-
         tvTotalPedido.text = getString(
             R.string.confirmar_pedido_total_formato,
-            total
+            PedidoManager.totalPedido()
         )
     }
 
     // =========================================================
-    // MOSTRA ENTREGA
+    // MOSTRAR DATOS DE ENTREGA
     // =========================================================
 
     private fun mostrarDatosEntrega() {
-
-        if (tipoEntrega.equals(TIPO_ENTREGA_DELIVERY, ignoreCase = true)) {
-
-            radioDelivery.isChecked =
-                true
-
+        if (tipoEntrega.equals(
+                TIPO_ENTREGA_DELIVERY,
+                ignoreCase = true
+            )
+        ) {
+            radioDelivery.isChecked = true
             mostrarDatosDelivery()
-
         } else {
-
-            radioRecojo.isChecked =
-                true
-
+            radioRecojo.isChecked = true
             mostrarDatosRecojo()
         }
 
@@ -386,43 +328,42 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     }
 
     private fun mostrarDatosDelivery() {
+        tvDireccion.text = direccion.ifBlank {
+            getString(
+                R.string.confirmar_pedido_direccion_no_especificada
+            )
+        }
 
-        tvDireccion.text =
-            direccion.ifBlank {
-                getString(R.string.confirmar_pedido_direccion_no_especificada)
-            }
+        tvReferencia.text = when {
+            referencia.isNotBlank() -> referencia
+            observacion.isNotBlank() -> observacion
+            else -> getString(
+                R.string.confirmar_pedido_sin_observaciones
+            )
+        }
 
-        /*
-         * Si todavía no tienes un campo separado para referencia,
-         * aquí se muestra la observación.
-         */
-        tvReferencia.text =
-            when {
-                referencia.isNotBlank() -> referencia
-                observacion.isNotBlank() -> observacion
-                else -> getString(R.string.confirmar_pedido_sin_observaciones)
-            }
-
-        tvTelefono.text =
-            telefono.ifBlank {
-                getString(R.string.confirmar_pedido_telefono_no_especificado)
-            }
+        tvTelefono.text = telefono.ifBlank {
+            getString(
+                R.string.confirmar_pedido_telefono_no_especificado
+            )
+        }
     }
 
     private fun mostrarDatosRecojo() {
-
         tvDireccion.text =
             getString(R.string.confirmar_pedido_recojo_tienda)
 
-        tvReferencia.text =
-            observacion.ifBlank {
-                getString(R.string.confirmar_pedido_sin_observaciones)
-            }
+        tvReferencia.text = observacion.ifBlank {
+            getString(
+                R.string.confirmar_pedido_sin_observaciones
+            )
+        }
 
-        tvTelefono.text =
-            telefono.ifBlank {
-                getString(R.string.confirmar_pedido_telefono_no_especificado)
-            }
+        tvTelefono.text = telefono.ifBlank {
+            getString(
+                R.string.confirmar_pedido_telefono_no_especificado
+            )
+        }
     }
 
     // =========================================================
@@ -430,25 +371,15 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     // =========================================================
 
     private fun configurarEntrega() {
-
-        radioGroupEntrega.setOnCheckedChangeListener { _,
-                                                       checkedId ->
-
+        radioGroupEntrega.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
-
                 R.id.radioDelivery -> {
-
-                    tipoEntrega =
-                        TIPO_ENTREGA_DELIVERY
-
+                    tipoEntrega = TIPO_ENTREGA_DELIVERY
                     mostrarDatosDelivery()
                 }
 
                 R.id.radioRecojo -> {
-
-                    tipoEntrega =
-                        TIPO_ENTREGA_RECOJO
-
+                    tipoEntrega = TIPO_ENTREGA_RECOJO
                     mostrarDatosRecojo()
                 }
             }
@@ -456,13 +387,11 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     }
 
     // =========================================================
-    // BOTÓN
+    // BOTÓN DE CONFIRMACIÓN
     // =========================================================
 
     private fun configurarBoton() {
-
         btnContinuarPago.setOnClickListener {
-
             confirmarPedido()
         }
     }
@@ -472,16 +401,11 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     // =========================================================
 
     private fun confirmarPedido() {
+        if (confirmandoPedido) return
 
-        if (confirmandoPedido) {
-            return
-        }
-
-        val usuario =
-            auth.currentUser
+        val usuario = auth.currentUser
 
         if (usuario == null) {
-
             Toast.makeText(
                 this,
                 getString(R.string.confirmar_pedido_sesion_no_activa),
@@ -491,11 +415,17 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             return
         }
 
-        val pedido =
-            PedidoManager.pedido
+        // Tomar una copia del carrito para que esta operación
+        // utilice cantidades y productos consistentes.
+        val pedido = PedidoManager.pedido.map { item ->
+            item.copy(
+                entradas = item.entradas.map { entrada ->
+                    entrada.copy()
+                }
+            )
+        }
 
         if (pedido.isEmpty()) {
-
             Toast.makeText(
                 this,
                 getString(R.string.confirmar_pedido_carrito_vacio),
@@ -505,11 +435,20 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             return
         }
 
+        if (pedido.any { it.cantidad <= 0 }) {
+            Toast.makeText(
+                this,
+                getString(R.string.confirmar_pedido_error_generico),
+                Toast.LENGTH_LONG
+            ).show()
+
+            return
+        }
+
         val opcionSeleccionada =
             radioGroupEntrega.checkedRadioButtonId
 
         if (opcionSeleccionada == -1) {
-
             Toast.makeText(
                 this,
                 getString(R.string.confirmar_pedido_seleccionar_entrega),
@@ -519,26 +458,19 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             return
         }
 
-        tipoEntrega =
-            when (opcionSeleccionada) {
-
-                R.id.radioDelivery ->
-                    TIPO_ENTREGA_DELIVERY
-
-                R.id.radioRecojo ->
-                    TIPO_ENTREGA_RECOJO
-
-                else ->
-                    return
-            }
+        tipoEntrega = when (opcionSeleccionada) {
+            R.id.radioDelivery -> TIPO_ENTREGA_DELIVERY
+            R.id.radioRecojo -> TIPO_ENTREGA_RECOJO
+            else -> return
+        }
 
         if (tipoEntrega == TIPO_ENTREGA_DELIVERY) {
-
             if (direccion.isBlank()) {
-
                 Toast.makeText(
                     this,
-                    getString(R.string.confirmar_pedido_direccion_no_encontrada),
+                    getString(
+                        R.string.confirmar_pedido_direccion_no_encontrada
+                    ),
                     Toast.LENGTH_SHORT
                 ).show()
 
@@ -546,10 +478,11 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             }
 
             if (telefono.isBlank()) {
-
                 Toast.makeText(
                     this,
-                    getString(R.string.confirmar_pedido_telefono_no_encontrado),
+                    getString(
+                        R.string.confirmar_pedido_telefono_no_encontrado
+                    ),
                     Toast.LENGTH_SHORT
                 ).show()
 
@@ -559,35 +492,38 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
         bloquearBoton()
 
-        val productos: List<HashMap<String, Any>> = pedido.map { item ->
-            val entradas: List<HashMap<String, Any>> = item.entradas.map { entrada ->
+        val productos: List<HashMap<String, Any>> =
+            pedido.map { item ->
+
+                val entradas: List<HashMap<String, Any>> =
+                    item.entradas.map { entrada ->
+                        hashMapOf(
+                            "id" to entrada.id,
+                            "nombre" to entrada.nombre,
+                            "cantidad" to entrada.cantidad,
+                            "precioUnitario" to entrada.precioUnitario
+                        )
+                    }
+
                 hashMapOf(
-                    "id" to entrada.id,
-                    "nombre" to entrada.nombre,
-                    "cantidad" to entrada.cantidad,
-                    "precioUnitario" to entrada.precioUnitario
+                    "id" to item.id,
+                    "nombre" to item.nombre,
+                    "precio" to item.precio,
+                    "cantidad" to item.cantidad,
+                    "tipo" to item.tipo.name,
+                    "precioBaseMenu" to
+                            (item.precioBaseMenu ?: 0.0),
+                    "entradas" to entradas
                 )
             }
 
-            hashMapOf(
-                "id" to item.id,
-                "nombre" to item.nombre,
-                "precio" to item.precio,
-                "cantidad" to item.cantidad,
-                "tipo" to item.tipo.name,
-                "precioBaseMenu" to (item.precioBaseMenu ?: 0.0),
-                "entradas" to entradas
-            )
-        }
-
-        val total = PedidoManager.totalPedido()
+        val total = pedido.sumOf { it.subtotal() }
 
         buscarReferenciasStock(
             pedido = pedido,
 
             onSuccess = { referencias ->
-
-                guardarPedidoYDescontarStock(
+                guardarPedidoYValidarStock(
                     usuarioId = usuario.uid,
                     correo = usuario.email.orEmpty(),
                     productos = productos,
@@ -597,7 +533,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             },
 
             onError = { exception ->
-
                 finalizarConError(exception)
             }
         )
@@ -608,22 +543,17 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     // =========================================================
 
     private fun bloquearBoton() {
+        confirmandoPedido = true
 
-        confirmandoPedido =
-            true
-
-        btnContinuarPago.isEnabled =
-            false
-
-        btnContinuarPago.alpha =
-            0.5f
+        btnContinuarPago.isEnabled = false
+        btnContinuarPago.alpha = 0.5f
 
         btnContinuarPago.text =
             getString(R.string.confirmar_pedido_confirmando)
     }
 
     // =========================================================
-    // BUSCAR REFERENCIAS DE STOCK
+    // PREPARAR VALIDACIÓN DE STOCK
     // =========================================================
 
     private fun buscarReferenciasStock(
@@ -631,7 +561,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         onSuccess: (Map<SolicitudStock, DocumentReference>) -> Unit,
         onError: (Exception) -> Unit
     ) {
-
         val solicitudesAgrupadas =
             mutableMapOf<Pair<String, Int>, SolicitudStock>()
 
@@ -656,9 +585,16 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
         pedido.forEach { item ->
             when (item.tipo) {
-                TipoPedido.MENU -> {
-                    agregarSolicitud(COLECCION_MENU, item.id, item.nombre, item.cantidad)
 
+                TipoPedido.MENU -> {
+                    agregarSolicitud(
+                        coleccion = COLECCION_MENU,
+                        id = item.id,
+                        nombre = item.nombre,
+                        cantidad = item.cantidad
+                    )
+
+                    // Válida también las entradas asociadas al menú.
                     item.entradas.forEach { entrada ->
                         agregarSolicitud(
                             coleccion = COLECCION_ENTRADAS,
@@ -669,19 +605,36 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     }
                 }
 
-                // Compatibilidad temporal con entradas antiguas independientes.
-                TipoPedido.ENTRADA ->
-                    agregarSolicitud(COLECCION_ENTRADAS, item.id, item.nombre, item.cantidad)
+                TipoPedido.CENA -> {
+                    agregarSolicitud(
+                        coleccion = COLECCION_CENAS,
+                        id = item.id,
+                        nombre = item.nombre,
+                        cantidad = item.cantidad
+                    )
+                }
 
+                TipoPedido.ENTRADA -> {
+                    agregarSolicitud(
+                        coleccion = COLECCION_ENTRADAS,
+                        id = item.id,
+                        nombre = item.nombre,
+                        cantidad = item.cantidad
+                    )
+                }
+
+                // Los extras todavía no cuentan con control de stock.
                 TipoPedido.EXTRA -> Unit
             }
         }
 
-        val productosConStock = solicitudesAgrupadas.values.toList()
-        val referencias = mutableMapOf<SolicitudStock, DocumentReference>()
+        val productosConStock =
+            solicitudesAgrupadas.values.toList()
+
+        val referencias =
+            mutableMapOf<SolicitudStock, DocumentReference>()
 
         if (productosConStock.isEmpty()) {
-
             onSuccess(referencias)
             return
         }
@@ -696,7 +649,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     }
 
     // =========================================================
-    // BÚSQUEDA RECURS
+    // BUSCAR REFERENCIAS DE PRODUCTOS EN FIRESTORE
     // =========================================================
 
     private fun buscarReferenciaRecursiva(
@@ -706,15 +659,12 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         onSuccess: (Map<SolicitudStock, DocumentReference>) -> Unit,
         onError: (Exception) -> Unit
     ) {
-
         if (posicion >= productos.size) {
-
             onSuccess(referencias)
             return
         }
 
-        val item =
-            productos[posicion]
+        val item = productos[posicion]
 
         db.collection(item.coleccion)
             .whereEqualTo(CAMPO_ID, item.idProducto)
@@ -722,8 +672,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             .get()
             .addOnSuccessListener { resultado ->
 
-                if (resultado.isEmpty) {
+                val documento = resultado.documents.firstOrNull()
 
+                if (documento == null) {
                     onError(
                         IllegalStateException(
                             getString(
@@ -736,10 +687,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     return@addOnSuccessListener
                 }
 
-                referencias[item] =
-                    resultado.documents
-                        .first()
-                        .reference
+                referencias[item] = documento.reference
 
                 buscarReferenciaRecursiva(
                     productos = productos,
@@ -750,53 +698,46 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 )
             }
             .addOnFailureListener { exception ->
-
                 onError(exception)
             }
     }
 
     // =========================================================
-    // GUARDAR PEDIDO Y DES STOCK
+    // VALIDAR STOCK Y GUARDAR PEDIDO
     // =========================================================
 
-    private fun guardarPedidoYDescontarStock(
+    /**
+     * Comprueba el stock actual mediante una transacción y crea
+     * el pedido pendiente.
+     *
+     * IMPORTANTE:
+     * Esta función NO descuenta ni modifica el stock.
+     * La actualización de inventario queda a cargo del flujo
+     * administrativo autorizado.
+     */
+    private fun guardarPedidoYValidarStock(
         usuarioId: String,
         correo: String,
         productos: List<HashMap<String, Any>>,
         total: Double,
         referenciasStock: Map<SolicitudStock, DocumentReference>
     ) {
-
         val referenciaPedido =
-            db.collection(COLECCION_PEDIDOS)
-                .document()
+            db.collection(COLECCION_PEDIDOS).document()
 
-        val contadorReferencia =
-            db.collection(COLECCION_CONFIGURACION)
-                .document(DOCUMENTO_CONTADOR_PEDIDOS)
+        // Referencia numérica temporal, sin escribir un contador
+        // global desde la aplicación del usuario.
+        val numeroPedido = System.currentTimeMillis()
 
         db.runTransaction { transaction ->
 
-            val contadorSnapshot =
-                transaction.get(contadorReferencia)
-
-            val ultimoNumero =
-                contadorSnapshot.getLong(CAMPO_ULTIMO_NUMERO)
-                    ?: 0L
-
-            val numeroPedido =
-                ultimoNumero + 1
-
-            val stocksActuales = mutableMapOf<SolicitudStock, Long>()
-
-            // Primero se realizan todas las lecturas.
+            // Primero se leen y validan todos los productos.
+            // No se modifica ningún documento de inventario.
             for ((item, referenciaStock) in referenciasStock) {
 
-                val snapshot =
-                    transaction.get(referenciaStock)
+                val snapshot = transaction.get(referenciaStock)
 
                 if (!snapshot.exists()) {
-
                     throw IllegalStateException(
                         getString(
                             R.string.confirmar_pedido_producto_ya_no_existe,
@@ -805,54 +746,40 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     )
                 }
 
-                val stock =
-                    snapshot.getLong(CAMPO_STOCK)
-                        ?: throw IllegalStateException(
-                            getString(
-                                R.string.confirmar_pedido_stock_invalido,
-                                item.nombre
-                            )
+                val stock = snapshot.getLong(CAMPO_STOCK)
+                    ?: throw IllegalStateException(
+                        getString(
+                            R.string.confirmar_pedido_stock_invalido,
+                            item.nombre
                         )
+                    )
 
-                if (stock < item.cantidad) {
-
+                if (stock < 0L) {
                     throw IllegalStateException(
-                        "$ERROR_SIN_STOCK${SEPARADOR_ERROR}${item.nombre}" +
-                                "$SEPARADOR_ERROR$stock$SEPARADOR_ERROR${item.cantidad}"
+                        getString(
+                            R.string.confirmar_pedido_stock_invalido,
+                            item.nombre
+                        )
                     )
                 }
 
-                stocksActuales[item] =
-                    stock
-            }
-
-            // Después se realizan las escrituras.
-            for ((item, referenciaStock) in referenciasStock) {
-
-                val stockActual =
-                    stocksActuales[item]
-                        ?: 0L
-
-                val nuevoStock =
-                    stockActual - item.cantidad
-
-                transaction.update(
-                    referenciaStock,
-                    CAMPO_STOCK,
-                    nuevoStock
-                )
+                if (stock < item.cantidad.toLong()) {
+                    throw StockInsuficienteException(
+                        nombreProducto = item.nombre,
+                        disponible = stock,
+                        solicitado = item.cantidad
+                    )
+                }
             }
 
             val datosPedido: HashMap<String, Any> =
                 hashMapOf(
-
                     "numeroPedido" to numeroPedido,
                     "usuarioId" to usuarioId,
 
-                    "nombreUsuario" to
-                            nombreUsuario.ifBlank {
-                                getString(R.string.confirmar_pedido_cliente)
-                            },
+                    "nombreUsuario" to nombreUsuario.ifBlank {
+                        getString(R.string.confirmar_pedido_cliente)
+                    },
 
                     "correo" to correo,
                     "productos" to productos,
@@ -860,36 +787,29 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
                     "tipoEntrega" to tipoEntrega,
 
-                    "direccion" to
-                            if (tipoEntrega == TIPO_ENTREGA_DELIVERY) {
-                                direccion
-                            } else {
-                                TIPO_ENTREGA_RECOJO
-                            },
+                    "dirección" to if (
+                        tipoEntrega == TIPO_ENTREGA_DELIVERY
+                    ) {
+                        direccion
+                    } else {
+                        TIPO_ENTREGA_RECOJO
+                    },
 
                     "referencia" to referencia,
-                    "telefono" to telefono,
-                    "observacion" to observacion,
+                    "teléfono" to telefono,
+                    "observación" to observacion,
 
-                    // Único método disponible actualmente
-                    "metodoPago" to METODO_PAGO_CONTRA_ENTREGA,
+                    "métodoPago" to METODO_PAGO_CONTRA_ENTREGA,
                     "estadoPago" to ESTADO_PENDIENTE,
                     "estadoPedido" to ESTADO_PENDIENTE,
 
-                    "fecha" to
-                            FieldValue.serverTimestamp()
+                    "fecha" to FieldValue.serverTimestamp()
                 )
 
-            // =========================================================
-            // UBICACIÓN GPS OPCIONAL
-            // Solo se guarda cuando es Delivery y el cliente la compartió.
-            // =========================================================
-
-            val latitudPedido =
-                latitud
-
-            val longitudPedido =
-                longitud
+            // Guarda ubicación únicamente si es Delivery
+            // y el cliente proporcionó coordenadas y enlace.
+            val latitudPedido = latitud
+            val longitudPedido = longitud
 
             if (
                 tipoEntrega == TIPO_ENTREGA_DELIVERY &&
@@ -897,35 +817,22 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 longitudPedido != null &&
                 ubicacionMaps.isNotBlank()
             ) {
-
-                datosPedido["latitud"] =
-                    latitudPedido
-
-                datosPedido["longitud"] =
-                    longitudPedido
-
-                datosPedido["ubicacionMaps"] =
-                    ubicacionMaps
+                datosPedido["latitud"] = latitudPedido
+                datosPedido["longitud"] = longitudPedido
+                datosPedido["ubicaciónMaps"] = ubicacionMaps
             }
 
+            // Única escritura de negocio de esta transacción:
+            // crear el pedido. No se escribe stock ni contador.
             transaction.set(
                 referenciaPedido,
                 datosPedido
             )
-
-            transaction.set(
-                contadorReferencia,
-                hashMapOf(
-                    CAMPO_ULTIMO_NUMERO to numeroPedido
-                )
-            )
         }
             .addOnSuccessListener {
-
                 pedidoConfirmado()
             }
             .addOnFailureListener { exception ->
-
                 finalizarConError(exception)
             }
     }
@@ -935,7 +842,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     // =========================================================
 
     private fun pedidoConfirmado() {
-
         PedidoManager.limpiar()
 
         Toast.makeText(
@@ -948,7 +854,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             this,
             ActivityMenuUsuario::class.java
         ).apply {
-
             flags =
                 Intent.FLAG_ACTIVITY_NEW_TASK or
                         Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -959,56 +864,30 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     }
 
     // =========================================================
-    // MANEJO DE ERROR
+    // MANEJO DE ERRORES
     // =========================================================
 
     private fun finalizarConError(exception: Exception) {
+        confirmandoPedido = false
 
-        confirmandoPedido =
-            false
-
-        btnContinuarPago.isEnabled =
-            true
-
-        btnContinuarPago.alpha =
-            1f
+        btnContinuarPago.isEnabled = true
+        btnContinuarPago.alpha = 1f
 
         btnContinuarPago.text =
             getString(R.string.confirmar_pedido_boton_confirmar)
 
-        val mensaje =
-            if (
-                exception.message
-                    ?.startsWith("$ERROR_SIN_STOCK$SEPARADOR_ERROR") == true
-            ) {
+        val errorStock = buscarErrorStock(exception)
 
-                val partes =
-                    exception.message
-                        ?.split(SEPARADOR_ERROR)
-
-                val producto =
-                    partes?.getOrNull(1)
-                        ?: getString(R.string.confirmar_pedido_producto_generico)
-
-                val disponible =
-                    partes?.getOrNull(2)
-                        ?: "0"
-
-                val solicitado =
-                    partes?.getOrNull(3)
-                        ?: "0"
-
-                getString(
-                    R.string.confirmar_pedido_stock_insuficiente,
-                    producto,
-                    disponible,
-                    solicitado
-                )
-
-            } else {
-
-                getString(R.string.confirmar_pedido_error_generico)
-            }
+        val mensaje = if (errorStock != null) {
+            getString(
+                R.string.confirmar_pedido_stock_insuficiente,
+                errorStock.nombreProducto,
+                errorStock.disponible.toString(),
+                errorStock.solicitado.toString()
+            )
+        } else {
+            getString(R.string.confirmar_pedido_error_generico)
+        }
 
         Toast.makeText(
             this,
@@ -1017,40 +896,53 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         ).show()
     }
 
+    private fun buscarErrorStock(
+        error: Throwable
+    ): StockInsuficienteException? {
+        var actual: Throwable? = error
+
+        while (actual != null) {
+            if (actual is StockInsuficienteException) {
+                return actual
+            }
+
+            actual = actual.cause
+        }
+
+        return null
+    }
+
+    // =========================================================
+    // CONSTANTES
+    // =========================================================
+
     private companion object {
+
         const val EXTRA_NOMBRE = "nombre"
-        const val EXTRA_TELEFONO = "telefono"
-        const val EXTRA_DIRECCION = "direccion"
-        const val EXTRA_OBSERVACION = "observacion"
+        const val EXTRA_TELEFONO = "teléfono"
+        const val EXTRA_DIRECCION = "dirección"
+        const val EXTRA_OBSERVACION = "observación"
         const val EXTRA_REFERENCIA = "referencia"
         const val EXTRA_TIPO_ENTREGA = "tipoEntrega"
 
-        // =========================================================
-        // UBICACIÓN GPS
-        // =========================================================
-
         const val EXTRA_LATITUD = "latitud"
         const val EXTRA_LONGITUD = "longitud"
-        const val EXTRA_UBICACION_MAPS = "ubicacionMaps"
+        const val EXTRA_UBICACION_MAPS = "ubicaciónMaps"
 
         const val TIPO_ENTREGA_DELIVERY = "Delivery"
         const val TIPO_ENTREGA_RECOJO = "Recojo en tienda"
+
         const val METODO_PAGO_CONTRA_ENTREGA = "Contra entrega"
         const val ESTADO_PENDIENTE = "Pendiente"
 
         const val COLECCION_USUARIOS = "usuarios"
         const val COLECCION_MENU = "menu"
+        const val COLECCION_CENAS = "cenas"
         const val COLECCION_ENTRADAS = "entradas"
         const val COLECCION_PEDIDOS = "pedidos"
-        const val COLECCION_CONFIGURACION = "configuracion"
-        const val DOCUMENTO_CONTADOR_PEDIDOS = "contadorPedidos"
 
         const val CAMPO_ID = "id"
         const val CAMPO_NOMBRE = "nombre"
         const val CAMPO_STOCK = "stock"
-        const val CAMPO_ULTIMO_NUMERO = "ultimoNumero"
-
-        const val ERROR_SIN_STOCK = "SIN_STOCK"
-        const val SEPARADOR_ERROR = ":"
     }
 }
