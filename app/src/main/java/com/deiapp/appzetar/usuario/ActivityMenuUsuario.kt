@@ -147,7 +147,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
 
     // =========================================================
-    // RESULTADO DE "VER TODO"
+    // RESULTADO DE "VER"
     // =========================================================
 
     private val launcherTodosLosMenus =
@@ -815,7 +815,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
         rvExtras.adapter = extraAdapter
 
 
-        // VER TODO
+        // VER
 
         tvVerTodo.setOnClickListener {
             val intent =
