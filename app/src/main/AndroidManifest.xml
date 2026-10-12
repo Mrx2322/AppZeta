@@ -41,6 +41,11 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- Nueva pantalla de pedido confirmado -->
+        <activity
+            android:name="com.deiapp.appzetar.usuario.pedidos.ActivityPedidoConfirmado"
+            android:exported="false" />
+
         <activity
             android:name="com.deiapp.appzetar.usuario.login.RegistroActivity"
             android:exported="false" />

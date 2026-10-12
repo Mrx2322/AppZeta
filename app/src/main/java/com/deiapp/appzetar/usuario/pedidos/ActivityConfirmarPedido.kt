@@ -3,6 +3,7 @@ package com.deiapp.appzetar.usuario.pedidos
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
@@ -13,7 +14,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.deiapp.appzeta.R
-import com.deiapp.appzetar.usuario.ActivityMenuUsuario
 import com.deiapp.appzetar.usuario.carrito.PedidoItem
 import com.deiapp.appzetar.usuario.carrito.PedidoManager
 import com.deiapp.appzetar.usuario.carrito.TipoPedido
@@ -24,6 +24,10 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityConfirmarPedido : AppCompatActivity() {
+
+    // =========================================================
+    // MODELOS PARA VALIDAR STOCK
+    // =========================================================
 
     private data class SolicitudStock(
         val coleccion: String,
@@ -75,25 +79,15 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     // =========================================================
 
     private var nombreUsuario = ""
-
     private var tipoEntrega = TIPO_ENTREGA_DELIVERY
 
     private var direccion = ""
-
     private var referencia = ""
-
     private var telefono = ""
 
-    // =========================================================
-    // UBICACIÓN GPS OPCIONAL
-    // =========================================================
-
     private var latitud: Double? = null
-
     private var longitud: Double? = null
-
     private var ubicacionMaps = ""
-
     private var observacion = ""
 
     private var confirmandoPedido = false
@@ -171,42 +165,61 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     }
 
     // =========================================================
+    // LEER TEXTOS DEL INTENT
+    // =========================================================
+
+    private fun leerExtraTexto(vararg claves: String): String {
+        for (clave in claves) {
+            val valor = intent
+                .getStringExtra(clave)
+                ?.trim()
+
+            if (!valor.isNullOrBlank()) {
+                return valor
+            }
+        }
+
+        return ""
+    }
+
+    // =========================================================
     // RECIBIR DATOS DE ENTREGA
     // =========================================================
 
     private fun recibirDatos() {
-        nombreUsuario = intent
-            .getStringExtra(EXTRA_NOMBRE)
-            ?.trim()
-            .orEmpty()
+        nombreUsuario = leerExtraTexto(
+            EXTRA_NOMBRE,
+            "nombreUsuario"
+        )
 
-        telefono = intent
-            .getStringExtra(EXTRA_TELEFONO)
-            ?.trim()
-            .orEmpty()
+        telefono = leerExtraTexto(
+            "telefono",
+            EXTRA_TELEFONO,
+            "telefonoUsuario",
+            "telefonoCliente",
+            "numeroTelefono",
+            "númeroTelefono"
+        )
 
-        direccion = intent
-            .getStringExtra(EXTRA_DIRECCION)
-            ?.trim()
-            .orEmpty()
+        direccion = leerExtraTexto(
+            "direccion",
+            EXTRA_DIRECCION
+        )
 
-        observacion = intent
-            .getStringExtra(EXTRA_OBSERVACION)
-            ?.trim()
-            .orEmpty()
+        observacion = leerExtraTexto(
+            "observacion",
+            EXTRA_OBSERVACION
+        )
 
-        referencia = intent
-            .getStringExtra(EXTRA_REFERENCIA)
-            ?.trim()
-            .orEmpty()
+        referencia = leerExtraTexto(
+            EXTRA_REFERENCIA
+        )
 
-        tipoEntrega = intent
-            .getStringExtra(EXTRA_TIPO_ENTREGA)
-            ?.trim()
-            .orEmpty()
-            .ifBlank {
-                TIPO_ENTREGA_DELIVERY
-            }
+        tipoEntrega = leerExtraTexto(
+            EXTRA_TIPO_ENTREGA
+        ).ifBlank {
+            TIPO_ENTREGA_DELIVERY
+        }
 
         latitud = if (intent.hasExtra(EXTRA_LATITUD)) {
             intent.getDoubleExtra(EXTRA_LATITUD, 0.0)
@@ -220,10 +233,10 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             null
         }
 
-        ubicacionMaps = intent
-            .getStringExtra(EXTRA_UBICACION_MAPS)
-            ?.trim()
-            .orEmpty()
+        ubicacionMaps = leerExtraTexto(
+            EXTRA_UBICACION_MAPS,
+            "ubicacionMaps"
+        )
     }
 
     // =========================================================
@@ -236,7 +249,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         if (usuario == null) {
             Toast.makeText(
                 this,
-                getString(R.string.confirmar_pedido_sesion_no_activa),
+                getString(
+                    R.string.confirmar_pedido_sesion_no_activa
+                ),
                 Toast.LENGTH_SHORT
             ).show()
 
@@ -245,7 +260,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         }
 
         tvCorreoUsuario.text = usuario.email
-            ?: getString(R.string.confirmar_pedido_sin_correo)
+            ?: getString(
+                R.string.confirmar_pedido_sin_correo
+            )
 
         if (nombreUsuario.isNotBlank()) {
             tvNombreUsuario.text = nombreUsuario
@@ -256,19 +273,30 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             .document(usuario.uid)
             .get()
             .addOnSuccessListener { documento ->
+
                 nombreUsuario = documento
                     .getString(CAMPO_NOMBRE)
                     ?.trim()
                     .orEmpty()
                     .ifBlank {
-                        getString(R.string.confirmar_pedido_cliente)
+                        getString(
+                            R.string.confirmar_pedido_cliente
+                        )
                     }
 
                 tvNombreUsuario.text = nombreUsuario
             }
-            .addOnFailureListener {
-                nombreUsuario =
-                    getString(R.string.confirmar_pedido_cliente)
+            .addOnFailureListener { exception ->
+
+                Log.e(
+                    TAG,
+                    "No se pudo cargar el nombre del usuario",
+                    exception
+                )
+
+                nombreUsuario = getString(
+                    R.string.confirmar_pedido_cliente
+                )
 
                 tvNombreUsuario.text = nombreUsuario
             }
@@ -284,7 +312,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         if (pedido.isEmpty()) {
             Toast.makeText(
                 this,
-                getString(R.string.confirmar_pedido_carrito_vacio),
+                getString(
+                    R.string.confirmar_pedido_carrito_vacio
+                ),
                 Toast.LENGTH_SHORT
             ).show()
 
@@ -307,11 +337,12 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     }
 
     // =========================================================
-    // MOSTRAR DATOS DE ENTREGA
+    // DATOS DE ENTREGA
     // =========================================================
 
     private fun mostrarDatosEntrega() {
-        if (tipoEntrega.equals(
+        if (
+            tipoEntrega.equals(
                 TIPO_ENTREGA_DELIVERY,
                 ignoreCase = true
             )
@@ -323,8 +354,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             mostrarDatosRecojo()
         }
 
-        tvMetodoPago.text =
-            getString(R.string.confirmar_pedido_contra_entrega)
+        tvMetodoPago.text = getString(
+            R.string.confirmar_pedido_contra_entrega
+        )
     }
 
     private fun mostrarDatosDelivery() {
@@ -337,6 +369,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         tvReferencia.text = when {
             referencia.isNotBlank() -> referencia
             observacion.isNotBlank() -> observacion
+
             else -> getString(
                 R.string.confirmar_pedido_sin_observaciones
             )
@@ -350,8 +383,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     }
 
     private fun mostrarDatosRecojo() {
-        tvDireccion.text =
-            getString(R.string.confirmar_pedido_recojo_tienda)
+        tvDireccion.text = getString(
+            R.string.confirmar_pedido_recojo_tienda
+        )
 
         tvReferencia.text = observacion.ifBlank {
             getString(
@@ -371,7 +405,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     // =========================================================
 
     private fun configurarEntrega() {
-        radioGroupEntrega.setOnCheckedChangeListener { _, checkedId ->
+        radioGroupEntrega.setOnCheckedChangeListener {
+                _, checkedId ->
+
             when (checkedId) {
                 R.id.radioDelivery -> {
                     tipoEntrega = TIPO_ENTREGA_DELIVERY
@@ -408,15 +444,16 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         if (usuario == null) {
             Toast.makeText(
                 this,
-                getString(R.string.confirmar_pedido_sesion_no_activa),
+                getString(
+                    R.string.confirmar_pedido_sesion_no_activa
+                ),
                 Toast.LENGTH_SHORT
             ).show()
 
             return
         }
 
-        // Tomar una copia del carrito para que esta operación
-        // utilice cantidades y productos consistentes.
+        // Copia local para conservar cantidades consistentes.
         val pedido = PedidoManager.pedido.map { item ->
             item.copy(
                 entradas = item.entradas.map { entrada ->
@@ -428,17 +465,28 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         if (pedido.isEmpty()) {
             Toast.makeText(
                 this,
-                getString(R.string.confirmar_pedido_carrito_vacio),
+                getString(
+                    R.string.confirmar_pedido_carrito_vacio
+                ),
                 Toast.LENGTH_SHORT
             ).show()
 
             return
         }
 
-        if (pedido.any { it.cantidad <= 0 }) {
+        if (
+            pedido.any { item ->
+                item.cantidad <= 0 ||
+                        item.entradas.any { entrada ->
+                            entrada.cantidad <= 0
+                        }
+            }
+        ) {
             Toast.makeText(
                 this,
-                getString(R.string.confirmar_pedido_error_generico),
+                getString(
+                    R.string.confirmar_pedido_error_generico
+                ),
                 Toast.LENGTH_LONG
             ).show()
 
@@ -451,7 +499,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         if (opcionSeleccionada == -1) {
             Toast.makeText(
                 this,
-                getString(R.string.confirmar_pedido_seleccionar_entrega),
+                getString(
+                    R.string.confirmar_pedido_seleccionar_entrega
+                ),
                 Toast.LENGTH_SHORT
             ).show()
 
@@ -490,6 +540,37 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             }
         }
 
+        if (
+            direccion.length > 300 ||
+            referencia.length > 300 ||
+            telefono.length > 25 ||
+            observacion.length > 500
+        ) {
+            Toast.makeText(
+                this,
+                getString(
+                    R.string.confirmar_pedido_error_generico
+                ),
+                Toast.LENGTH_LONG
+            ).show()
+
+            return
+        }
+
+        val total = pedido.sumOf { it.subtotal() }
+
+        if (!total.isFinite() || total <= 0.0) {
+            Toast.makeText(
+                this,
+                getString(
+                    R.string.confirmar_pedido_error_generico
+                ),
+                Toast.LENGTH_LONG
+            ).show()
+
+            return
+        }
+
         bloquearBoton()
 
         val productos: List<HashMap<String, Any>> =
@@ -511,13 +592,12 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     "precio" to item.precio,
                     "cantidad" to item.cantidad,
                     "tipo" to item.tipo.name,
-                    "precioBaseMenu" to
-                            (item.precioBaseMenu ?: 0.0),
+                    "precioBaseMenu" to (
+                            item.precioBaseMenu ?: 0.0
+                            ),
                     "entradas" to entradas
                 )
             }
-
-        val total = pedido.sumOf { it.subtotal() }
 
         buscarReferenciasStock(
             pedido = pedido,
@@ -548,8 +628,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         btnContinuarPago.isEnabled = false
         btnContinuarPago.alpha = 0.5f
 
-        btnContinuarPago.text =
-            getString(R.string.confirmar_pedido_confirmando)
+        btnContinuarPago.text = getString(
+            R.string.confirmar_pedido_confirmando
+        )
     }
 
     // =========================================================
@@ -558,7 +639,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
     private fun buscarReferenciasStock(
         pedido: List<PedidoItem>,
-        onSuccess: (Map<SolicitudStock, DocumentReference>) -> Unit,
+        onSuccess: (
+            Map<SolicitudStock, DocumentReference>
+        ) -> Unit,
         onError: (Exception) -> Unit
     ) {
         val solicitudesAgrupadas =
@@ -594,7 +677,8 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                         cantidad = item.cantidad
                     )
 
-                    // Válida también las entradas asociadas al menú.
+                    // Las entradas asociadas se descuentan
+                    // por cada unidad del menú solicitado.
                     item.entradas.forEach { entrada ->
                         agregarSolicitud(
                             coleccion = COLECCION_ENTRADAS,
@@ -623,7 +707,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     )
                 }
 
-                // Los extras todavía no cuentan con control de stock.
+                // Los extras no tienen control de stock aquí.
                 TipoPedido.EXTRA -> Unit
             }
         }
@@ -649,14 +733,16 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     }
 
     // =========================================================
-    // BUSCAR REFERENCIAS DE PRODUCTOS EN FIRESTORE
+    // BUSCAR DOCUMENTOS DE STOCK EN FIRESTORE
     // =========================================================
 
     private fun buscarReferenciaRecursiva(
         productos: List<SolicitudStock>,
         posicion: Int,
         referencias: MutableMap<SolicitudStock, DocumentReference>,
-        onSuccess: (Map<SolicitudStock, DocumentReference>) -> Unit,
+        onSuccess: (
+            Map<SolicitudStock, DocumentReference>
+        ) -> Unit,
         onError: (Exception) -> Unit
     ) {
         if (posicion >= productos.size) {
@@ -703,17 +789,16 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     }
 
     // =========================================================
-    // VALIDAR STOCK Y GUARDAR PEDIDO
+    // VALIDAR STOCK, DESCONTAR Y GUARDAR PEDIDO
     // =========================================================
 
     /**
-     * Comprueba el stock actual mediante una transacción y crea
-     * el pedido pendiente.
+     * Valida el stock de todos los productos y realiza los descuentos,
+     * la creación del pedido y la actualización del contador en una
+     * única transacción de Firestore.
      *
-     * IMPORTANTE:
-     * Esta función NO descuenta ni modifica el stock.
-     * La actualización de inventario queda a cargo del flujo
-     * administrativo autorizado.
+     * Si una operación falla, Firestore no confirma parcialmente
+     * ninguna de las escrituras de esta transacción.
      */
     private fun guardarPedidoYValidarStock(
         usuarioId: String,
@@ -725,41 +810,67 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         val referenciaPedido =
             db.collection(COLECCION_PEDIDOS).document()
 
-        // Referencia numérica temporal, sin escribir un contador
-        // global desde la aplicación del usuario.
-        val numeroPedido = System.currentTimeMillis()
+        val referenciaContador =
+            db.collection(COLECCION_CONFIGURACION)
+                .document(DOCUMENTO_CONTADOR_PEDIDOS)
 
         db.runTransaction { transaction ->
 
-            // Primero se leen y validan todos los productos.
-            // No se modifica ningún documento de inventario.
+            // =================================================
+            // 1. LEER EL CONTADOR
+            // =================================================
+
+            val snapshotContador =
+                transaction.get(referenciaContador)
+
+            val siguienteNumero: Long =
+                if (snapshotContador.exists()) {
+
+                    val ultimoNumero =
+                        snapshotContador.getLong(CAMPO_ULTIMO_NUMERO)
+                            ?: throw IllegalStateException(
+                                "El contador de pedidos no contiene un número entero válido."
+                            )
+
+                    if (ultimoNumero < 0L) {
+                        throw IllegalStateException(
+                            "El contador de pedidos no puede ser negativo."
+                        )
+                    }
+
+                    Math.addExact(ultimoNumero, 1L)
+                } else {
+                    1L
+                }
+
+            // =================================================
+            // 2. LEER Y VALIDAR TODO EL STOCK
+            // TODAS LAS LECTURAS VAN ANTES DE LAS ESCRITURAS
+            // =================================================
+
+            val snapshotsStock =
+                mutableListOf<Pair<SolicitudStock, DocumentReference>>()
+
             for ((item, referenciaStock) in referenciasStock) {
 
-                val snapshot = transaction.get(referenciaStock)
+                val snapshotStock =
+                    transaction.get(referenciaStock)
 
-                if (!snapshot.exists()) {
+                if (!snapshotStock.exists()) {
                     throw IllegalStateException(
-                        getString(
-                            R.string.confirmar_pedido_producto_ya_no_existe,
-                            item.nombre
-                        )
+                        "El producto ${item.nombre} ya no existe."
                     )
                 }
 
-                val stock = snapshot.getLong(CAMPO_STOCK)
-                    ?: throw IllegalStateException(
-                        getString(
-                            R.string.confirmar_pedido_stock_invalido,
-                            item.nombre
+                val stock =
+                    snapshotStock.getLong(CAMPO_STOCK)
+                        ?: throw IllegalStateException(
+                            "El stock de ${item.nombre} no es válido."
                         )
-                    )
 
                 if (stock < 0L) {
                     throw IllegalStateException(
-                        getString(
-                            R.string.confirmar_pedido_stock_invalido,
-                            item.nombre
-                        )
+                        "El stock de ${item.nombre} no puede ser negativo."
                     )
                 }
 
@@ -770,15 +881,38 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                         solicitado = item.cantidad
                     )
                 }
+
+                snapshotsStock.add(
+                    item to referenciaStock
+                )
             }
+
+            // =================================================
+            // 3. DESCONTAR STOCK
+            // =================================================
+
+            for ((item, referenciaStock) in snapshotsStock) {
+
+                transaction.update(
+                    referenciaStock,
+                    CAMPO_STOCK,
+                    FieldValue.increment(-item.cantidad.toLong())
+                )
+            }
+
+            // =================================================
+            // 4. PREPARAR LOS DATOS DEL PEDIDO
+            // =================================================
 
             val datosPedido: HashMap<String, Any> =
                 hashMapOf(
-                    "numeroPedido" to numeroPedido,
+                    "numeroPedido" to siguienteNumero,
                     "usuarioId" to usuarioId,
 
                     "nombreUsuario" to nombreUsuario.ifBlank {
-                        getString(R.string.confirmar_pedido_cliente)
+                        getString(
+                            R.string.confirmar_pedido_cliente
+                        )
                     },
 
                     "correo" to correo,
@@ -787,7 +921,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
                     "tipoEntrega" to tipoEntrega,
 
-                    "dirección" to if (
+                    "direccion" to if (
                         tipoEntrega == TIPO_ENTREGA_DELIVERY
                     ) {
                         direccion
@@ -796,18 +930,17 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     },
 
                     "referencia" to referencia,
-                    "teléfono" to telefono,
-                    "observación" to observacion,
+                    "telefono" to telefono,
+                    "observacion" to observacion,
 
-                    "métodoPago" to METODO_PAGO_CONTRA_ENTREGA,
+                    "metodoPago" to METODO_PAGO_CONTRA_ENTREGA,
                     "estadoPago" to ESTADO_PENDIENTE,
                     "estadoPedido" to ESTADO_PENDIENTE,
 
                     "fecha" to FieldValue.serverTimestamp()
                 )
 
-            // Guarda ubicación únicamente si es Delivery
-            // y el cliente proporcionó coordenadas y enlace.
+            // GPS opcional para Delivery.
             val latitudPedido = latitud
             val longitudPedido = longitud
 
@@ -819,47 +952,88 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             ) {
                 datosPedido["latitud"] = latitudPedido
                 datosPedido["longitud"] = longitudPedido
-                datosPedido["ubicaciónMaps"] = ubicacionMaps
+                datosPedido["ubicacionMaps"] = ubicacionMaps
             }
 
-            // Única escritura de negocio de esta transacción:
-            // crear el pedido. No se escribe stock ni contador.
+            // =================================================
+            // 5. ACTUALIZAR EL CONTADOR
+            // =================================================
+
+            if (snapshotContador.exists()) {
+                transaction.update(
+                    referenciaContador,
+                    CAMPO_ULTIMO_NUMERO,
+                    siguienteNumero
+                )
+            } else {
+                transaction.set(
+                    referenciaContador,
+                    hashMapOf(
+                        CAMPO_ULTIMO_NUMERO to siguienteNumero
+                    )
+                )
+            }
+
+            // =================================================
+            // 6. GUARDAR EL PEDIDO
+            // =================================================
+
             transaction.set(
                 referenciaPedido,
                 datosPedido
             )
+
+            siguienteNumero
         }
-            .addOnSuccessListener {
-                pedidoConfirmado()
+            .addOnSuccessListener { numeroPedido ->
+
+                Log.i(
+                    TAG,
+                    "Pedido $numeroPedido guardado y stock descontado correctamente."
+                )
+
+                pedidoConfirmado(
+                    numeroPedido = numeroPedido,
+                    total = total
+                )
             }
             .addOnFailureListener { exception ->
+
                 finalizarConError(exception)
             }
     }
 
     // =========================================================
-    // PEDIDO CONFIRMADO
+    // PEDIDO GUARDADO CORRECTAMENTE
     // =========================================================
 
-    private fun pedidoConfirmado() {
+    private fun pedidoConfirmado(
+        numeroPedido: Long,
+        total: Double
+    ) {
+        // Vaciar el carrito solamente después del éxito de Firestore.
         PedidoManager.limpiar()
 
-        Toast.makeText(
+        val intentConfirmacion = Intent(
             this,
-            getString(R.string.confirmar_pedido_exito),
-            Toast.LENGTH_LONG
-        ).show()
-
-        val intent = Intent(
-            this,
-            ActivityMenuUsuario::class.java
+            ActivityPedidoConfirmado::class.java
         ).apply {
-            flags =
-                Intent.FLAG_ACTIVITY_NEW_TASK or
-                        Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+            putExtra(
+                EXTRA_NUMERO_PEDIDO_CONFIRMADO,
+                numeroPedido
+            )
+
+            putExtra(
+                EXTRA_TOTAL_PEDIDO_CONFIRMADO,
+                total
+            )
+
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
-        startActivity(intent)
+        startActivity(intentConfirmacion)
         finish()
     }
 
@@ -873,8 +1047,15 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         btnContinuarPago.isEnabled = true
         btnContinuarPago.alpha = 1f
 
-        btnContinuarPago.text =
-            getString(R.string.confirmar_pedido_boton_confirmar)
+        btnContinuarPago.text = getString(
+            R.string.confirmar_pedido_boton_confirmar
+        )
+
+        Log.e(
+            TAG,
+            "Falló la validación, el descuento de stock o el guardado del pedido",
+            exception
+        )
 
         val errorStock = buscarErrorStock(exception)
 
@@ -886,7 +1067,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 errorStock.solicitado.toString()
             )
         } else {
-            getString(R.string.confirmar_pedido_error_generico)
+            getString(
+                R.string.confirmar_pedido_error_generico
+            )
         }
 
         Toast.makeText(
@@ -918,6 +1101,8 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
     private companion object {
 
+        const val TAG = "CONFIRMAR_PEDIDO"
+
         const val EXTRA_NOMBRE = "nombre"
         const val EXTRA_TELEFONO = "teléfono"
         const val EXTRA_DIRECCION = "dirección"
@@ -928,6 +1113,12 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         const val EXTRA_LATITUD = "latitud"
         const val EXTRA_LONGITUD = "longitud"
         const val EXTRA_UBICACION_MAPS = "ubicaciónMaps"
+
+        const val EXTRA_NUMERO_PEDIDO_CONFIRMADO =
+            "extra_numero_pedido_confirmado"
+
+        const val EXTRA_TOTAL_PEDIDO_CONFIRMADO =
+            "extra_total_pedido_confirmado"
 
         const val TIPO_ENTREGA_DELIVERY = "Delivery"
         const val TIPO_ENTREGA_RECOJO = "Recojo en tienda"
@@ -940,9 +1131,13 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         const val COLECCION_CENAS = "cenas"
         const val COLECCION_ENTRADAS = "entradas"
         const val COLECCION_PEDIDOS = "pedidos"
+        const val COLECCION_CONFIGURACION = "configuracion"
+
+        const val DOCUMENTO_CONTADOR_PEDIDOS = "contadorPedidos"
 
         const val CAMPO_ID = "id"
         const val CAMPO_NOMBRE = "nombre"
         const val CAMPO_STOCK = "stock"
+        const val CAMPO_ULTIMO_NUMERO = "ultimoNumero"
     }
 }
