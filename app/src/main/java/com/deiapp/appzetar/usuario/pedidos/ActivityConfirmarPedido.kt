@@ -844,7 +844,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 }
 
             // =================================================
-            // 2. LEER Y VALIDAR TOD
+            // 2. LEER Y VALIDAR TODA LA LISTA DE STOCK
             // TODAS LAS LECTURAS VAN ANTES DE LAS ESCRITURAS
             // =================================================
 
