@@ -1,9 +1,11 @@
 package com.deiapp.appzetar.usuario.login
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +17,7 @@ import com.deiapp.appzetar.usuario.ActivityMenuUsuario
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FieldValue
 
 class RegistroActivity : AppCompatActivity() {
 
@@ -24,6 +27,8 @@ class RegistroActivity : AppCompatActivity() {
     private lateinit var etConfirmarContrasena: TextInputEditText
 
     private lateinit var btnRegistrarse: Button
+    private lateinit var cbAceptaPrivacidad: CheckBox
+    private lateinit var tvPoliticaPrivacidad: View
 
     private lateinit var auth: FirebaseAuth
 
@@ -53,6 +58,10 @@ class RegistroActivity : AppCompatActivity() {
 
         btnRegistrarse.setOnClickListener {
             registrarUsuario()
+        }
+
+        tvPoliticaPrivacidad.setOnClickListener {
+            abrirPoliticaPrivacidad()
         }
     }
 
@@ -99,6 +108,8 @@ class RegistroActivity : AppCompatActivity() {
             findViewById(R.id.etConfirmarContrasena)
 
         btnRegistrarse = findViewById(R.id.btnRegistrarse)
+        cbAceptaPrivacidad = findViewById(R.id.cbAceptaPrivacidad)
+        tvPoliticaPrivacidad = findViewById(R.id.tvPoliticaPrivacidad)
     }
 
     // =========================================================
@@ -172,6 +183,15 @@ class RegistroActivity : AppCompatActivity() {
             return
         }
 
+        if (!cbAceptaPrivacidad.isChecked) {
+            Toast.makeText(
+                this,
+                R.string.privacidad_debes_aceptar,
+                Toast.LENGTH_LONG
+            ).show()
+            return
+        }
+
         // =====================================================
         // DESACTIVAR BOTÓN
         // =====================================================
@@ -203,7 +223,9 @@ class RegistroActivity : AppCompatActivity() {
                 val datos = hashMapOf(
                     "uid" to uid,
                     "nombre" to nombre,
-                    "correo" to correo
+                    "correo" to correo,
+                    "privacidadVersion" to VERSION_POLITICA_PRIVACIDAD,
+                    "privacidadAceptadaEn" to FieldValue.serverTimestamp()
                 )
 
                 // =============================================
@@ -258,5 +280,19 @@ class RegistroActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
             }
+    }
+
+    private fun abrirPoliticaPrivacidad() {
+        startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(URL_POLITICA_PRIVACIDAD)
+            )
+        )
+    }
+
+    private companion object {
+        const val URL_POLITICA_PRIVACIDAD = "https://appzeta-f919f.web.app/privacidad"
+        const val VERSION_POLITICA_PRIVACIDAD = "2026-10-15"
     }
 }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -43,6 +44,8 @@ class ActivityPerfilUsuario : AppCompatActivity() {
     private lateinit var opcionEditarPerfil: LinearLayout
     private lateinit var opcionPedidosPerfil: LinearLayout
     private lateinit var btnCerrarSesion: MaterialButton
+    private lateinit var btnPrivacidad: MaterialButton
+    private lateinit var btnEliminarCuenta: MaterialButton
 
     private lateinit var navInicio: LinearLayout
     private lateinit var navExtras: LinearLayout
@@ -101,6 +104,8 @@ class ActivityPerfilUsuario : AppCompatActivity() {
         opcionEditarPerfil = findViewById(R.id.opcionEditarPerfil)
         opcionPedidosPerfil = findViewById(R.id.opcionPedidosPerfil)
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion)
+        btnPrivacidad = findViewById(R.id.btnPrivacidad)
+        btnEliminarCuenta = findViewById(R.id.btnEliminarCuenta)
 
         navInicio = findViewById(R.id.navInicio)
         navExtras = findViewById(R.id.navExtras)
@@ -125,6 +130,14 @@ class ActivityPerfilUsuario : AppCompatActivity() {
 
         btnCerrarSesion.setOnClickListener {
             mostrarConfirmacionCerrarSesion()
+        }
+
+        btnPrivacidad.setOnClickListener {
+            abrirEnlace(POLITICA_PRIVACIDAD_URL)
+        }
+
+        btnEliminarCuenta.setOnClickListener {
+            abrirEnlace(ELIMINAR_CUENTA_URL)
         }
 
         configurarNavegacion()
@@ -524,5 +537,21 @@ class ActivityPerfilUsuario : AppCompatActivity() {
 
         startActivity(intent)
         finish()
+    }
+
+    private fun abrirEnlace(url: String) {
+        startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(url)
+            )
+        )
+    }
+
+    private companion object {
+        const val POLITICA_PRIVACIDAD_URL =
+            "https://appzeta-f919f.web.app/privacidad"
+        const val ELIMINAR_CUENTA_URL =
+            "https://appzeta-f919f.web.app/eliminar-cuenta"
     }
 }

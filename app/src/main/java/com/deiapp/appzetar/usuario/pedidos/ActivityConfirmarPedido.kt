@@ -1,6 +1,7 @@
 ﻿package com.deiapp.appzetar.usuario.pedidos
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.RadioButton
@@ -15,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.deiapp.appzeta.R
 import com.deiapp.appzetar.usuario.carrito.PedidoManager
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -44,6 +46,8 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     private lateinit var tvMetodoPago: TextView
 
     private lateinit var btnContinuarPago: MaterialButton
+    private lateinit var cbAceptaPrivacidad: MaterialCheckBox
+    private lateinit var tvPoliticaPrivacidad: TextView
 
     private var nombreUsuario = ""
     private var tipoEntrega = TIPO_ENTREGA_DELIVERY
@@ -111,6 +115,16 @@ class ActivityConfirmarPedido : AppCompatActivity() {
         tvMetodoPago = findViewById(R.id.tvMetodoPago)
 
         btnContinuarPago = findViewById(R.id.btnContinuarPago)
+        cbAceptaPrivacidad = findViewById(R.id.cbAceptaPrivacidad)
+        tvPoliticaPrivacidad = findViewById(R.id.tvPoliticaPrivacidad)
+        tvPoliticaPrivacidad.setOnClickListener {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(URL_POLITICA_PRIVACIDAD)
+                )
+            )
+        }
     }
 
     private fun leerExtraTexto(vararg claves: String): String {
@@ -316,6 +330,15 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     private fun confirmarPedido() {
         if (confirmandoPedido) return
 
+        if (!cbAceptaPrivacidad.isChecked) {
+            Toast.makeText(
+                this,
+                R.string.privacidad_debes_aceptar,
+                Toast.LENGTH_LONG
+            ).show()
+            return
+        }
+
         val usuario = auth.currentUser ?: run {
             Toast.makeText(
                 this,
@@ -457,6 +480,8 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             "observacion" to observacion,
             "metodoPago" to METODO_PAGO_CONTRA_ENTREGA,
             "estado" to ESTADO_SOLICITUD_PENDIENTE,
+            "privacidadVersion" to VERSION_POLITICA_PRIVACIDAD,
+            "privacidadAceptadaEn" to FieldValue.serverTimestamp(),
             "fecha" to FieldValue.serverTimestamp()
         )
 
@@ -526,6 +551,8 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
     private companion object {
         const val TAG = "CONFIRMAR_PEDIDO"
+        const val URL_POLITICA_PRIVACIDAD = "https://appzeta-f919f.web.app/privacidad"
+        const val VERSION_POLITICA_PRIVACIDAD = "2026-10-15"
 
         const val EXTRA_NOMBRE = "nombre"
         const val EXTRA_TELEFONO = "teléfono"

@@ -291,7 +291,8 @@ service cloud.firestore {
       allow create: if esPropietario(usuarioId)
         && request.resource.data.keys().hasAll(['nombre'])
         && request.resource.data.keys().hasOnly([
-          'uid', 'nombre', 'correo', 'email', 'esInvitado'
+          'uid', 'nombre', 'correo', 'email', 'esInvitado',
+          'privacidadVersion', 'privacidadAceptadaEn'
         ])
         && (
           !('uid' in request.resource.data)
@@ -309,6 +310,18 @@ service cloud.firestore {
         && (
           !('esInvitado' in request.resource.data)
           || request.resource.data.esInvitado is bool
+        )
+        && (
+          !('privacidadVersion' in request.resource.data)
+          || request.resource.data.privacidadVersion == '2026-10-15'
+        )
+        && (
+          !('privacidadAceptadaEn' in request.resource.data)
+          || (
+            request.resource.data.privacidadVersion == '2026-10-15'
+            && request.resource.data.privacidadAceptadaEn is timestamp
+            && request.resource.data.privacidadAceptadaEn == request.time
+          )
         )
         && identidadUsuarioValida();
 
@@ -370,7 +383,8 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly([
           'usuarioId', 'nombreUsuario', 'correo', 'productos', 'totalEstimado',
           'tipoEntrega', 'direccion', 'referencia', 'telefono', 'observacion',
-          'metodoPago', 'estado', 'fecha', 'latitud', 'longitud', 'ubicacionMaps'
+          'metodoPago', 'estado', 'fecha', 'latitud', 'longitud', 'ubicacionMaps',
+          'privacidadVersion', 'privacidadAceptadaEn'
         ])
         && request.resource.data.usuarioId == request.auth.uid
         && textoEntre(request.resource.data.nombreUsuario, 1, 100)
@@ -401,6 +415,18 @@ service cloud.firestore {
         && request.resource.data.estado == 'Pendiente de aprobacion'
         && request.resource.data.fecha is timestamp
         && request.resource.data.fecha == request.time
+        && (
+          !('privacidadVersion' in request.resource.data)
+          || request.resource.data.privacidadVersion == '2026-10-15'
+        )
+        && (
+          !('privacidadAceptadaEn' in request.resource.data)
+          || (
+            request.resource.data.privacidadVersion == '2026-10-15'
+            && request.resource.data.privacidadAceptadaEn is timestamp
+            && request.resource.data.privacidadAceptadaEn == request.time
+          )
+        )
         && ubicacionGpsValida();
 
       allow get, list: if esAdministrador()

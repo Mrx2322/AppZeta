@@ -377,6 +377,12 @@
     <string name="perfil_flecha">›</string>
 
     <string name="perfil_cerrar_sesion">Cerrar sesión</string>
+    <string name="perfil_privacidad">Privacidad y uso de datos</string>
+    <string name="perfil_eliminar_cuenta">Solicitar eliminación de cuenta y datos</string>
+    <string name="privacidad_checkbox_registro">He leído la Política de privacidad y autorizo el tratamiento de mis datos para usar AppZeta.</string>
+    <string name="privacidad_checkbox_pedido">He leído la Política de privacidad y autorizo el uso de mis datos para gestionar esta solicitud.</string>
+    <string name="privacidad_leer">Leer Política de privacidad</string>
+    <string name="privacidad_debes_aceptar">Lee la Política de privacidad y marca la casilla para continuar.</string>
 
     <!-- ===================================================== -->
     <!-- REGISTRO USUARIO -->
