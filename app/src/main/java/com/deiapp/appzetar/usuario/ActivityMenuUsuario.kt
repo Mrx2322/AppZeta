@@ -5,6 +5,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -108,6 +109,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
     private val listaMenuCarrusel: MutableList<TaskMenu> = mutableListOf()
 
     private lateinit var rvMenu: RecyclerView
+    private lateinit var layoutIndicadoresMenu: LinearLayout
+    private lateinit var snapHelperMenu: LinearSnapHelper
     private lateinit var menuAdapter: MenuUsuarioAdapter
     private lateinit var tvMenuVacio: View
 
@@ -120,8 +123,10 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
     private lateinit var rvCenas: RecyclerView
     private lateinit var tvTituloCenas: TextView
+    private lateinit var layoutIndicadoresCenas: LinearLayout
     private lateinit var cenasAdapter: CenasUsuarioAdapter
     private lateinit var tvCenasVacias: View
+    private lateinit var snapHelperCenas: LinearSnapHelper
     private var menuCargado = false
     private var cenasCargadas = false
 
@@ -247,10 +252,12 @@ class ActivityMenuUsuario : AppCompatActivity() {
         tvEntradasVacias = findViewById(R.id.tvEntradasVacias)
         rvExtras = findViewById(R.id.rvExtras)
         rvMenu = findViewById(R.id.rvMenu)
+        layoutIndicadoresMenu = findViewById(R.id.layoutIndicadoresMenu)
         tvMenuVacio = findViewById(R.id.tvMenuVacio)
 
         rvCenas = findViewById(R.id.rvCenas)
         tvTituloCenas = findViewById(R.id.tvTituloCenas)
+        layoutIndicadoresCenas = findViewById(R.id.layoutIndicadoresCenas)
         tvCenasVacias = findViewById(R.id.tvCenasVacias)
 
         progressBarMenu = findViewById(R.id.progressBarMenu)
@@ -956,12 +963,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
         rvMenu.layoutManager = layoutManager
         rvMenu.clipToPadding = false
         rvMenu.clipChildren = false
-        rvMenu.setPadding(90, 0, 90, 0)
         rvMenu.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
         rvMenu.itemAnimator = null
 
-        LinearSnapHelper()
-            .attachToRecyclerView(rvMenu)
+        snapHelperMenu = LinearSnapHelper()
+        snapHelperMenu.attachToRecyclerView(rvMenu)
 
         rvMenu.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
@@ -973,6 +979,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 ) {
                     super.onScrolled(recyclerView, dx, dy)
                     animarTarjetasCarrusel(recyclerView)
+                    actualizarIndicadorActivoMenu()
                 }
 
                 override fun onScrollStateChanged(
@@ -989,13 +996,93 @@ class ActivityMenuUsuario : AppCompatActivity() {
                         RecyclerView.SCROLL_STATE_IDLE
                     ) {
                         animarTarjetaCentral(recyclerView)
+                        actualizarIndicadorActivoMenu()
                     }
                 }
             }
         )
 
         rvMenu.post {
+            ajustarPaddingCarruselMenu()
+            reconstruirIndicadoresMenu()
             animarTarjetasCarrusel(rvMenu)
+        }
+    }
+
+
+    private fun ajustarPaddingCarruselMenu() {
+        if (rvMenu.width <= 0) return
+
+        val densidad = resources.displayMetrics.density
+        val margenTarjeta = (8 * densidad).toInt()
+        val anchoTarjeta = rvMenu.getChildAt(0)?.width
+            ?: (rvMenu.width * FRACTION_ANCHO_CARRUSEL_MENU).toInt()
+        val anchoDecorado = anchoTarjeta + margenTarjeta * 2
+        val espacioLateral = ((rvMenu.width - anchoDecorado) / 2)
+            .coerceAtLeast(0)
+
+        if (rvMenu.paddingStart != espacioLateral ||
+            rvMenu.paddingEnd != espacioLateral
+        ) {
+            rvMenu.setPadding(espacioLateral, 0, espacioLateral, 0)
+        }
+    }
+
+
+    private fun reconstruirIndicadoresMenu() {
+        val cantidad = rvMenu.adapter?.itemCount ?: 0
+        layoutIndicadoresMenu.removeAllViews()
+
+        if (cantidad <= 1) {
+            layoutIndicadoresMenu.isVisible = false
+            return
+        }
+
+        layoutIndicadoresMenu.isVisible = true
+        val densidad = resources.displayMetrics.density
+        val tamano = (8 * densidad).toInt()
+        val margen = (4 * densidad).toInt()
+
+        repeat(cantidad) { indice ->
+            val punto = View(this).apply {
+                tag = indice
+                layoutParams = LinearLayout.LayoutParams(tamano, tamano).apply {
+                    marginStart = margen
+                    marginEnd = margen
+                }
+                background = GradientDrawable().apply {
+                    shape = GradientDrawable.OVAL
+                }
+            }
+            layoutIndicadoresMenu.addView(punto)
+        }
+
+        actualizarIndicadorActivoMenu()
+    }
+
+
+    private fun actualizarIndicadorActivoMenu() {
+        if (!::layoutIndicadoresMenu.isInitialized ||
+            layoutIndicadoresMenu.childCount == 0
+        ) return
+
+        val layoutManager = rvMenu.layoutManager ?: return
+        val snapView = snapHelperMenu.findSnapView(layoutManager)
+        val posicion = snapView?.let(layoutManager::getPosition)
+            ?.coerceIn(0, layoutIndicadoresMenu.childCount - 1)
+            ?: 0
+
+        for (indice in 0 until layoutIndicadoresMenu.childCount) {
+            val punto = layoutIndicadoresMenu.getChildAt(indice)
+            val activo = indice == posicion
+            val drawable = punto.background as? GradientDrawable ?: continue
+            drawable.setColor(
+                Color.parseColor(
+                    if (activo) COLOR_NARANJA_CARRUSEL else COLOR_PUNTO_INACTIVO
+                )
+            )
+            punto.scaleX = if (activo) 1.15f else 1f
+            punto.scaleY = if (activo) 1.15f else 1f
         }
     }
 
@@ -1016,12 +1103,11 @@ class ActivityMenuUsuario : AppCompatActivity() {
         rvCenas.layoutManager = layoutManager
         rvCenas.clipToPadding = false
         rvCenas.clipChildren = false
-        rvCenas.setPadding(90, 0, 90, 0)
         rvCenas.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
         rvCenas.itemAnimator = null
 
-        LinearSnapHelper()
-            .attachToRecyclerView(rvCenas)
+        snapHelperCenas = LinearSnapHelper()
+        snapHelperCenas.attachToRecyclerView(rvCenas)
 
         rvCenas.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
@@ -1034,6 +1120,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
                     super.onScrolled(recyclerView, dx, dy)
 
                     animarTarjetasCarrusel(recyclerView)
+                    actualizarIndicadorActivoCenas()
                 }
 
                 override fun onScrollStateChanged(
@@ -1050,13 +1137,95 @@ class ActivityMenuUsuario : AppCompatActivity() {
                         RecyclerView.SCROLL_STATE_IDLE
                     ) {
                         animarTarjetaCentral(recyclerView)
+                        actualizarIndicadorActivoCenas()
                     }
                 }
             }
         )
 
         rvCenas.post {
+            ajustarPaddingCarruselCenas()
+            reconstruirIndicadoresCenas()
             animarTarjetasCarrusel(rvCenas)
+        }
+    }
+
+
+    private fun ajustarPaddingCarruselCenas() {
+        if (rvCenas.width <= 0) return
+
+        val densidad = resources.displayMetrics.density
+        val margenTarjeta = (8 * densidad).toInt()
+        val anchoTarjeta = rvCenas.getChildAt(0)?.width
+            ?: (rvCenas.width * FRACTION_ANCHO_CARRUSEL_CENAS).toInt()
+        val anchoDecorado = anchoTarjeta + margenTarjeta * 2
+        val espacioLateral = ((rvCenas.width - anchoDecorado) / 2)
+            .coerceAtLeast(0)
+
+        if (rvCenas.paddingStart != espacioLateral ||
+            rvCenas.paddingEnd != espacioLateral
+        ) {
+            rvCenas.setPadding(espacioLateral, 0, espacioLateral, 0)
+        }
+    }
+
+
+    private fun reconstruirIndicadoresCenas() {
+        val cantidad = rvCenas.adapter?.itemCount ?: 0
+        layoutIndicadoresCenas.removeAllViews()
+
+        if (cantidad <= 1) {
+            layoutIndicadoresCenas.isVisible = false
+            return
+        }
+
+        layoutIndicadoresCenas.isVisible = true
+        val densidad = resources.displayMetrics.density
+        val tamano = (8 * densidad).toInt()
+        val margen = (4 * densidad).toInt()
+
+        repeat(cantidad) { indice ->
+            val punto = View(this).apply {
+                tag = indice
+                layoutParams = LinearLayout.LayoutParams(tamano, tamano).apply {
+                    marginStart = margen
+                    marginEnd = margen
+                }
+                background = GradientDrawable().apply {
+                    shape = GradientDrawable.OVAL
+                }
+            }
+
+            layoutIndicadoresCenas.addView(punto)
+        }
+
+        actualizarIndicadorActivoCenas()
+    }
+
+
+    private fun actualizarIndicadorActivoCenas() {
+        if (!::layoutIndicadoresCenas.isInitialized ||
+            layoutIndicadoresCenas.childCount == 0
+        ) return
+
+        val layoutManager = rvCenas.layoutManager ?: return
+        val snapView = snapHelperCenas.findSnapView(layoutManager)
+        val posicion = snapView?.let(layoutManager::getPosition)
+            ?.coerceIn(0, layoutIndicadoresCenas.childCount - 1)
+            ?: 0
+
+        for (indice in 0 until layoutIndicadoresCenas.childCount) {
+            val punto = layoutIndicadoresCenas.getChildAt(indice)
+            val activo = indice == posicion
+            val drawable = punto.background as? GradientDrawable ?: continue
+
+            drawable.setColor(
+                Color.parseColor(
+                    if (activo) COLOR_NARANJA_CARRUSEL else COLOR_PUNTO_INACTIVO
+                )
+            )
+            punto.scaleX = if (activo) 1.15f else 1f
+            punto.scaleY = if (activo) 1.15f else 1f
         }
     }
 
@@ -1070,7 +1239,22 @@ class ActivityMenuUsuario : AppCompatActivity() {
     ) {
         if (recyclerView.width <= 0) return
 
-        val centroX = recyclerView.width / 2f
+        val centroX = if (recyclerView.id == R.id.rvCenas ||
+            recyclerView.id == R.id.rvMenu
+        ) {
+            val layoutManager = recyclerView.layoutManager
+            val tarjetaActiva = layoutManager?.let { manager ->
+                if (recyclerView.id == R.id.rvCenas) {
+                    snapHelperCenas.findSnapView(manager)
+                } else {
+                    snapHelperMenu.findSnapView(manager)
+                }
+            }
+            tarjetaActiva?.let { (it.left + it.right) / 2f }
+                ?: recyclerView.width / 2f
+        } else {
+            recyclerView.width / 2f
+        }
         val distanciaMaxima = recyclerView.width / 2f
 
         if (distanciaMaxima <= 0f) return
@@ -1093,7 +1277,14 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
             tarjeta.scaleX = escala
             tarjeta.scaleY = escala
-            tarjeta.alpha = 1f - (posicion * 0.25f)
+            val atenuacionMaxima = if (recyclerView.id == R.id.rvCenas ||
+                recyclerView.id == R.id.rvMenu
+            ) {
+                ATENUACION_CARRUSEL_CENAS
+            } else {
+                ATENUACION_CARRUSEL_MENU
+            }
+            tarjeta.alpha = 1f - (posicion * atenuacionMaxima)
             tarjeta.translationY = posicion * 14f
             tarjeta.translationZ = (1f - posicion) * 25f
         }
@@ -1109,7 +1300,22 @@ class ActivityMenuUsuario : AppCompatActivity() {
     ) {
         if (recyclerView.width <= 0) return
 
-        val centroX = recyclerView.width / 2f
+        val centroX = if (recyclerView.id == R.id.rvCenas ||
+            recyclerView.id == R.id.rvMenu
+        ) {
+            val layoutManager = recyclerView.layoutManager
+            val tarjetaActiva = layoutManager?.let { manager ->
+                if (recyclerView.id == R.id.rvCenas) {
+                    snapHelperCenas.findSnapView(manager)
+                } else {
+                    snapHelperMenu.findSnapView(manager)
+                }
+            }
+            tarjetaActiva?.let { (it.left + it.right) / 2f }
+                ?: recyclerView.width / 2f
+        } else {
+            recyclerView.width / 2f
+        }
         var tarjetaCentral: View? = null
         var distanciaMenor = Float.MAX_VALUE
 
@@ -1976,6 +2182,12 @@ class ActivityMenuUsuario : AppCompatActivity() {
                     )
                 }
 
+                rvMenu.post {
+                    ajustarPaddingCarruselMenu()
+                    reconstruirIndicadoresMenu()
+                    animarTarjetasCarrusel(rvMenu)
+                }
+
                 mostrarContenido()
             }
     }
@@ -2064,6 +2276,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
                     listaCenas.addAll(nuevasCenas)
 
+                    reconstruirIndicadoresCenas()
+
                     if (nuevasCenas.isNotEmpty()) {
                         cenasAdapter.notifyItemRangeInserted(
                             0,
@@ -2075,6 +2289,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
                     if (listaCenas.isNotEmpty()) {
                         rvCenas.post {
+                            ajustarPaddingCarruselCenas()
+                            reconstruirIndicadoresCenas()
                             animarTarjetasCarrusel(rvCenas)
                         }
                     }
@@ -2150,6 +2366,12 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 0,
                 listaMenuCarrusel.size
             )
+
+            rvMenu.post {
+                ajustarPaddingCarruselMenu()
+                reconstruirIndicadoresMenu()
+                animarTarjetasCarrusel(rvMenu)
+            }
         }
 
         if (
@@ -2162,6 +2384,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
             )
 
             rvCenas.post {
+                ajustarPaddingCarruselCenas()
+                reconstruirIndicadoresCenas()
                 animarTarjetasCarrusel(rvCenas)
             }
         }
@@ -2190,6 +2414,12 @@ class ActivityMenuUsuario : AppCompatActivity() {
     // =========================================================
 
     companion object {
+        private const val FRACTION_ANCHO_CARRUSEL_MENU = 0.80f
+        private const val FRACTION_ANCHO_CARRUSEL_CENAS = 0.80f
+        private const val ATENUACION_CARRUSEL_CENAS = 0.62f
+        private const val ATENUACION_CARRUSEL_MENU = 0.25f
+        private const val COLOR_NARANJA_CARRUSEL = "#E87520"
+        private const val COLOR_PUNTO_INACTIVO = "#D8D4D0"
         private const val LIMITE_MENU_CARRUSEL = 3
         private const val PREFERENCIAS_INVITADO =
             "preferencias_invitado"

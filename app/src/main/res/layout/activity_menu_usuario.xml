@@ -200,6 +200,15 @@
                 android:paddingEnd="4dp"
                 android:overScrollMode="never" />
 
+            <LinearLayout
+                android:id="@+id/layoutIndicadoresMenu"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone" />
+
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/tvMenuVacio"
                 android:layout_width="match_parent"
@@ -278,9 +287,18 @@
                 android:clipToPadding="false"
                 android:minHeight="250dp"
                 android:nestedScrollingEnabled="false"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:overScrollMode="never" />
+
+            <LinearLayout
+                android:id="@+id/layoutIndicadoresCenas"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/tvCenasVacias"

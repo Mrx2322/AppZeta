@@ -50,19 +50,20 @@
                 android:minHeight="0dp"
 
                 android:padding="0dp"
-
-                android:text="@string/todos_menus_volver"
+                android:contentDescription="@string/todos_menus_volver"
+                android:text=""
                 android:textAllCaps="false"
 
-                android:textColor="#E87520"
-                android:textSize="32sp"
+                app:backgroundTint="#FFF8F1"
+                app:cornerRadius="18dp"
 
-                app:backgroundTint="#FFFFFF"
-                app:cornerRadius="16dp"
+                app:elevation="2dp"
 
-                app:elevation="0dp"
-
-                app:strokeColor="#EEEEEE"
+                app:icon="@drawable/ic_arrow_back_menu"
+                app:iconGravity="textStart"
+                app:iconSize="24dp"
+                app:iconTint="#D95F12"
+                app:strokeColor="#F0D8C7"
                 app:strokeWidth="1dp" />
 
 

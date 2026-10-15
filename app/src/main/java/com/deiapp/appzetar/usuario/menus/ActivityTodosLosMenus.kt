@@ -111,7 +111,8 @@ class ActivityTodosLosMenus : AppCompatActivity() {
 
     private fun configurarRecycler() {
         menuAdapter = MenuUsuarioAdapter(
-            listaMenu
+            listaMenu,
+            centrarTarjetas = true
         ) { plato ->
             devolverMenuSeleccionado(plato)
         }

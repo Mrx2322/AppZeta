@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
 
-    android:minHeight="250dp"
+    android:minHeight="254dp"
 
     android:layout_marginStart="8dp"
     android:layout_marginEnd="8dp"
@@ -15,8 +15,10 @@
 
     app:cardBackgroundColor="#FFFFFF"
     app:cardCornerRadius="20dp"
-    app:cardElevation="2dp"
-    app:cardMaxElevation="2dp"
+    app:cardElevation="3dp"
+    app:cardMaxElevation="3dp"
+    app:strokeColor="#F1EAE3"
+    app:strokeWidth="1dp"
 
     app:cardPreventCornerOverlap="true"
     app:cardUseCompatPadding="false">
@@ -36,7 +38,7 @@
             android:id="@+id/imgPlato"
 
             android:layout_width="match_parent"
-            android:layout_height="135dp"
+            android:layout_height="140dp"
 
             android:background="#F2F2F2"
 
@@ -53,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
-            android:minHeight="112dp"
+            android:minHeight="114dp"
 
             android:baselineAligned="false"
 
@@ -103,10 +105,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="5dp"
 
-                    android:textColor="#FF9800"
-                    android:textSize="14sp"
+                    android:textColor="#E87520"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
 
@@ -118,7 +120,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
-                    android:layout_marginTop="3dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_stock_badge"
+                    android:paddingStart="7dp"
+                    android:paddingTop="3dp"
+                    android:paddingEnd="7dp"
+                    android:paddingBottom="3dp"
 
                     android:textSize="12sp"
                     android:textStyle="bold" />
@@ -159,4 +166,4 @@
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

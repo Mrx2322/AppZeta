@@ -23,6 +23,18 @@ class CenasUsuarioAdapter(
                 false
             )
 
+        val viewportWidth = if (parent.width > 0) {
+            parent.width
+        } else {
+            parent.resources.displayMetrics.widthPixels
+        }
+        val cardWidth = (viewportWidth * FRACTION_ANCHO_TARJETA).toInt()
+
+        view.layoutParams = RecyclerView.LayoutParams(
+            cardWidth,
+            RecyclerView.LayoutParams.WRAP_CONTENT
+        )
+
         return CenasUsuarioViewHolder(view)
     }
 
@@ -37,4 +49,8 @@ class CenasUsuarioAdapter(
     }
 
     override fun getItemCount(): Int = listaCenas.size
+
+    private companion object {
+        const val FRACTION_ANCHO_TARJETA = 0.80f
+    }
 }
