@@ -14,8 +14,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.deiapp.appzeta.R
-import com.deiapp.appzetar.usuario.pedidos.ActivityConfirmarPedido
 import com.deiapp.appzetar.usuario.carrito.PedidoManager
+import com.deiapp.appzetar.usuario.pedidos.ActivityConfirmarPedido
 import com.google.firebase.auth.FirebaseAuth
 
 class ActivityResumenPedido : AppCompatActivity() {
@@ -68,7 +68,6 @@ class ActivityResumenPedido : AppCompatActivity() {
     // =========================================================
 
     private fun aplicarInsets() {
-
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
         ) { view, insets ->
@@ -93,36 +92,37 @@ class ActivityResumenPedido : AppCompatActivity() {
     // =========================================================
 
     private fun obtenerDatos() {
-
-        val nombreRecibido =
-            intent.getStringExtra("nombre")
-                ?.trim()
-                .orEmpty()
+        val nombreRecibido = intent.getStringExtra("nombre")
+            ?.trim()
+            .orEmpty()
 
         nombre = obtenerNombreCliente(nombreRecibido)
 
-        telefono =
-            intent.getStringExtra("telefono")
-                ?.trim()
-                .orEmpty()
+        telefono = intent.getStringExtra("teléfono")
+            ?.trim()
+            .orEmpty()
 
-        direccion =
-            intent.getStringExtra("direccion")
-                ?.trim()
-                .orEmpty()
+        direccion = intent.getStringExtra("dirección")
+            ?.trim()
+            .orEmpty()
 
-        observacion =
-            intent.getStringExtra("observacion")
-                ?.trim()
-                .orEmpty()
+        observacion = intent.getStringExtra("observación")
+            ?.trim()
+            .orEmpty()
     }
 
-    private fun obtenerNombreCliente(nombreRecibido: String): String {
-        val nombreGenerico = getString(R.string.login_nombre_invitado)
+    private fun obtenerNombreCliente(
+        nombreRecibido: String
+    ): String {
+        val nombreGenerico =
+            getString(R.string.login_nombre_invitado)
 
         if (
             nombreRecibido.isNotBlank() &&
-            !nombreRecibido.equals(nombreGenerico, ignoreCase = true)
+            !nombreRecibido.equals(
+                nombreGenerico,
+                ignoreCase = true
+            )
         ) {
             return nombreRecibido
         }
@@ -145,27 +145,16 @@ class ActivityResumenPedido : AppCompatActivity() {
     // =========================================================
 
     private fun initComponent() {
+        rvResumenPedido = findViewById(R.id.rvResumenPedido)
 
-        rvResumenPedido =
-            findViewById(R.id.rvResumenPedido)
-
-        tvNombreCliente =
-            findViewById(R.id.tvNombreCliente)
-
-        tvTelefonoCliente =
-            findViewById(R.id.tvTelefonoCliente)
-
-        tvDireccionCliente =
-            findViewById(R.id.tvDireccionCliente)
-
+        tvNombreCliente = findViewById(R.id.tvNombreCliente)
+        tvTelefonoCliente = findViewById(R.id.tvTelefonoCliente)
+        tvDireccionCliente = findViewById(R.id.tvDireccionCliente)
         tvObservacionCliente =
             findViewById(R.id.tvObservacionCliente)
 
-        tvTotalProductos =
-            findViewById(R.id.tvTotalProductos)
-
-        btnConfirmarPedido =
-            findViewById(R.id.btnConfirmarPedido)
+        tvTotalProductos = findViewById(R.id.tvTotalProductos)
+        btnConfirmarPedido = findViewById(R.id.btnConfirmarPedido)
     }
 
     // =========================================================
@@ -173,7 +162,6 @@ class ActivityResumenPedido : AppCompatActivity() {
     // =========================================================
 
     private fun initUI() {
-
         mostrarDatosCliente()
         configurarListaPedido()
         mostrarCantidadProductos()
@@ -185,21 +173,15 @@ class ActivityResumenPedido : AppCompatActivity() {
     // =========================================================
 
     private fun mostrarDatosCliente() {
+        tvNombreCliente.text = nombre
+        tvTelefonoCliente.text = telefono
+        tvDireccionCliente.text = direccion
 
-        tvNombreCliente.text =
-            nombre
-
-        tvTelefonoCliente.text =
-            telefono
-
-        tvDireccionCliente.text =
-            direccion
-
-        tvObservacionCliente.isVisible = observacion.isNotBlank()
+        tvObservacionCliente.isVisible =
+            observacion.isNotBlank()
 
         if (observacion.isNotBlank()) {
-            tvObservacionCliente.text =
-                observacion
+            tvObservacionCliente.text = observacion
         }
     }
 
@@ -208,21 +190,16 @@ class ActivityResumenPedido : AppCompatActivity() {
     // =========================================================
 
     private fun configurarListaPedido() {
-
-        val resumenAdapter =
-            PedidoResumenAdapter(
-                PedidoManager.pedido
-            )
+        val resumenAdapter = PedidoResumenAdapter(
+            PedidoManager.pedido
+        )
 
         rvResumenPedido.apply {
+            layoutManager = LinearLayoutManager(
+                this@ActivityResumenPedido
+            )
 
-            layoutManager =
-                LinearLayoutManager(
-                    this@ActivityResumenPedido
-                )
-
-            adapter =
-                resumenAdapter
+            adapter = resumenAdapter
         }
     }
 
@@ -231,9 +208,7 @@ class ActivityResumenPedido : AppCompatActivity() {
     // =========================================================
 
     private fun mostrarCantidadProductos() {
-
-        val cantidad =
-            PedidoManager.cantidadTotal()
+        val cantidad = PedidoManager.cantidadTotal()
 
         tvTotalProductos.text = resources.getQuantityString(
             R.plurals.resumen_cantidad_productos,
@@ -247,7 +222,6 @@ class ActivityResumenPedido : AppCompatActivity() {
     // =========================================================
 
     private fun configurarBotonConfirmar() {
-
         btnConfirmarPedido.setOnClickListener {
             confirmarPedido()
         }
@@ -258,9 +232,7 @@ class ActivityResumenPedido : AppCompatActivity() {
     // =========================================================
 
     private fun confirmarPedido() {
-
         if (PedidoManager.pedido.isEmpty()) {
-
             Toast.makeText(
                 this,
                 R.string.resumen_carrito_vacio,
@@ -276,13 +248,12 @@ class ActivityResumenPedido : AppCompatActivity() {
             this,
             ActivityConfirmarPedido::class.java
         ).apply {
-
             putExtra("nombre", nombre)
-            putExtra("telefono", telefono)
-            putExtra("direccion", direccion)
-            putExtra("observacion", observacion)
+            putExtra("teléfono", telefono)
+            putExtra("dirección", direccion)
+            putExtra("observación", observacion)
 
-            // Opciones activas actualmente
+            // Opciones activas actualmente.
             putExtra("tipoEntrega", "Delivery")
             putExtra("metodoPago", "Contra entrega")
         }
@@ -292,14 +263,19 @@ class ActivityResumenPedido : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
         if (::btnConfirmarPedido.isInitialized) {
             btnConfirmarPedido.isEnabled = true
         }
     }
 
     companion object {
-        private const val PREFERENCIAS_INVITADO = "preferencias_invitado"
-        private const val CLAVE_NOMBRE_INVITADO = "nombre_invitado_"
+        private const val PREFERENCIAS_INVITADO =
+            "preferencias_invitado"
+
+        private const val CLAVE_NOMBRE_INVITADO =
+            "nombre_invitado_"
+
         private const val INVITADO_SIN_UID = "sin_uid"
     }
 }

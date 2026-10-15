@@ -27,18 +27,14 @@ data class PedidoItem(
     val entradas: List<EntradaPedido> = emptyList()
 ) {
 
-    fun subtotal(): Double =
-        precio * cantidad
-
+    fun subtotal(): Double = precio * cantidad
 
     fun cantidadEntradas(): Int =
         entradas.sumOf { entrada ->
             entrada.cantidad
         }
 
-
     fun descripcionEntradas(): String {
-
         if (tipo != TipoPedido.MENU) {
             return ""
         }
@@ -47,30 +43,22 @@ data class PedidoItem(
             return "Sin entrada"
         }
 
-        return entradas.joinToString(
-            separator = ", "
-        ) { entrada ->
-
+        return entradas.joinToString(separator = ", ") { entrada ->
             if (entrada.cantidad > 1) {
-
                 "${entrada.cantidad} x ${entrada.nombre}"
-
             } else {
-
                 entrada.nombre
             }
         }
     }
 
-
     /**
-     * Permite agrupar cantidades únicamente cuando el producto
-     * y su combinación de entradas son exactamente iguales.
+     * Agrupa cantidades únicamente cuando el producto y su
+     * combinación de entradas son exactamente iguales.
      */
     fun tieneMismaConfiguracionQue(
         otro: PedidoItem
     ): Boolean {
-
         if (
             id != otro.id ||
             tipo != otro.tipo ||
@@ -83,30 +71,21 @@ data class PedidoItem(
             return true
         }
 
-        return firmaEntradas() ==
-                otro.firmaEntradas()
+        return firmaEntradas() == otro.firmaEntradas()
     }
 
-
-    private fun firmaEntradas():
-            List<Triple<Int, Int, Double>> {
-
+    private fun firmaEntradas(): List<Triple<Int, Int, Double>> {
         return entradas
             .groupBy { entrada ->
                 entrada.id
             }
             .map { (entradaId, coincidencias) ->
-
                 Triple(
                     entradaId,
-
                     coincidencias.sumOf { entrada ->
                         entrada.cantidad
                     },
-
-                    coincidencias
-                        .first()
-                        .precioUnitario
+                    coincidencias.first().precioUnitario
                 )
             }
             .sortedBy { firma ->
@@ -115,14 +94,12 @@ data class PedidoItem(
     }
 }
 
-
 enum class TipoPedido {
     MENU,
     CENA,
     ENTRADA,
     EXTRA
 }
-
 
 /**
  * Reglas comerciales del menú.
@@ -140,42 +117,31 @@ object ReglasPrecioPedido {
 
     /**
      * Valor interno de la entrada incluida.
-     * Se mantiene en S/2 para no alterar la estructura
+     * Se mantiene en S/2 para conservar la estructura
      * existente de los pedidos.
      */
-    const val PRECIO_ENTRADA =
-        2.0
+    const val PRECIO_ENTRADA = 2.0
 
     /**
      * Precio cobrado al cliente por cada entrada adicional.
      */
-    const val PRECIO_ENTRADA_ADICIONAL =
-        5.0
+    const val PRECIO_ENTRADA_ADICIONAL = 5.0
 
     /**
      * Descuento cuando el cliente pide el menú sin entrada.
      */
-    const val DESCUENTO_SIN_ENTRADA =
-        1.0
-
+    const val DESCUENTO_SIN_ENTRADA = 1.0
 
     fun calcularPrecioMenu(
         precioMenuConEntrada: Double,
         cantidadEntradas: Int
     ): Double {
-
         return if (cantidadEntradas <= 0) {
-
             (
                     precioMenuConEntrada -
                             DESCUENTO_SIN_ENTRADA
-                    )
-                .coerceAtLeast(
-                    0.0
-                )
-
+                    ).coerceAtLeast(0.0)
         } else {
-
             precioMenuConEntrada +
                     (
                             PRECIO_ENTRADA_ADICIONAL *

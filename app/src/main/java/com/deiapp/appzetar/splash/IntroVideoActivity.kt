@@ -4,9 +4,9 @@ import android.content.Intent
 import android.graphics.Matrix
 import android.graphics.SurfaceTexture
 import android.media.MediaPlayer
+import android.os.Bundle
 import android.view.Surface
 import android.view.TextureView
-import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -29,6 +29,7 @@ class IntroVideoActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
         WindowInsetsControllerCompat(window, window.decorView)
             .hide(WindowInsetsCompat.Type.systemBars())
 
@@ -38,6 +39,7 @@ class IntroVideoActivity : AppCompatActivity(),
 
         val contenedor = FrameLayout(this).apply {
             setBackgroundColor(android.graphics.Color.rgb(11, 20, 32))
+
             addView(
                 videoView,
                 FrameLayout.LayoutParams(
@@ -68,6 +70,7 @@ class IntroVideoActivity : AppCompatActivity(),
                 archivo.startOffset,
                 archivo.length
             )
+
             archivo.close()
 
             mediaPlayer.setSurface(superficie)
@@ -75,7 +78,12 @@ class IntroVideoActivity : AppCompatActivity(),
 
             mediaPlayer.setOnPreparedListener { player ->
                 preparado = true
-                ajustarVideo(player.videoWidth, player.videoHeight)
+
+                ajustarVideo(
+                    player.videoWidth,
+                    player.videoHeight
+                )
+
                 player.start()
             }
 
@@ -93,6 +101,7 @@ class IntroVideoActivity : AppCompatActivity(),
             }
 
             mediaPlayer.prepareAsync()
+
         } catch (_: Exception) {
             superficie.release()
             abrirMainActivity()
@@ -106,7 +115,9 @@ class IntroVideoActivity : AppCompatActivity(),
             val anchoPantalla = videoView.width.toFloat()
             val altoPantalla = videoView.height.toFloat()
 
-            if (anchoPantalla <= 0f || altoPantalla <= 0f) return@post
+            if (anchoPantalla <= 0f || altoPantalla <= 0f) {
+                return@post
+            }
 
             val escala = max(
                 anchoPantalla / videoWidth,
@@ -127,41 +138,31 @@ class IntroVideoActivity : AppCompatActivity(),
     }
 
     private fun abrirMainActivity() {
-
         if (navegando) return
         navegando = true
 
-        val usuarioActual =
-            FirebaseAuth.getInstance().currentUser
+        val usuarioActual = FirebaseAuth.getInstance().currentUser
 
-        val intent =
-            if (
-                usuarioActual != null &&
-                !usuarioActual.isAnonymous
-            ) {
-
-                Intent(
-                    this,
-                    SplashActivity::class.java
-                ).apply {
-
-                    flags =
-                        Intent.FLAG_ACTIVITY_NEW_TASK or
-                                Intent.FLAG_ACTIVITY_CLEAR_TASK
-                }
-
-            } else {
-
-                Intent(
-                    this,
-                    MainActivity::class.java
-                ).apply {
-
-                    flags =
-                        Intent.FLAG_ACTIVITY_NEW_TASK or
-                                Intent.FLAG_ACTIVITY_CLEAR_TASK
-                }
+        val intent = if (
+            usuarioActual != null &&
+            !usuarioActual.isAnonymous
+        ) {
+            Intent(
+                this,
+                SplashActivity::class.java
+            ).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
+        } else {
+            Intent(
+                this,
+                MainActivity::class.java
+            ).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+        }
 
         startActivity(intent)
         finish()
@@ -169,6 +170,7 @@ class IntroVideoActivity : AppCompatActivity(),
 
     override fun onStop() {
         super.onStop()
+
         if (preparado && !navegando) {
             reproductor?.pause()
         }
@@ -176,6 +178,7 @@ class IntroVideoActivity : AppCompatActivity(),
 
     override fun onStart() {
         super.onStart()
+
         if (preparado && !navegando) {
             reproductor?.start()
         }
@@ -191,18 +194,24 @@ class IntroVideoActivity : AppCompatActivity(),
         }
     }
 
-    override fun onSurfaceTextureDestroyed(surfaceTexture: SurfaceTexture): Boolean {
+    override fun onSurfaceTextureDestroyed(
+        surfaceTexture: SurfaceTexture
+    ): Boolean {
         reproductor?.release()
         reproductor = null
         preparado = false
+
         return true
     }
 
-    override fun onSurfaceTextureUpdated(surfaceTexture: SurfaceTexture) = Unit
+    override fun onSurfaceTextureUpdated(
+        surfaceTexture: SurfaceTexture
+    ) = Unit
 
     override fun onDestroy() {
         reproductor?.release()
         reproductor = null
+
         super.onDestroy()
     }
 }

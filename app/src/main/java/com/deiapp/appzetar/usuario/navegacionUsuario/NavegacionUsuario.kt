@@ -10,45 +10,30 @@ object NavegacionUsuario {
         activity: Activity,
         destino: Class<out Activity>
     ) {
-
-        // Evita intentar abrir nuevamente
-        // la Activity que ya está visible.
+        // Evita abrir nuevamente la Activity visible.
         if (activity.javaClass == destino) {
             return
         }
 
-        val intent =
-            Intent(
-                activity,
-                destino
-            ).apply {
-
-                /*
-                 * Si la pantalla ya existe en la pila:
-                 * - la reutiliza;
-                 * - evita duplicados;
-                 * - elimina las Activities que quedaron
-                 *   innecesariamente por encima.
-                 */
-                flags =
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                            Intent.FLAG_ACTIVITY_SINGLE_TOP
-            }
+        val intent = Intent(
+            activity,
+            destino
+        ).apply {
+            /*
+             * Si la pantalla ya existe en la pila:
+             * - la reutiliza;
+             * - evita duplicados;
+             * - elimina las Activities situadas encima.
+             */
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                    Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
 
         /*
-         * Eliminamos las animaciones entre las
-         * pantallas principales de la barra inferior.
-         *
-         * Así se comporta visualmente como una
-         * navegación inferior estable y se evita
-         * ver dos Activities superpuestas.
+         * Elimina las animaciones entre pantallas principales
+         * para mantener estable la navegación inferior.
          */
-
-        if (
-            Build.VERSION.SDK_INT >=
-            Build.VERSION_CODES.UPSIDE_DOWN_CAKE
-        ) {
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             activity.overrideActivityTransition(
                 Activity.OVERRIDE_TRANSITION_OPEN,
                 0,
@@ -56,9 +41,7 @@ object NavegacionUsuario {
             )
 
             activity.startActivity(intent)
-
         } else {
-
             activity.startActivity(intent)
 
             @Suppress("DEPRECATION")

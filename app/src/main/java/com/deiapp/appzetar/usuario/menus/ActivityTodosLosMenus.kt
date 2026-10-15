@@ -1,7 +1,7 @@
 package com.deiapp.appzetar.usuario.menus
 
-import android.os.Build
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -25,8 +25,7 @@ import com.google.firebase.firestore.ListenerRegistration
 
 class ActivityTodosLosMenus : AppCompatActivity() {
 
-    private val db =
-        FirebaseFirestore.getInstance()
+    private val db = FirebaseFirestore.getInstance()
 
     private lateinit var btnVolver: MaterialButton
     private lateinit var rvTodosLosMenus: RecyclerView
@@ -35,15 +34,15 @@ class ActivityTodosLosMenus : AppCompatActivity() {
 
     private lateinit var menuAdapter: MenuUsuarioAdapter
 
-    private val listaMenu =
-        mutableListOf<TaskMenu>()
+    private val listaMenu = mutableListOf<TaskMenu>()
 
-    private var menuListener: ListenerRegistration? =
-        null
+    private var menuListener: ListenerRegistration? = null
 
-    override fun onCreate(
-        savedInstanceState: Bundle?
-    ) {
+    // =========================================================
+    // ON CREATE
+    // =========================================================
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
@@ -64,15 +63,18 @@ class ActivityTodosLosMenus : AppCompatActivity() {
         escucharMenus()
     }
 
+    // =========================================================
+    // INSETS
+    // =========================================================
+
     private fun aplicarInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
         ) { view, insets ->
 
-            val systemBars =
-                insets.getInsets(
-                    WindowInsetsCompat.Type.systemBars()
-                )
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+            )
 
             view.setPadding(
                 systemBars.left,
@@ -85,45 +87,49 @@ class ActivityTodosLosMenus : AppCompatActivity() {
         }
     }
 
+    // =========================================================
+    // INICIALIZAR VISTAS
+    // =========================================================
+
     private fun inicializarVistas() {
-        btnVolver =
-            findViewById(R.id.btnVolver)
+        btnVolver = findViewById(R.id.btnVolver)
 
-        rvTodosLosMenus =
-            findViewById(R.id.rvTodosLosMenus)
+        rvTodosLosMenus = findViewById(
+            R.id.rvTodosLosMenus
+        )
 
-        progressTodosLosMenus =
-            findViewById(R.id.progressTodosLosMenus)
+        progressTodosLosMenus = findViewById(
+            R.id.progressTodosLosMenus
+        )
 
-        tvSinMenus =
-            findViewById(R.id.tvSinMenus)
+        tvSinMenus = findViewById(R.id.tvSinMenus)
     }
+
+    // =========================================================
+    // CONFIGURAR RECYCLER
+    // =========================================================
 
     private fun configurarRecycler() {
-        menuAdapter =
-            MenuUsuarioAdapter(
-                listaMenu
-            ) { plato ->
-                devolverMenuSeleccionado(
-                    plato
-                )
-            }
+        menuAdapter = MenuUsuarioAdapter(
+            listaMenu
+        ) { plato ->
+            devolverMenuSeleccionado(plato)
+        }
 
         rvTodosLosMenus.apply {
-            layoutManager =
-                LinearLayoutManager(
-                    this@ActivityTodosLosMenus
-                )
+            layoutManager = LinearLayoutManager(
+                this@ActivityTodosLosMenus
+            )
 
-            adapter =
-                menuAdapter
-
+            adapter = menuAdapter
             setHasFixedSize(true)
-
-            itemAnimator =
-                null
+            itemAnimator = null
         }
     }
+
+    // =========================================================
+    // EVENTOS
+    // =========================================================
 
     private fun configurarEventos() {
         btnVolver.setOnClickListener {
@@ -131,41 +137,43 @@ class ActivityTodosLosMenus : AppCompatActivity() {
         }
     }
 
+    // =========================================================
+    // ESCUCHAR MENÚS EN FIRESTORE
+    // =========================================================
+
     private fun escucharMenus() {
         mostrarCargando(true)
 
-        menuListener =
-            db.collection(COLECCION_MENU)
-                .addSnapshotListener { resultado, error ->
+        menuListener = db.collection(COLECCION_MENU)
+            .addSnapshotListener { resultado, error ->
 
-                    mostrarCargando(false)
+                mostrarCargando(false)
 
-                    if (error != null) {
-                        manejarErrorCarga(error)
-                        return@addSnapshotListener
-                    }
-
-                    if (resultado == null) {
-                        actualizarMenus(
-                            emptyList()
-                        )
-                        return@addSnapshotListener
-                    }
-
-                    val nuevosMenus =
-                        resultado.documents
-                            .mapNotNull { documento ->
-                                documento.toTaskMenuOrNull()
-                            }
-                            .sortedBy { menu ->
-                                menu.name.lowercase()
-                            }
-
-                    actualizarMenus(
-                        nuevosMenus
-                    )
+                if (error != null) {
+                    manejarErrorCarga(error)
+                    return@addSnapshotListener
                 }
+
+                if (resultado == null) {
+                    actualizarMenus(emptyList())
+                    return@addSnapshotListener
+                }
+
+                val nuevosMenus = resultado.documents
+                    .mapNotNull { documento ->
+                        documento.toTaskMenuOrNull()
+                    }
+                    .sortedBy { menu ->
+                        menu.name.lowercase()
+                    }
+
+                actualizarMenus(nuevosMenus)
+            }
     }
+
+    // =========================================================
+    // MANEJAR ERROR DE CARGA
+    // =========================================================
 
     private fun manejarErrorCarga(
         error: Exception
@@ -178,109 +186,130 @@ class ActivityTodosLosMenus : AppCompatActivity() {
 
         Toast.makeText(
             this,
-            getString(
-                R.string.error_cargar_menus
-            ),
+            getString(R.string.error_cargar_menus),
             Toast.LENGTH_SHORT
         ).show()
 
-        actualizarMenus(
-            emptyList()
-        )
+        actualizarMenus(emptyList())
     }
+
+    // =========================================================
+    // ACTUALIZAR LISTA CON DIFF
+    // =========================================================
 
     private fun actualizarMenus(
         nuevosMenus: List<TaskMenu>
     ) {
         val listaAnterior = listaMenu.toList()
 
-        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-            override fun getOldListSize(): Int = listaAnterior.size
-            override fun getNewListSize(): Int = nuevosMenus.size
+        val diffResult = DiffUtil.calculateDiff(
+            object : DiffUtil.Callback() {
 
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return listaAnterior[oldItemPosition].id == nuevosMenus[newItemPosition].id
-            }
+                override fun getOldListSize(): Int =
+                    listaAnterior.size
 
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return listaAnterior[oldItemPosition] == nuevosMenus[newItemPosition]
+                override fun getNewListSize(): Int =
+                    nuevosMenus.size
+
+                override fun areItemsTheSame(
+                    oldItemPosition: Int,
+                    newItemPosition: Int
+                ): Boolean {
+                    return listaAnterior[oldItemPosition].id ==
+                            nuevosMenus[newItemPosition].id
+                }
+
+                override fun areContentsTheSame(
+                    oldItemPosition: Int,
+                    newItemPosition: Int
+                ): Boolean {
+                    return listaAnterior[oldItemPosition] ==
+                            nuevosMenus[newItemPosition]
+                }
             }
-        })
+        )
 
         listaMenu.clear()
         listaMenu.addAll(nuevosMenus)
+
         diffResult.dispatchUpdatesTo(menuAdapter)
 
         mostrarEstadoVacio()
     }
 
-    private fun DocumentSnapshot.toTaskMenuOrNull(): TaskMenu? {
-        val id =
-            getLong(CAMPO_ID)
-                ?.toInt()
-                ?: id.toIntOrNull()
-                ?: return null
+    // =========================================================
+    // CONVERTIR DOCUMENTO A TASK MENU
+    // =========================================================
 
-        val nombre =
-            getString(CAMPO_NOMBRE)
-                ?.trim()
-                .orEmpty()
+    private fun DocumentSnapshot.toTaskMenuOrNull(): TaskMenu? {
+        val menuId = getLong(CAMPO_ID)?.toInt()
+            ?: this.id.toIntOrNull()
+            ?: return null
+
+        val nombre = getString(CAMPO_NOMBRE)
+            ?.trim()
+            .orEmpty()
 
         if (nombre.isBlank()) {
             return null
         }
 
-        val precio =
-            getDouble(CAMPO_PRECIO)
-                ?: 0.0
+        val precio = getDouble(CAMPO_PRECIO)
+            ?: 0.0
 
-        val stock =
-            getLong(CAMPO_STOCK)
-                ?.toInt()
-                ?: 0
+        val stock = getLong(CAMPO_STOCK)
+            ?.toInt()
+            ?: 0
 
         return TaskMenu(
-            id = id,
+            id = menuId,
             name = nombre,
             precio = precio,
             stock = stock
         )
     }
 
+    // =========================================================
+    // ESTADO DE CARGA
+    // =========================================================
+
     private fun mostrarCargando(
         mostrar: Boolean
     ) {
-        progressTodosLosMenus.visibility =
-            if (mostrar) {
-                View.VISIBLE
-            } else {
-                View.GONE
-            }
+        progressTodosLosMenus.visibility = if (mostrar) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
 
         if (mostrar) {
-            tvSinMenus.visibility =
-                View.GONE
+            tvSinMenus.visibility = View.GONE
         }
     }
 
+    // =========================================================
+    // ESTADO VACÍO
+    // =========================================================
+
     private fun mostrarEstadoVacio() {
-        val listaVacia =
-            listaMenu.isEmpty()
+        val listaVacia = listaMenu.isEmpty()
 
-        tvSinMenus.visibility =
-            if (listaVacia) {
-                View.VISIBLE
-            } else {
-                View.GONE
-            }
+        tvSinMenus.visibility = if (listaVacia) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
 
-        rvTodosLosMenus.visibility =
-            if (listaVacia) {
-                View.GONE
-            } else {
-                View.VISIBLE
-            }
+        rvTodosLosMenus.visibility = if (listaVacia) {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
     }
+
+    // =========================================================
+    // DEVOLVER MENÚ SELECCIONADO
+    // =========================================================
 
     private fun devolverMenuSeleccionado(
         plato: TaskMenu
@@ -288,22 +317,19 @@ class ActivityTodosLosMenus : AppCompatActivity() {
         if (plato.stock <= 0) {
             Toast.makeText(
                 this,
-                getString(
-                    R.string.menu_agotado
-                ),
+                getString(R.string.menu_agotado),
                 Toast.LENGTH_SHORT
             ).show()
 
             return
         }
 
-        val resultado =
-            Intent().apply {
-                putExtra(
-                    EXTRA_MENU_ID,
-                    plato.id
-                )
-            }
+        val resultado = Intent().apply {
+            putExtra(
+                EXTRA_MENU_ID,
+                plato.id
+            )
+        }
 
         setResult(
             RESULT_OK,
@@ -313,10 +339,15 @@ class ActivityTodosLosMenus : AppCompatActivity() {
         cerrarPantalla()
     }
 
+    // =========================================================
+    // CERRAR PANTALLA
+    // =========================================================
+
     private fun cerrarPantalla() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-
+        if (
+            Build.VERSION.SDK_INT >=
+            Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+        ) {
             overrideActivityTransition(
                 OVERRIDE_TRANSITION_CLOSE,
                 android.R.anim.fade_in,
@@ -324,9 +355,7 @@ class ActivityTodosLosMenus : AppCompatActivity() {
             )
 
             finish()
-
         } else {
-
             finish()
 
             @Suppress("DEPRECATION")
@@ -337,37 +366,32 @@ class ActivityTodosLosMenus : AppCompatActivity() {
         }
     }
 
+    // =========================================================
+    // LIBERAR RECURSOS
+    // =========================================================
+
     override fun onDestroy() {
         menuListener?.remove()
-        menuListener =
-            null
+        menuListener = null
 
         super.onDestroy()
     }
 
+    // =========================================================
+    // CONSTANTES
+    // =========================================================
+
     companion object {
+        const val EXTRA_MENU_ID = "extra_menu_id"
 
-        const val EXTRA_MENU_ID =
-            "extra_menu_id"
+        private const val COLECCION_MENU = "menu"
 
-        private const val COLECCION_MENU =
-            "menu"
+        private const val CAMPO_ID = "id"
+        private const val CAMPO_NOMBRE = "nombre"
+        private const val CAMPO_PRECIO = "precio"
+        private const val CAMPO_STOCK = "stock"
 
-        private const val CAMPO_ID =
-            "id"
-
-        private const val CAMPO_NOMBRE =
-            "nombre"
-
-        private const val CAMPO_PRECIO =
-            "precio"
-
-        private const val CAMPO_STOCK =
-            "stock"
-
-        private const val TAG =
-            "TODOS_LOS_MENUS"
-
+        private const val TAG = "TODOS_LOS_MENUS"
         private const val LOG_ERROR_CARGA =
             "Error cargando los menús"
     }

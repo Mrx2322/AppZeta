@@ -15,7 +15,6 @@ class CenasUsuarioAdapter(
         parent: ViewGroup,
         viewType: Int
     ): CenasUsuarioViewHolder {
-
         val view = LayoutInflater
             .from(parent.context)
             .inflate(
@@ -37,6 +36,5 @@ class CenasUsuarioAdapter(
         )
     }
 
-    override fun getItemCount(): Int =
-        listaCenas.size
+    override fun getItemCount(): Int = listaCenas.size
 }

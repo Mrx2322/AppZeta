@@ -7,27 +7,35 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.deiapp.appzeta.R
 
-class PedidoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class PedidoViewHolder(
+    view: View
+) : RecyclerView.ViewHolder(view) {
 
     private val resources = view.resources
 
-    private val tvNombre: TextView = view.findViewById(R.id.tvNombreProducto)
+    private val tvNombre: TextView =
+        view.findViewById(R.id.tvNombreProducto)
 
-    private val tvPrecio: TextView = view.findViewById(R.id.tvPrecioProducto)
+    private val tvPrecio: TextView =
+        view.findViewById(R.id.tvPrecioProducto)
 
     private val tvDetalleProducto: TextView =
         view.findViewById(R.id.tvDetalleProducto)
 
-    private val tvCantidad: TextView = view.findViewById(R.id.tvCantidad)
+    private val tvCantidad: TextView =
+        view.findViewById(R.id.tvCantidad)
 
     private val tvSubtotal: TextView =
         view.findViewById(R.id.tvSubtotalProducto)
 
-    private val btnMenos: ImageButton = view.findViewById(R.id.btnMenos)
+    private val btnMenos: ImageButton =
+        view.findViewById(R.id.btnMenos)
 
-    private val btnMas: ImageButton = view.findViewById(R.id.btnMas)
+    private val btnMas: ImageButton =
+        view.findViewById(R.id.btnMas)
 
-    private val btnEliminar: ImageButton = view.findViewById(R.id.btnEliminar)
+    private val btnEliminar: ImageButton =
+        view.findViewById(R.id.btnEliminar)
 
     fun render(
         item: PedidoItem,
@@ -50,20 +58,34 @@ class PedidoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             R.string.pedido_precio_unitario,
             item.precio
         )
+
         tvCantidad.text = item.cantidad.toString()
+
         tvSubtotal.text = resources.getString(
             R.string.pedido_subtotal,
             item.subtotal()
         )
 
-        btnMas.setOnClickListener { onAumentar(item) }
-        btnMenos.setOnClickListener { onDisminuir(item) }
-        btnEliminar.setOnClickListener { onEliminar(item) }
+        btnMas.setOnClickListener {
+            onAumentar(item)
+        }
+
+        btnMenos.setOnClickListener {
+            onDisminuir(item)
+        }
+
+        btnEliminar.setOnClickListener {
+            onEliminar(item)
+        }
     }
 
-    private fun obtenerDetalleMenu(item: PedidoItem): String {
+    private fun obtenerDetalleMenu(
+        item: PedidoItem
+    ): String {
         if (item.entradas.isEmpty()) {
-            return resources.getString(R.string.pedido_sin_entrada)
+            return resources.getString(
+                R.string.pedido_sin_entrada
+            )
         }
 
         val recursoDetalle = if (item.cantidadEntradas() == 1) {

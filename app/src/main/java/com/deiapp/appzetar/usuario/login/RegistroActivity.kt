@@ -27,9 +27,11 @@ class RegistroActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
 
-    private val db =
-        FirebaseFirestore.getInstance()
+    private val db = FirebaseFirestore.getInstance()
 
+    // =========================================================
+    // ON CREATE
+    // =========================================================
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,71 +43,38 @@ class RegistroActivity : AppCompatActivity() {
             false
         )
 
-        setContentView(
-            R.layout.activity_registro
-        )
+        setContentView(R.layout.activity_registro)
 
         configurarInsets()
 
+        auth = FirebaseAuth.getInstance()
 
-        auth =
-            FirebaseAuth.getInstance()
-
-
-        etNombre =
-            findViewById(R.id.etNombre)
-
-        etCorreo =
-            findViewById(R.id.etCorreo)
-
-        etContrasena =
-            findViewById(R.id.etContrasena)
-
-        etConfirmarContrasena =
-            findViewById(R.id.etConfirmarContrasena)
-
-        btnRegistrarse =
-            findViewById(R.id.btnRegistrarse)
-
+        inicializarVistas()
 
         btnRegistrarse.setOnClickListener {
-
             registrarUsuario()
         }
     }
-
 
     // =========================================================
     // INSETS
     // =========================================================
 
     private fun configurarInsets() {
+        val root = findViewById<View>(R.id.main)
 
-        val root =
-            findViewById<View>(
-                R.id.main
-            )
-
-        val paddingInicialIzquierdo =
-            root.paddingLeft
-
-        val paddingInicialSuperior =
-            root.paddingTop
-
-        val paddingInicialDerecho =
-            root.paddingRight
-
-        val paddingInicialInferior =
-            root.paddingBottom
+        val paddingInicialIzquierdo = root.paddingLeft
+        val paddingInicialSuperior = root.paddingTop
+        val paddingInicialDerecho = root.paddingRight
+        val paddingInicialInferior = root.paddingBottom
 
         ViewCompat.setOnApplyWindowInsetsListener(
             root
         ) { view, insets ->
 
-            val systemBars =
-                insets.getInsets(
-                    WindowInsetsCompat.Type.systemBars()
-                )
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+            )
 
             view.setPadding(
                 paddingInicialIzquierdo + systemBars.left,
@@ -118,196 +87,174 @@ class RegistroActivity : AppCompatActivity() {
         }
     }
 
+    // =========================================================
+    // INICIALIZAR VISTAS
+    // =========================================================
+
+    private fun inicializarVistas() {
+        etNombre = findViewById(R.id.etNombre)
+        etCorreo = findViewById(R.id.etCorreo)
+        etContrasena = findViewById(R.id.etContrasena)
+        etConfirmarContrasena =
+            findViewById(R.id.etConfirmarContrasena)
+
+        btnRegistrarse = findViewById(R.id.btnRegistrarse)
+    }
 
     // =========================================================
-    // REGISTRAR
+    // REGISTRAR USUARIO
     // =========================================================
 
     private fun registrarUsuario() {
+        val nombre = etNombre.text
+            ?.toString()
+            ?.trim()
+            ?: ""
 
-        val nombre =
-            etNombre.text
-                ?.toString()
-                ?.trim()
-                ?: ""
+        val correo = etCorreo.text
+            ?.toString()
+            ?.trim()
+            ?: ""
 
-        val correo =
-            etCorreo.text
-                ?.toString()
-                ?.trim()
-                ?: ""
+        val contrasena = etContrasena.text
+            ?.toString()
+            ?.trim()
+            ?: ""
 
-        val contrasena =
-            etContrasena.text
-                ?.toString()
-                ?.trim()
-                ?: ""
+        val confirmar = etConfirmarContrasena.text
+            ?.toString()
+            ?.trim()
+            ?: ""
 
-        val confirmar =
-            etConfirmarContrasena.text
-                ?.toString()
-                ?.trim()
-                ?: ""
-
-
-        // -----------------------------------------------------
+        // =====================================================
         // VALIDACIONES
-        // -----------------------------------------------------
+        // =====================================================
 
         if (nombre.isEmpty()) {
-
             etNombre.error =
                 getString(R.string.registro_error_ingresa_nombre)
 
             return
         }
 
-
         if (correo.isEmpty()) {
-
             etCorreo.error =
                 getString(R.string.registro_error_ingresa_correo)
 
             return
         }
 
-
         if (contrasena.isEmpty()) {
-
             etContrasena.error =
                 getString(R.string.registro_error_ingresa_contrasena)
 
             return
         }
 
-
         if (contrasena.length < 6) {
-
             etContrasena.error =
                 getString(R.string.registro_error_minimo_caracteres)
 
             return
         }
 
-
         if (confirmar.isEmpty()) {
-
             etConfirmarContrasena.error =
                 getString(R.string.registro_error_confirma_contrasena)
 
             return
         }
 
-
         if (contrasena != confirmar) {
-
             etConfirmarContrasena.error =
                 getString(R.string.registro_error_contrasenas_no_coinciden)
 
             return
         }
 
-
-        // -----------------------------------------------------
+        // =====================================================
         // DESACTIVAR BOTÓN
-        // -----------------------------------------------------
+        // =====================================================
 
         btnRegistrarse.isEnabled = false
 
-
-        // -----------------------------------------------------
-        // CREAR USUARIO FIREBASE
-        // -----------------------------------------------------
+        // =====================================================
+        // CREAR USUARIO EN FIREBASE AUTH
+        // =====================================================
 
         auth.createUserWithEmailAndPassword(
             correo,
             contrasena
         )
             .addOnSuccessListener {
-
-                val usuario =
-                    auth.currentUser
-
+                val usuario = auth.currentUser
 
                 if (usuario == null) {
-
                     btnRegistrarse.isEnabled = true
-
                     return@addOnSuccessListener
                 }
 
+                val uid = usuario.uid
 
-                val uid =
-                    usuario.uid
-
-
-                // -------------------------------------------------
+                // =============================================
                 // DATOS DEL USUARIO
-                // -------------------------------------------------
+                // =============================================
 
-                val datos =
-                    hashMapOf(
-                        "uid" to uid,
-                        "nombre" to nombre,
-                        "correo" to correo
-                    )
+                val datos = hashMapOf(
+                    "uid" to uid,
+                    "nombre" to nombre,
+                    "correo" to correo
+                )
 
-
-                // -------------------------------------------------
-                // FIRESTORE
-                // -------------------------------------------------
+                // =============================================
+                // GUARDAR PERFIL EN FIRESTORE
+                // =============================================
 
                 db.collection("usuarios")
                     .document(uid)
                     .set(datos)
-
                     .addOnSuccessListener {
-
                         Toast.makeText(
                             this,
-                            getString(R.string.registro_cuenta_creada_exito),
+                            getString(
+                                R.string.registro_cuenta_creada_exito
+                            ),
                             Toast.LENGTH_SHORT
                         ).show()
 
-
-                        val intent =
-                            Intent(
-                                this,
-                                ActivityMenuUsuario::class.java
-                            )
-
+                        val intent = Intent(
+                            this,
+                            ActivityMenuUsuario::class.java
+                        )
 
                         intent.flags =
                             Intent.FLAG_ACTIVITY_NEW_TASK or
                                     Intent.FLAG_ACTIVITY_CLEAR_TASK
 
-
                         startActivity(intent)
-
                         finish()
                     }
-
                     .addOnFailureListener {
-
                         btnRegistrarse.isEnabled = true
 
                         Toast.makeText(
                             this,
-                            getString(R.string.registro_error_guardar_datos),
+                            getString(
+                                R.string.registro_error_guardar_datos
+                            ),
                             Toast.LENGTH_LONG
                         ).show()
                     }
             }
-
             .addOnFailureListener { error ->
-
                 btnRegistrarse.isEnabled = true
-
 
                 Toast.makeText(
                     this,
                     error.message
-                        ?: getString(R.string.registro_error_crear_cuenta),
+                        ?: getString(
+                            R.string.registro_error_crear_cuenta
+                        ),
                     Toast.LENGTH_LONG
                 ).show()
             }

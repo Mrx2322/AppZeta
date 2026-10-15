@@ -26,15 +26,9 @@ class CategoriaAdapter(
         private val tvCategoria: TextView =
             itemView.findViewById(R.id.tvCategoria)
 
-        fun bind(
-            categoria: CategoriaItem
-        ) {
-            imgCategoria.setImageResource(
-                categoria.icono
-            )
-
-            tvCategoria.text =
-                categoria.nombre
+        fun bind(categoria: CategoriaItem) {
+            imgCategoria.setImageResource(categoria.icono)
+            tvCategoria.text = categoria.nombre
 
             mostrarEstadoSeleccion(
                 categoria.id == categoriaSeleccionada
@@ -50,29 +44,20 @@ class CategoriaAdapter(
         ) {
             if (seleccionada) {
                 tvCategoria.setTextColor(
-                    obtenerColor(
-                        R.color.categoria_texto_seleccionado
-                    )
+                    obtenerColor(R.color.categoria_texto_seleccionado)
                 )
 
-                tvCategoria.alpha =
-                    ALPHA_SELECCIONADA
-
+                tvCategoria.alpha = ALPHA_SELECCIONADA
             } else {
                 tvCategoria.setTextColor(
-                    obtenerColor(
-                        R.color.categoria_texto_normal
-                    )
+                    obtenerColor(R.color.categoria_texto_normal)
                 )
 
-                tvCategoria.alpha =
-                    ALPHA_NORMAL
+                tvCategoria.alpha = ALPHA_NORMAL
             }
         }
 
-        private fun obtenerColor(
-            colorRes: Int
-        ): Int {
+        private fun obtenerColor(colorRes: Int): Int {
             return ContextCompat.getColor(
                 itemView.context,
                 colorRes
@@ -84,15 +69,13 @@ class CategoriaAdapter(
         parent: ViewGroup,
         viewType: Int
     ): CategoriaViewHolder {
-
-        val view =
-            LayoutInflater
-                .from(parent.context)
-                .inflate(
-                    R.layout.item_categoria,
-                    parent,
-                    false
-                )
+        val view = LayoutInflater
+            .from(parent.context)
+            .inflate(
+                R.layout.item_categoria,
+                parent,
+                false
+            )
 
         return CategoriaViewHolder(view)
     }
@@ -101,13 +84,10 @@ class CategoriaAdapter(
         holder: CategoriaViewHolder,
         position: Int
     ) {
-        holder.bind(
-            categorias[position]
-        )
+        holder.bind(categorias[position])
     }
 
-    override fun getItemCount(): Int =
-        categorias.size
+    override fun getItemCount(): Int = categorias.size
 
     private fun seleccionarCategoria(
         categoria: CategoriaItem
@@ -117,19 +97,11 @@ class CategoriaAdapter(
             return
         }
 
-        val categoriaAnterior =
-            categoriaSeleccionada
+        val categoriaAnterior = categoriaSeleccionada
+        categoriaSeleccionada = categoria.id
 
-        categoriaSeleccionada =
-            categoria.id
-
-        notificarCambioCategoria(
-            categoriaAnterior
-        )
-
-        notificarCambioCategoria(
-            categoriaSeleccionada
-        )
+        notificarCambioCategoria(categoriaAnterior)
+        notificarCambioCategoria(categoriaSeleccionada)
 
         onCategoriaClick(categoria)
     }
@@ -137,10 +109,9 @@ class CategoriaAdapter(
     private fun notificarCambioCategoria(
         categoriaId: Int
     ) {
-        val posicion =
-            categorias.indexOfFirst { categoria ->
-                categoria.id == categoriaId
-            }
+        val posicion = categorias.indexOfFirst { categoria ->
+            categoria.id == categoriaId
+        }
 
         if (posicion != RecyclerView.NO_POSITION) {
             notifyItemChanged(posicion)
@@ -148,13 +119,8 @@ class CategoriaAdapter(
     }
 
     companion object {
-
         private const val CATEGORIA_TODOS = 0
-
-        private const val ALPHA_SELECCIONADA =
-            1f
-
-        private const val ALPHA_NORMAL =
-            0.75f
+        private const val ALPHA_SELECCIONADA = 1f
+        private const val ALPHA_NORMAL = 0.75f
     }
 }

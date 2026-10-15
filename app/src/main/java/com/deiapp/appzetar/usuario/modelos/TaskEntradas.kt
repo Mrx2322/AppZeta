@@ -13,10 +13,10 @@ sealed class TaskEntradas(
         disponible: Boolean = true,
         stock: Int = 0
     ) : TaskEntradas(
-        id,
-        nombre,
-        disponible,
-        stock
+        id = id,
+        nombre = nombre,
+        disponible = disponible,
+        stock = stock
     )
 
     class Huancaina(
@@ -25,10 +25,10 @@ sealed class TaskEntradas(
         disponible: Boolean = true,
         stock: Int = 0
     ) : TaskEntradas(
-        id,
-        nombre,
-        disponible,
-        stock
+        id = id,
+        nombre = nombre,
+        disponible = disponible,
+        stock = stock
     )
 
     class Otros(
@@ -37,9 +37,9 @@ sealed class TaskEntradas(
         disponible: Boolean = true,
         stock: Int = 0
     ) : TaskEntradas(
-        id,
-        nombre,
-        disponible,
-        stock
+        id = id,
+        nombre = nombre,
+        disponible = disponible,
+        stock = stock
     )
 }

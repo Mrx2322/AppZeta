@@ -1,6 +1,6 @@
 package com.deiapp.appzetar.splash
 
-import kotlin.time.Duration.Companion.milliseconds
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
@@ -9,11 +9,11 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.lifecycleScope
+import com.deiapp.appzeta.R
 import com.deiapp.appzetar.usuario.ActivityMenuUsuario
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import android.annotation.SuppressLint
-import com.deiapp.appzeta.R
+import kotlin.time.Duration.Companion.milliseconds
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
@@ -28,18 +28,17 @@ class SplashActivity : AppCompatActivity() {
         val ivDelivery = findViewById<ImageView>(R.id.ivDelivery)
 
         lifecycleScope.launch {
-
             for (progress in 1..100) {
                 delay(20.milliseconds)
 
                 progressBar.progress = progress
+
                 tvStatus.text = getString(
                     R.string.splash_preparando_experiencia,
                     progress
                 )
 
-                ivDelivery.translationX =
-                    progress * 3f
+                ivDelivery.translationX = progress * 3f
             }
 
             val intent = Intent(

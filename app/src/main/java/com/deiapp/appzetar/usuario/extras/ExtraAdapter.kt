@@ -20,8 +20,11 @@ class ExtraAdapter(
     private var extrasVisibles: List<ExtraItem> =
         todosLosExtras.toList()
 
-    private var categoriaActual =
-        CATEGORIA_TODOS
+    private var categoriaActual = CATEGORIA_TODOS
+
+    // =========================================================
+    // VIEW HOLDER
+    // =========================================================
 
     inner class ExtraViewHolder(
         itemView: View
@@ -39,21 +42,15 @@ class ExtraAdapter(
         private val btnAgregarExtra: View =
             itemView.findViewById(R.id.btnAgregarExtra)
 
-        fun bind(
-            extra: ExtraItem
-        ) {
-            imgExtra.setImageResource(
-                extra.icono
+        fun bind(extra: ExtraItem) {
+            imgExtra.setImageResource(extra.icono)
+
+            tvNombreExtra.text = extra.nombre
+
+            tvPrecioExtra.text = itemView.context.getString(
+                R.string.precio_soles_formato,
+                extra.precio
             )
-
-            tvNombreExtra.text =
-                extra.nombre
-
-            tvPrecioExtra.text =
-                itemView.context.getString(
-                    R.string.precio_soles_formato,
-                    extra.precio
-                )
 
             btnAgregarExtra.setOnClickListener {
                 onAgregarClick(extra)
@@ -61,19 +58,21 @@ class ExtraAdapter(
         }
     }
 
+    // =========================================================
+    // CREAR Y MOSTRAR ELEMENTOS
+    // =========================================================
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): ExtraViewHolder {
-
-        val view =
-            LayoutInflater
-                .from(parent.context)
-                .inflate(
-                    R.layout.item_extra,
-                    parent,
-                    false
-                )
+        val view = LayoutInflater
+            .from(parent.context)
+            .inflate(
+                R.layout.item_extra,
+                parent,
+                false
+            )
 
         return ExtraViewHolder(view)
     }
@@ -82,65 +81,66 @@ class ExtraAdapter(
         holder: ExtraViewHolder,
         position: Int
     ) {
-        holder.bind(
-            extrasVisibles[position]
-        )
+        holder.bind(extrasVisibles[position])
     }
 
-    override fun getItemCount(): Int =
-        extrasVisibles.size
+    override fun getItemCount(): Int = extrasVisibles.size
+
+    // =========================================================
+    // ACTUALIZAR EXTRAS
+    // =========================================================
 
     fun actualizarExtras(
         nuevosExtras: List<ExtraItem>,
         categoriaId: Int = categoriaActual
     ) {
-        todosLosExtras =
-            nuevosExtras.toList()
+        todosLosExtras = nuevosExtras.toList()
 
-        filtrarPorCategoria(
-            categoriaId
-        )
+        filtrarPorCategoria(categoriaId)
     }
 
-    fun filtrarPorCategoria(
-        categoriaId: Int
-    ) {
-        categoriaActual =
-            categoriaId
+    // =========================================================
+    // FILTRAR POR CATEGORÍA
+    // =========================================================
 
-        val nuevaLista =
-            if (categoriaId == CATEGORIA_TODOS) {
-                todosLosExtras.toList()
-            } else {
-                todosLosExtras.filter { extra ->
-                    extra.categoriaId == categoriaId
-                }
+    fun filtrarPorCategoria(categoriaId: Int) {
+        categoriaActual = categoriaId
+
+        val nuevaLista = if (categoriaId == CATEGORIA_TODOS) {
+            todosLosExtras.toList()
+        } else {
+            todosLosExtras.filter { extra ->
+                extra.categoriaId == categoriaId
             }
+        }
 
-        actualizarListaVisible(
-            nuevaLista
-        )
+        actualizarListaVisible(nuevaLista)
     }
+
+    // =========================================================
+    // ACTUALIZAR LISTA CON DIFF
+    // =========================================================
 
     private fun actualizarListaVisible(
         nuevaLista: List<ExtraItem>
     ) {
-        val listaAnterior =
-            extrasVisibles
+        val listaAnterior = extrasVisibles
 
-        val resultadoDiff =
-            DiffUtil.calculateDiff(
-                ExtraDiffCallback(
-                    listaAnterior = listaAnterior,
-                    listaNueva = nuevaLista
-                )
+        val resultadoDiff = DiffUtil.calculateDiff(
+            ExtraDiffCallback(
+                listaAnterior = listaAnterior,
+                listaNueva = nuevaLista
             )
+        )
 
-        extrasVisibles =
-            nuevaLista
+        extrasVisibles = nuevaLista
 
         resultadoDiff.dispatchUpdatesTo(this)
     }
+
+    // =========================================================
+    // COMPARACIÓN DE ELEMENTOS
+    // =========================================================
 
     private class ExtraDiffCallback(
         private val listaAnterior: List<ExtraItem>,
@@ -157,7 +157,6 @@ class ExtraAdapter(
             oldItemPosition: Int,
             newItemPosition: Int
         ): Boolean {
-
             return listaAnterior[oldItemPosition].id ==
                     listaNueva[newItemPosition].id
         }
@@ -166,15 +165,12 @@ class ExtraAdapter(
             oldItemPosition: Int,
             newItemPosition: Int
         ): Boolean {
-
             return listaAnterior[oldItemPosition] ==
                     listaNueva[newItemPosition]
         }
     }
 
     companion object {
-
-        private const val CATEGORIA_TODOS =
-            0
+        private const val CATEGORIA_TODOS = 0
     }
 }

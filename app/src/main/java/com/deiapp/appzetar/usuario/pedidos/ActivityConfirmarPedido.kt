@@ -1,4 +1,3 @@
-
 package com.deiapp.appzetar.usuario.pedidos
 
 import android.content.Intent
@@ -287,7 +286,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 tvNombreUsuario.text = nombreUsuario
             }
             .addOnFailureListener { exception ->
-
                 Log.e(
                     TAG,
                     "No se pudo cargar el nombre del usuario",
@@ -453,7 +451,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             return
         }
 
-        // Copia local para conservar cantidades consistentes.
+        // Copia local para conservar las cantidades consistentes.
         val pedido = PedidoManager.pedido.map { item ->
             item.copy(
                 entradas = item.entradas.map { entrada ->
@@ -557,7 +555,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             return
         }
 
-        val total = pedido.sumOf { it.subtotal() }
+        val total = pedido.sumOf { item ->
+            item.subtotal()
+        }
 
         if (!total.isFinite() || total <= 0.0) {
             Toast.makeText(
@@ -668,7 +668,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
         pedido.forEach { item ->
             when (item.tipo) {
-
                 TipoPedido.MENU -> {
                     agregarSolicitud(
                         coleccion = COLECCION_MENU,
@@ -677,7 +676,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                         cantidad = item.cantidad
                     )
 
-                    // Las entradas asociadas se descuentan
+                    // Las entradas asociadas se cuentan
                     // por cada unidad del menú solicitado.
                     item.entradas.forEach { entrada ->
                         agregarSolicitud(
@@ -797,8 +796,8 @@ class ActivityConfirmarPedido : AppCompatActivity() {
      * la creación del pedido y la actualización del contador en una
      * única transacción de Firestore.
      *
-     * Si una operación falla, Firestore no confirma parcialmente
-     * ninguna de las escrituras de esta transacción.
+     * Si una operación falla, la transacción no confirma
+     * parcialmente sus escrituras.
      */
     private fun guardarPedidoYValidarStock(
         usuarioId: String,
@@ -825,7 +824,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
 
             val siguienteNumero: Long =
                 if (snapshotContador.exists()) {
-
                     val ultimoNumero =
                         snapshotContador.getLong(CAMPO_ULTIMO_NUMERO)
                             ?: throw IllegalStateException(
@@ -844,7 +842,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 }
 
             // =================================================
-            // 2. LEER Y VALIDAR TODA LA LISTA DE STOCK
+            // 2. LEER Y VALIDAR TODO EL STOCK
             // TODAS LAS LECTURAS VAN ANTES DE LAS ESCRITURAS
             // =================================================
 
@@ -852,9 +850,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 mutableListOf<Pair<SolicitudStock, DocumentReference>>()
 
             for ((item, referenciaStock) in referenciasStock) {
-
-                val snapshotStock =
-                    transaction.get(referenciaStock)
+                val snapshotStock = transaction.get(referenciaStock)
 
                 if (!snapshotStock.exists()) {
                     throw IllegalStateException(
@@ -862,11 +858,10 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     )
                 }
 
-                val stock =
-                    snapshotStock.getLong(CAMPO_STOCK)
-                        ?: throw IllegalStateException(
-                            "El stock de ${item.nombre} no es válido."
-                        )
+                val stock = snapshotStock.getLong(CAMPO_STOCK)
+                    ?: throw IllegalStateException(
+                        "El stock de ${item.nombre} no es válido."
+                    )
 
                 if (stock < 0L) {
                     throw IllegalStateException(
@@ -892,7 +887,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             // =================================================
 
             for ((item, referenciaStock) in snapshotsStock) {
-
                 transaction.update(
                     referenciaStock,
                     CAMPO_STOCK,
@@ -940,7 +934,7 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                     "fecha" to FieldValue.serverTimestamp()
                 )
 
-            // GPS opcional para Delivery.
+            // Ubicación GPS opcional para Delivery.
             val latitudPedido = latitud
             val longitudPedido = longitud
 
@@ -986,7 +980,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             siguienteNumero
         }
             .addOnSuccessListener { numeroPedido ->
-
                 Log.i(
                     TAG,
                     "Pedido $numeroPedido guardado y stock descontado correctamente."
@@ -998,7 +991,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
                 )
             }
             .addOnFailureListener { exception ->
-
                 finalizarConError(exception)
             }
     }
@@ -1018,7 +1010,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
             this,
             ActivityPedidoConfirmado::class.java
         ).apply {
-
             putExtra(
                 EXTRA_NUMERO_PEDIDO_CONFIRMADO,
                 numeroPedido
@@ -1041,7 +1032,9 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     // MANEJO DE ERRORES
     // =========================================================
 
-    private fun finalizarConError(exception: Exception) {
+    private fun finalizarConError(
+        exception: Exception
+    ) {
         confirmandoPedido = false
 
         btnContinuarPago.isEnabled = true
@@ -1100,7 +1093,6 @@ class ActivityConfirmarPedido : AppCompatActivity() {
     // =========================================================
 
     private companion object {
-
         const val TAG = "CONFIRMAR_PEDIDO"
 
         const val EXTRA_NOMBRE = "nombre"

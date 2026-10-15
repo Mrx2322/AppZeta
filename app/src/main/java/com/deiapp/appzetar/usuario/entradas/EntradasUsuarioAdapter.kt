@@ -12,117 +12,68 @@ class EntradasUsuarioAdapter(
     private val entradas: MutableList<TaskEntradas>
 ) : RecyclerView.Adapter<EntradasUsuarioViewHolder>() {
 
-    private val cantidadesSeleccionadas =
-        mutableMapOf<Int, Int>()
-
+    private val cantidadesSeleccionadas = mutableMapOf<Int, Int>()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): EntradasUsuarioViewHolder {
+        val view = LayoutInflater
+            .from(parent.context)
+            .inflate(
+                R.layout.item_task_entradas,
+                parent,
+                false
+            )
 
-        val view =
-            LayoutInflater
-                .from(parent.context)
-                .inflate(
-                    R.layout.item_task_entradas,
-                    parent,
-                    false
-                )
-
-        return EntradasUsuarioViewHolder(
-            view
-        )
+        return EntradasUsuarioViewHolder(view)
     }
-
 
     override fun onBindViewHolder(
         holder: EntradasUsuarioViewHolder,
         position: Int
     ) {
-
-        val entrada =
-            entradas[position]
-
+        val entrada = entradas[position]
 
         val maximoSeleccionable =
-            calcularMaximoSeleccionable(
-                entrada
-            )
+            calcularMaximoSeleccionable(entrada)
 
-
-        val cantidadActual =
-            (
-                    cantidadesSeleccionadas[
-                        entrada.id
-                    ] ?: 0
-                    )
-                .coerceAtMost(
-                    maximoSeleccionable
-                )
-
+        val cantidadActual = (
+                cantidadesSeleccionadas[entrada.id] ?: 0
+                ).coerceAtMost(maximoSeleccionable)
 
         if (cantidadActual > 0) {
-
-            cantidadesSeleccionadas[
-                entrada.id
-            ] = cantidadActual
-
+            cantidadesSeleccionadas[entrada.id] = cantidadActual
         } else {
-
-            cantidadesSeleccionadas.remove(
-                entrada.id
-            )
+            cantidadesSeleccionadas.remove(entrada.id)
         }
-
 
         holder.render(
             taskEntradas = entrada,
             cantidadSeleccionada = cantidadActual,
             maximoSeleccionable = maximoSeleccionable,
-
             onSumarClick = {
-
-                sumarEntrada(
-                    entrada
-                )
+                sumarEntrada(entrada)
             },
-
             onRestarClick = {
-
-                restarEntrada(
-                    entrada
-                )
+                restarEntrada(entrada)
             }
         )
     }
 
-
-    override fun getItemCount(): Int =
-        entradas.size
-
+    override fun getItemCount(): Int = entradas.size
 
     // =============================================================
     // ENTRADAS SELECCIONADAS
     // =============================================================
 
-    fun obtenerEntradasSeleccionadas():
-            List<EntradaPedido> {
-
+    fun obtenerEntradasSeleccionadas(): List<EntradaPedido> {
         return entradas.mapNotNull { entrada ->
-
-            val cantidad =
-                cantidadesSeleccionadas[
-                    entrada.id
-                ] ?: 0
-
+            val cantidad = cantidadesSeleccionadas[entrada.id] ?: 0
 
             if (cantidad <= 0) {
-
                 null
-
             } else {
-
                 EntradaPedido(
                     id = entrada.id,
                     nombre = entrada.nombre,
@@ -132,13 +83,11 @@ class EntradasUsuarioAdapter(
         }
     }
 
-
     // =============================================================
-    // LIMPIAR
+    // LIMPIAR SELECCIÓN
     // =============================================================
 
     fun limpiarSeleccion() {
-
         if (cantidadesSeleccionadas.isEmpty()) {
             return
         }
@@ -149,32 +98,22 @@ class EntradasUsuarioAdapter(
         cantidadesSeleccionadas.clear()
 
         entradas.forEachIndexed { index, entrada ->
-
             if (entrada.id in entradasSeleccionadas) {
                 notifyItemChanged(index)
             }
         }
     }
 
-
     // =============================================================
-    // SUMAR
+    // SUMAR ENTRADA
     // =============================================================
 
-    private fun sumarEntrada(
-        entrada: TaskEntradas
-    ) {
-
+    private fun sumarEntrada(entrada: TaskEntradas) {
         val maximoSeleccionable =
-            calcularMaximoSeleccionable(
-                entrada
-            )
+            calcularMaximoSeleccionable(entrada)
 
         val cantidadActual =
-            cantidadesSeleccionadas[
-                entrada.id
-            ] ?: 0
-
+            cantidadesSeleccionadas[entrada.id] ?: 0
 
         if (
             !entrada.disponible ||
@@ -183,58 +122,33 @@ class EntradasUsuarioAdapter(
             return
         }
 
-
-        cantidadesSeleccionadas[
-            entrada.id
-        ] =
+        cantidadesSeleccionadas[entrada.id] =
             cantidadActual + 1
 
-
-        notificarEntradaCambiada(
-            entrada.id
-        )
+        notificarEntradaCambiada(entrada.id)
     }
 
-
     // =============================================================
-    // RESTAR
+    // RESTAR ENTRADA
     // =============================================================
 
-    private fun restarEntrada(
-        entrada: TaskEntradas
-    ) {
-
+    private fun restarEntrada(entrada: TaskEntradas) {
         val cantidadActual =
-            cantidadesSeleccionadas[
-                entrada.id
-            ] ?: 0
-
+            cantidadesSeleccionadas[entrada.id] ?: 0
 
         if (cantidadActual <= 0) {
             return
         }
 
-
         if (cantidadActual == 1) {
-
-            cantidadesSeleccionadas.remove(
-                entrada.id
-            )
-
+            cantidadesSeleccionadas.remove(entrada.id)
         } else {
-
-            cantidadesSeleccionadas[
-                entrada.id
-            ] =
+            cantidadesSeleccionadas[entrada.id] =
                 cantidadActual - 1
         }
 
-
-        notificarEntradaCambiada(
-            entrada.id
-        )
+        notificarEntradaCambiada(entrada.id)
     }
-
 
     // =============================================================
     // STOCK DISPONIBLE
@@ -243,21 +157,13 @@ class EntradasUsuarioAdapter(
     private fun calcularMaximoSeleccionable(
         entrada: TaskEntradas
     ): Int {
-
         val cantidadEnCarrito =
-            PedidoManager
-                .cantidadEntradaEnPedido(
-                    entrada.id
-                )
-
+            PedidoManager.cantidadEntradaEnPedido(entrada.id)
 
         return (
-                entrada.stock -
-                        cantidadEnCarrito
-                )
-            .coerceAtLeast(0)
+                entrada.stock - cantidadEnCarrito
+                ).coerceAtLeast(0)
     }
-
 
     // =============================================================
     // ACTUALIZAR TARJETA
@@ -266,21 +172,12 @@ class EntradasUsuarioAdapter(
     private fun notificarEntradaCambiada(
         entradaId: Int
     ) {
+        val posicion = entradas.indexOfFirst { entrada ->
+            entrada.id == entradaId
+        }
 
-        val posicion =
-            entradas.indexOfFirst { entrada ->
-                entrada.id == entradaId
-            }
-
-
-        if (
-            posicion !=
-            RecyclerView.NO_POSITION
-        ) {
-
-            notifyItemChanged(
-                posicion
-            )
+        if (posicion != RecyclerView.NO_POSITION) {
+            notifyItemChanged(posicion)
         }
     }
 }

@@ -36,6 +36,7 @@ class MenuUsuarioViewHolder(
         mostrarNombre(taskMenu)
         mostrarImagen()
         mostrarPrecio(taskMenu)
+
         mostrarStock(
             taskMenu = taskMenu,
             onAgregarClick = onAgregarClick
@@ -44,33 +45,24 @@ class MenuUsuarioViewHolder(
         itemView.setOnClickListener(null)
     }
 
-    private fun mostrarNombre(
-        taskMenu: TaskMenu
-    ) {
-        tvMenuPlato.text =
-            taskMenu.name
+    private fun mostrarNombre(taskMenu: TaskMenu) {
+        tvMenuPlato.text = taskMenu.name
     }
 
     private fun mostrarImagen() {
-        imgPlato.setImageResource(
-            R.drawable.fondo_menu
-        )
+        imgPlato.setImageResource(R.drawable.fondo_menu)
     }
 
-    private fun mostrarPrecio(
-        taskMenu: TaskMenu
-    ) {
-        val precioSinEntrada =
-            ReglasPrecioPedido.calcularPrecioMenu(
-                precioMenuConEntrada = taskMenu.precio,
-                cantidadEntradas = 0
-            )
+    private fun mostrarPrecio(taskMenu: TaskMenu) {
+        val precioSinEntrada = ReglasPrecioPedido.calcularPrecioMenu(
+            precioMenuConEntrada = taskMenu.precio,
+            cantidadEntradas = 0
+        )
 
-        tvPrecio.text =
-            itemView.context.getString(
-                R.string.menu_precio_sin_entrada,
-                precioSinEntrada
-            )
+        tvPrecio.text = itemView.context.getString(
+            R.string.menu_precio_sin_entrada,
+            precioSinEntrada
+        )
     }
 
     private fun mostrarStock(
@@ -78,7 +70,6 @@ class MenuUsuarioViewHolder(
         onAgregarClick: (TaskMenu) -> Unit
     ) {
         when {
-
             taskMenu.stock <= 0 -> {
                 mostrarAgotado()
             }
@@ -108,19 +99,13 @@ class MenuUsuarioViewHolder(
 
     private fun mostrarAgotado() {
         tvStockPlato.text =
-            itemView.context.getString(
-                R.string.menu_estado_agotado
-            )
+            itemView.context.getString(R.string.menu_estado_agotado)
 
         tvStockPlato.setTextColor(
-            obtenerColor(
-                R.color.menu_stock_agotado
-            )
+            obtenerColor(R.color.menu_stock_agotado)
         )
 
-        configurarBotonAgregar(
-            habilitado = false
-        )
+        configurarBotonAgregar(habilitado = false)
     }
 
     private fun mostrarUltimaUnidad(
@@ -128,14 +113,10 @@ class MenuUsuarioViewHolder(
         onAgregarClick: (TaskMenu) -> Unit
     ) {
         tvStockPlato.text =
-            itemView.context.getString(
-                R.string.menu_ultima_unidad
-            )
+            itemView.context.getString(R.string.menu_ultima_unidad)
 
         tvStockPlato.setTextColor(
-            obtenerColor(
-                R.color.menu_stock_bajo
-            )
+            obtenerColor(R.color.menu_stock_bajo)
         )
 
         configurarBotonAgregar(
@@ -149,16 +130,13 @@ class MenuUsuarioViewHolder(
         taskMenu: TaskMenu,
         onAgregarClick: (TaskMenu) -> Unit
     ) {
-        tvStockPlato.text =
-            itemView.context.getString(
-                R.string.menu_ultimas_unidades,
-                taskMenu.stock
-            )
+        tvStockPlato.text = itemView.context.getString(
+            R.string.menu_ultimas_unidades,
+            taskMenu.stock
+        )
 
         tvStockPlato.setTextColor(
-            obtenerColor(
-                R.color.menu_stock_bajo
-            )
+            obtenerColor(R.color.menu_stock_bajo)
         )
 
         configurarBotonAgregar(
@@ -173,14 +151,10 @@ class MenuUsuarioViewHolder(
         onAgregarClick: (TaskMenu) -> Unit
     ) {
         tvStockPlato.text =
-            itemView.context.getString(
-                R.string.menu_estado_disponible
-            )
+            itemView.context.getString(R.string.menu_estado_disponible)
 
         tvStockPlato.setTextColor(
-            obtenerColor(
-                R.color.menu_stock_disponible
-            )
+            obtenerColor(R.color.menu_stock_disponible)
         )
 
         configurarBotonAgregar(
@@ -195,15 +169,13 @@ class MenuUsuarioViewHolder(
         taskMenu: TaskMenu? = null,
         onAgregarClick: ((TaskMenu) -> Unit)? = null
     ) {
-        btnAgregar.isEnabled =
-            habilitado
+        btnAgregar.isEnabled = habilitado
 
-        btnAgregar.alpha =
-            if (habilitado) {
-                ALPHA_HABILITADO
-            } else {
-                ALPHA_DESHABILITADO
-            }
+        btnAgregar.alpha = if (habilitado) {
+            ALPHA_HABILITADO
+        } else {
+            ALPHA_DESHABILITADO
+        }
 
         if (
             habilitado &&
@@ -218,9 +190,7 @@ class MenuUsuarioViewHolder(
         }
     }
 
-    private fun obtenerColor(
-        colorRes: Int
-    ): Int {
+    private fun obtenerColor(colorRes: Int): Int {
         return ContextCompat.getColor(
             itemView.context,
             colorRes
@@ -228,11 +198,7 @@ class MenuUsuarioViewHolder(
     }
 
     companion object {
-
-        private const val ALPHA_HABILITADO =
-            1f
-
-        private const val ALPHA_DESHABILITADO =
-            0.45f
+        private const val ALPHA_HABILITADO = 1f
+        private const val ALPHA_DESHABILITADO = 0.45f
     }
 }

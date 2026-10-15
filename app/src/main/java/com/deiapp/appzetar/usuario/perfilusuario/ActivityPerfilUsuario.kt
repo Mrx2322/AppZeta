@@ -1,8 +1,6 @@
 package com.deiapp.appzetar.usuario.perfilusuario
 
-import com.deiapp.appzetar.usuario.login.LoginActivity
-import com.deiapp.appzetar.usuario.navegacionUsuario.NavegacionUsuario
-import com.deiapp.appzetar.usuario.extras.ActivityExtras
+import android.annotation.SuppressLint
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Intent
@@ -19,15 +17,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.auth.FirebaseAuth
-import android.annotation.SuppressLint
 import com.deiapp.appzeta.R
 import com.deiapp.appzetar.usuario.ActivityMenuUsuario
 import com.deiapp.appzetar.usuario.carrito.ActivityPedido
 import com.deiapp.appzetar.usuario.carrito.PedidoManager
+import com.deiapp.appzetar.usuario.extras.ActivityExtras
+import com.deiapp.appzetar.usuario.login.LoginActivity
+import com.deiapp.appzetar.usuario.navegacionUsuario.NavegacionUsuario
 import com.deiapp.appzetar.usuario.pedidos.ActivityPedidosUsuario
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityPerfilUsuario : AppCompatActivity() {
@@ -59,10 +59,7 @@ class ActivityPerfilUsuario : AppCompatActivity() {
 
         enableEdgeToEdge()
 
-        WindowCompat.setDecorFitsSystemWindows(
-            window,
-            false
-        )
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContentView(R.layout.activity_perfil_usuario)
 
@@ -138,23 +135,35 @@ class ActivityPerfilUsuario : AppCompatActivity() {
 
     private fun configurarNavegacion() {
         navInicio.setOnClickListener {
-            NavegacionUsuario.abrir(this, ActivityMenuUsuario::class.java)
+            NavegacionUsuario.abrir(
+                this,
+                ActivityMenuUsuario::class.java
+            )
         }
 
         navExtras.setOnClickListener {
-            NavegacionUsuario.abrir(this, ActivityExtras::class.java)
+            NavegacionUsuario.abrir(
+                this,
+                ActivityExtras::class.java
+            )
         }
 
         navPedidos.setOnClickListener {
-            NavegacionUsuario.abrir(this, ActivityPedidosUsuario::class.java)
+            NavegacionUsuario.abrir(
+                this,
+                ActivityPedidosUsuario::class.java
+            )
         }
 
         navCarrito.setOnClickListener {
-            NavegacionUsuario.abrir(this, ActivityPedido::class.java)
+            NavegacionUsuario.abrir(
+                this,
+                ActivityPedido::class.java
+            )
         }
 
         navPerfil.setOnClickListener {
-            // Ya estás en Perfil.
+            // El usuario ya está en la pantalla Perfil.
         }
     }
 
@@ -231,7 +240,6 @@ class ActivityPerfilUsuario : AppCompatActivity() {
         val cantidad = PedidoManager.cantidadTotal()
 
         tvCantidadCarrito.text = cantidad.toString()
-
         tvCantidadCarrito.visibility =
             if (cantidad > 0) View.VISIBLE else View.GONE
     }
@@ -289,7 +297,6 @@ class ActivityPerfilUsuario : AppCompatActivity() {
             duration = 450
             startDelay = 80
             interpolator = DecelerateInterpolator()
-
             start()
         }
 
@@ -323,7 +330,6 @@ class ActivityPerfilUsuario : AppCompatActivity() {
             duration = 420
             startDelay = retraso
             interpolator = DecelerateInterpolator()
-
             start()
         }
     }
@@ -357,9 +363,7 @@ class ActivityPerfilUsuario : AppCompatActivity() {
                         usuario.displayName
                             ?: getString(R.string.perfil_nombre_default)
 
-                    correoActual =
-                        usuario.email
-                            ?: ""
+                    correoActual = usuario.email ?: ""
                 }
 
                 mostrarDatos()
@@ -370,9 +374,7 @@ class ActivityPerfilUsuario : AppCompatActivity() {
                     usuario.displayName
                         ?: getString(R.string.perfil_nombre_default)
 
-                correoActual =
-                    usuario.email
-                        ?: ""
+                correoActual = usuario.email ?: ""
 
                 mostrarDatos()
                 ejecutarAnimacionInicial()
@@ -441,6 +443,7 @@ class ActivityPerfilUsuario : AppCompatActivity() {
             if (nuevoNombre.isEmpty()) {
                 etNombreEditar.error =
                     getString(R.string.registro_error_ingresa_nombre)
+
                 return@setOnClickListener
             }
 
@@ -513,11 +516,11 @@ class ActivityPerfilUsuario : AppCompatActivity() {
         val intent = Intent(
             this,
             LoginActivity::class.java
-        )
-
-        intent.flags =
-            Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK
+        ).apply {
+            flags =
+                Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
 
         startActivity(intent)
         finish()

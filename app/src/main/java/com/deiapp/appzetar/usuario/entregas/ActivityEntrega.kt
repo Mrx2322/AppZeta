@@ -41,6 +41,7 @@ class ActivityEntrega : AppCompatActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
         ) { view, insets ->
+
             val systemBars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
             )
@@ -59,34 +60,29 @@ class ActivityEntrega : AppCompatActivity() {
         configurarInterfaz()
     }
 
+    // =========================================================
+    // INICIALIZAR VISTAS
+    // =========================================================
+
     private fun inicializarVistas() {
-        cardDelivery =
-            findViewById(R.id.cardDelivery)
+        cardDelivery = findViewById(R.id.cardDelivery)
+        cardRecojo = findViewById(R.id.cardRecojo)
 
-        cardRecojo =
-            findViewById(R.id.cardRecojo)
+        rbDelivery = findViewById(R.id.rbDelivery)
+        rbRecojo = findViewById(R.id.rbRecojo)
 
-        rbDelivery =
-            findViewById(R.id.rbDelivery)
+        cardContraEntrega = findViewById(R.id.cardContraEntrega)
+        cardYape = findViewById(R.id.cardYape)
 
-        rbRecojo =
-            findViewById(R.id.rbRecojo)
+        rbContraEntrega = findViewById(R.id.rbContraEntrega)
+        rbYape = findViewById(R.id.rbYape)
 
-        cardContraEntrega =
-            findViewById(R.id.cardContraEntrega)
-
-        cardYape =
-            findViewById(R.id.cardYape)
-
-        rbContraEntrega =
-            findViewById(R.id.rbContraEntrega)
-
-        rbYape =
-            findViewById(R.id.rbYape)
-
-        btnContinuar =
-            findViewById(R.id.btnContinuarEntrega)
+        btnContinuar = findViewById(R.id.btnContinuarEntrega)
     }
+
+    // =========================================================
+    // CONFIGURAR INTERFAZ Y EVENTOS
+    // =========================================================
 
     private fun configurarInterfaz() {
         rbDelivery.isChecked = false
@@ -135,6 +131,10 @@ class ActivityEntrega : AppCompatActivity() {
         }
     }
 
+    // =========================================================
+    // SELECCIÓN DEL TIPO DE ENTREGA
+    // =========================================================
+
     private fun seleccionarDelivery() {
         rbDelivery.isChecked = true
         rbRecojo.isChecked = false
@@ -149,12 +149,20 @@ class ActivityEntrega : AppCompatActivity() {
         actualizarSeleccionEntrega()
     }
 
+    // =========================================================
+    // SELECCIÓN DEL MÉTODO DE PAGO
+    // =========================================================
+
     private fun seleccionarContraEntrega() {
         rbContraEntrega.isChecked = true
         rbYape.isChecked = false
 
         actualizarSeleccionPago()
     }
+
+    // =========================================================
+    // ACTUALIZAR ESTADO VISUAL DE ENTREGA
+    // =========================================================
 
     private fun actualizarSeleccionEntrega() {
         cardDelivery.strokeWidth =
@@ -172,6 +180,10 @@ class ActivityEntrega : AppCompatActivity() {
             }
     }
 
+    // =========================================================
+    // ACTUALIZAR ESTADO VISUAL DE PAGO
+    // =========================================================
+
     private fun actualizarSeleccionPago() {
         cardContraEntrega.strokeWidth =
             if (rbContraEntrega.isChecked) {
@@ -180,9 +192,12 @@ class ActivityEntrega : AppCompatActivity() {
                 STROKE_NORMAL
             }
 
-        cardYape.strokeWidth =
-            STROKE_NORMAL
+        cardYape.strokeWidth = STROKE_NORMAL
     }
+
+    // =========================================================
+    // YAPE: FUNCIONALIDAD PENDIENTE
+    // =========================================================
 
     private fun mostrarYapeProximamente() {
         rbContraEntrega.isChecked = true
@@ -196,6 +211,10 @@ class ActivityEntrega : AppCompatActivity() {
             Toast.LENGTH_LONG
         ).show()
     }
+
+    // =========================================================
+    // CONTINUAR
+    // =========================================================
 
     private fun continuar() {
         if (!rbContraEntrega.isChecked) {
@@ -222,76 +241,73 @@ class ActivityEntrega : AppCompatActivity() {
         }
     }
 
+    // =========================================================
+    // ABRIR DELIVERY
+    // =========================================================
+
     private fun abrirDelivery() {
         btnContinuar.isEnabled = false
 
-        val intent =
-            Intent(
-                this,
-                ActivityDireccion::class.java
-            ).apply {
+        val intent = Intent(
+            this,
+            ActivityDireccion::class.java
+        ).apply {
+            putExtra(
+                ActivityDireccion.EXTRA_METODO_PAGO,
+                getString(R.string.metodo_pago_contra_entrega)
+            )
 
-                putExtra(
-                    ActivityDireccion.EXTRA_METODO_PAGO,
-                    getString(
-                        R.string.metodo_pago_contra_entrega
-                    )
-                )
-
-                putExtra(
-                    ActivityDireccion.EXTRA_TIPO_ENTREGA,
-                    getString(
-                        R.string.tipo_entrega_delivery
-                    )
-                )
-            }
+            putExtra(
+                ActivityDireccion.EXTRA_TIPO_ENTREGA,
+                getString(R.string.tipo_entrega_delivery)
+            )
+        }
 
         startActivity(intent)
     }
 
+    // =========================================================
+    // ABRIR RECOJO
+    // =========================================================
+
     private fun abrirRecojo() {
         btnContinuar.isEnabled = false
 
-        val intent =
-            Intent(
-                this,
-                ActivityConfirmarPedido::class.java
-            ).apply {
+        val intent = Intent(
+            this,
+            ActivityConfirmarPedido::class.java
+        ).apply {
+            putExtra(
+                EXTRA_METODO_PAGO,
+                getString(R.string.metodo_pago_contra_entrega)
+            )
 
-                putExtra(
-                    EXTRA_METODO_PAGO,
-                    getString(
-                        R.string.metodo_pago_contra_entrega
-                    )
-                )
-
-                putExtra(
-                    EXTRA_TIPO_ENTREGA,
-                    getString(
-                        R.string.tipo_entrega_recojo
-                    )
-                )
-            }
+            putExtra(
+                EXTRA_TIPO_ENTREGA,
+                getString(R.string.tipo_entrega_recojo)
+            )
+        }
 
         startActivity(intent)
     }
 
     override fun onResume() {
         super.onResume()
+
         if (::btnContinuar.isInitialized) {
             btnContinuar.isEnabled = true
         }
     }
 
-    companion object {
+    // =========================================================
+    // CONSTANTES
+    // =========================================================
 
+    companion object {
         private const val STROKE_NORMAL = 0
         private const val STROKE_SELECCIONADO = 2
 
-        private const val EXTRA_METODO_PAGO =
-            "metodoPago"
-
-        private const val EXTRA_TIPO_ENTREGA =
-            "tipoEntrega"
+        private const val EXTRA_METODO_PAGO = "metodoPago"
+        private const val EXTRA_TIPO_ENTREGA = "tipoEntrega"
     }
 }

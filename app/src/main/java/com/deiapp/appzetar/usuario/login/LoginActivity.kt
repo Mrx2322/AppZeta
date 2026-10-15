@@ -2,8 +2,8 @@ package com.deiapp.appzetar.usuario.login
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -50,14 +50,13 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var tvRegistrarse: TextView
 
     // =========================================================
-    // FIREBASE / CREDENTIAL MANAGER
+    // FIREBASE Y CREDENTIAL MANAGER
     // =========================================================
 
     private lateinit var auth: FirebaseAuth
     private lateinit var credentialManager: CredentialManager
 
-    private val db =
-        FirebaseFirestore.getInstance()
+    private val db = FirebaseFirestore.getInstance()
 
     // =========================================================
     // ON CREATE
@@ -73,17 +72,12 @@ class LoginActivity : AppCompatActivity() {
             false
         )
 
-        setContentView(
-            R.layout.activity_login
-        )
+        setContentView(R.layout.activity_login)
 
         configurarInsets()
 
-        auth =
-            FirebaseAuth.getInstance()
-
-        credentialManager =
-            CredentialManager.create(this)
+        auth = FirebaseAuth.getInstance()
+        credentialManager = CredentialManager.create(this)
 
         inicializarVistas()
         configurarEventos()
@@ -94,32 +88,20 @@ class LoginActivity : AppCompatActivity() {
     // =========================================================
 
     private fun configurarInsets() {
+        val root = findViewById<View>(R.id.main)
 
-        val root =
-            findViewById<View>(
-                R.id.main
-            )
-
-        val paddingInicialIzquierdo =
-            root.paddingLeft
-
-        val paddingInicialSuperior =
-            root.paddingTop
-
-        val paddingInicialDerecho =
-            root.paddingRight
-
-        val paddingInicialInferior =
-            root.paddingBottom
+        val paddingInicialIzquierdo = root.paddingLeft
+        val paddingInicialSuperior = root.paddingTop
+        val paddingInicialDerecho = root.paddingRight
+        val paddingInicialInferior = root.paddingBottom
 
         ViewCompat.setOnApplyWindowInsetsListener(
             root
         ) { view, insets ->
 
-            val systemBars =
-                insets.getInsets(
-                    WindowInsetsCompat.Type.systemBars()
-                )
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+            )
 
             view.setPadding(
                 paddingInicialIzquierdo + systemBars.left,
@@ -137,24 +119,14 @@ class LoginActivity : AppCompatActivity() {
     // =========================================================
 
     private fun inicializarVistas() {
+        etCorreo = findViewById(R.id.etCorreo)
+        etContrasena = findViewById(R.id.etContrasena)
 
-        etCorreo =
-            findViewById(R.id.etCorreo)
+        btnIniciarSesion = findViewById(R.id.btnIniciarSesion)
+        btnGoogle = findViewById(R.id.btnGoogle)
+        btnInvitado = findViewById(R.id.btnInvitado)
 
-        etContrasena =
-            findViewById(R.id.etContrasena)
-
-        btnIniciarSesion =
-            findViewById(R.id.btnIniciarSesion)
-
-        btnGoogle =
-            findViewById(R.id.btnGoogle)
-
-        btnInvitado =
-            findViewById(R.id.btnInvitado)
-
-        tvRegistrarse =
-            findViewById(R.id.tvRegistrarse)
+        tvRegistrarse = findViewById(R.id.tvRegistrarse)
     }
 
     // =========================================================
@@ -162,7 +134,6 @@ class LoginActivity : AppCompatActivity() {
     // =========================================================
 
     private fun configurarEventos() {
-
         btnIniciarSesion.setOnClickListener {
             iniciarSesion()
         }
@@ -176,7 +147,6 @@ class LoginActivity : AppCompatActivity() {
         }
 
         tvRegistrarse.setOnClickListener {
-
             startActivity(
                 Intent(
                     this,
@@ -187,62 +157,47 @@ class LoginActivity : AppCompatActivity() {
     }
 
     // =========================================================
-    // LOGIN CORREO Y CONTRASEÑA
+    // LOGIN CON CORREO Y CONTRASEÑA
     // =========================================================
 
     private fun iniciarSesion() {
+        val correo = etCorreo.text
+            ?.toString()
+            ?.trim()
+            .orEmpty()
 
-        val correo =
-            etCorreo.text
-                ?.toString()
-                ?.trim()
-                .orEmpty()
-
-        val contrasena =
-            etContrasena.text
-                ?.toString()
-                ?.trim()
-                .orEmpty()
+        val contrasena = etContrasena.text
+            ?.toString()
+            ?.trim()
+            .orEmpty()
 
         if (correo.isEmpty()) {
-
             etCorreo.error =
-                getString(
-                    R.string.login_error_ingresa_correo
-                )
+                getString(R.string.login_error_ingresa_correo)
 
             return
         }
 
         if (contrasena.isEmpty()) {
-
             etContrasena.error =
-                getString(
-                    R.string.login_error_ingresa_contrasena
-                )
+                getString(R.string.login_error_ingresa_contrasena)
 
             return
         }
 
-        btnIniciarSesion.isEnabled =
-            false
+        btnIniciarSesion.isEnabled = false
 
         auth.signInWithEmailAndPassword(
             correo,
             contrasena
         )
             .addOnSuccessListener {
-
                 abrirMenuUsuario(
-                    getString(
-                        R.string.login_inicio_correcto
-                    )
+                    getString(R.string.login_inicio_correcto)
                 )
             }
             .addOnFailureListener { error ->
-
-                btnIniciarSesion.isEnabled =
-                    true
+                btnIniciarSesion.isEnabled = true
 
                 Log.e(
                     TAG,
@@ -252,42 +207,32 @@ class LoginActivity : AppCompatActivity() {
 
                 Toast.makeText(
                     this,
-                    getString(
-                        R.string.login_error_credenciales
-                    ),
+                    getString(R.string.login_error_credenciales),
                     Toast.LENGTH_SHORT
                 ).show()
             }
     }
 
     // =========================================================
-    // INVITADO
+    // ACCESO COMO INVITADO
     // =========================================================
 
     private fun continuarComoInvitado() {
+        btnInvitado.isEnabled = false
 
-        btnInvitado.isEnabled =
-            false
-
-        val usuarioActual =
-            auth.currentUser
+        val usuarioActual = auth.currentUser
 
         if (usuarioActual?.isAnonymous == true) {
-
             crearPerfilInvitadoSiNoExiste()
-
             return
         }
 
         auth.signInAnonymously()
             .addOnSuccessListener {
-
                 crearPerfilInvitadoSiNoExiste()
             }
             .addOnFailureListener { error ->
-
-                btnInvitado.isEnabled =
-                    true
+                btnInvitado.isEnabled = true
 
                 Log.e(
                     TAG,
@@ -297,71 +242,52 @@ class LoginActivity : AppCompatActivity() {
 
                 Toast.makeText(
                     this,
-                    getString(
-                        R.string.login_error_ingreso_invitado
-                    ),
+                    getString(R.string.login_error_ingreso_invitado),
                     Toast.LENGTH_SHORT
                 ).show()
             }
     }
 
     // =========================================================
-    // PERFIL INVITADO
+    // PERFIL DEL INVITADO
     // =========================================================
 
     private fun crearPerfilInvitadoSiNoExiste() {
+        val usuario = auth.currentUser ?: run {
+            btnInvitado.isEnabled = true
+            return
+        }
 
-        val usuario =
-            auth.currentUser
-                ?: run {
-
-                    btnInvitado.isEnabled =
-                        true
-
-                    return
-                }
-
-        val referencia =
-            db.collection("usuarios")
-                .document(usuario.uid)
+        val referencia = db.collection("usuarios")
+            .document(usuario.uid)
 
         referencia.get()
             .addOnSuccessListener { documento ->
-
                 if (documento.exists()) {
-
                     abrirMenuUsuario(
-                        getString(
-                            R.string.login_bienvenida_zeta
-                        )
+                        getString(R.string.login_bienvenida_zeta)
                     )
 
                     return@addOnSuccessListener
                 }
 
-                val datos =
-                    hashMapOf(
-                        "uid" to usuario.uid,
-                        "nombre" to getString(
-                            R.string.login_nombre_invitado
-                        ),
-                        "correo" to "",
-                        "esInvitado" to true
-                    )
+                val datos = hashMapOf(
+                    "uid" to usuario.uid,
+                    "nombre" to getString(
+                        R.string.login_nombre_invitado
+                    ),
+                    "correo" to "",
+                    "esInvitado" to true
+                )
 
                 referencia.set(datos)
                     .addOnSuccessListener {
-
                         abrirMenuUsuario(
-                            getString(
-                                R.string.login_bienvenida_zeta
-                            )
+                            getString(R.string.login_bienvenida_zeta)
                         )
                     }
                     .addOnFailureListener { error ->
-
-                        btnInvitado.isEnabled =
-                            true
+                        btnInvitado.isEnabled = true
 
                         Log.e(
                             TAG,
@@ -379,9 +305,7 @@ class LoginActivity : AppCompatActivity() {
                     }
             }
             .addOnFailureListener { error ->
-
-                btnInvitado.isEnabled =
-                    true
+                btnInvitado.isEnabled = true
 
                 Log.e(
                     TAG,
@@ -400,48 +324,37 @@ class LoginActivity : AppCompatActivity() {
     }
 
     // =========================================================
-    // GOOGLE SIGN-IN
+    // INICIAR SESIÓN CON GOOGLE
     // =========================================================
 
     private fun iniciarSesionConGoogle() {
-
-        btnGoogle.isEnabled =
-            false
+        btnGoogle.isEnabled = false
 
         /*
-         * Para un botón explícito "Continuar con Google"
+         * Para el botón explícito "Continuar con Google",
          * utilizamos GetSignInWithGoogleOption.
          */
-        val googleOption =
-            GetSignInWithGoogleOption.Builder(
-                getString(
-                    R.string.default_web_client_id
-                )
-            )
-                .build()
+        val googleOption = GetSignInWithGoogleOption.Builder(
+            getString(R.string.default_web_client_id)
+        ).build()
 
-        val solicitud =
-            GetCredentialRequest.Builder()
-                .addCredentialOption(
-                    googleOption
-                )
-                .build()
+        val solicitud = GetCredentialRequest.Builder()
+            .addCredentialOption(googleOption)
+            .build()
 
         credentialManager.getCredentialAsync(
             this,
             solicitud,
             null,
             ContextCompat.getMainExecutor(this),
-            object :
-                CredentialManagerCallback<
-                        GetCredentialResponse,
-                        GetCredentialException
-                        > {
+            object : CredentialManagerCallback<
+                    GetCredentialResponse,
+                    GetCredentialException
+                    > {
 
                 override fun onResult(
                     result: GetCredentialResponse
                 ) {
-
                     procesarCredencialGoogle(
                         result.credential
                     )
@@ -450,9 +363,7 @@ class LoginActivity : AppCompatActivity() {
                 override fun onError(
                     e: GetCredentialException
                 ) {
-
-                    btnGoogle.isEnabled =
-                        true
+                    btnGoogle.isEnabled = true
 
                     Log.e(
                         TAG,
@@ -463,9 +374,7 @@ class LoginActivity : AppCompatActivity() {
 
                     Toast.makeText(
                         this@LoginActivity,
-                        getString(
-                            R.string.login_error_google
-                        ),
+                        getString(R.string.login_error_google),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -474,21 +383,18 @@ class LoginActivity : AppCompatActivity() {
     }
 
     // =========================================================
-    // PROCESAR CREDENCIAL GOOGLE
+    // PROCESAR CREDENCIAL DE GOOGLE
     // =========================================================
 
     private fun procesarCredencialGoogle(
         credential: Credential
     ) {
-
         if (
             credential is CustomCredential &&
             credential.type ==
             GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
         ) {
-
             try {
-
                 val googleCredential =
                     GoogleIdTokenCredential.createFrom(
                         credential.data
@@ -497,11 +403,8 @@ class LoginActivity : AppCompatActivity() {
                 autenticarConFirebase(
                     googleCredential.idToken
                 )
-
             } catch (error: Exception) {
-
-                btnGoogle.isEnabled =
-                    true
+                btnGoogle.isEnabled = true
 
                 Log.e(
                     TAG,
@@ -517,11 +420,8 @@ class LoginActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-
         } else {
-
-            btnGoogle.isEnabled =
-                true
+            btnGoogle.isEnabled = true
 
             Log.e(
                 TAG,
@@ -539,30 +439,25 @@ class LoginActivity : AppCompatActivity() {
     }
 
     // =========================================================
-    // FIREBASE GOOGLE
+    // AUTENTICACIÓN GOOGLE CON FIREBASE
     // =========================================================
 
     private fun autenticarConFirebase(
         idToken: String
     ) {
-
-        val firebaseCredential =
-            GoogleAuthProvider.getCredential(
-                idToken,
-                null
-            )
+        val firebaseCredential = GoogleAuthProvider.getCredential(
+            idToken,
+            null
+        )
 
         auth.signInWithCredential(
             firebaseCredential
         )
             .addOnSuccessListener {
-
                 crearPerfilGoogleSiNoExiste()
             }
             .addOnFailureListener { error ->
-
-                btnGoogle.isEnabled =
-                    true
+                btnGoogle.isEnabled = true
 
                 Log.e(
                     TAG,
@@ -573,84 +468,58 @@ class LoginActivity : AppCompatActivity() {
 
                 Toast.makeText(
                     this,
-                    getString(
-                        R.string.login_error_google
-                    ),
+                    getString(R.string.login_error_google),
                     Toast.LENGTH_SHORT
                 ).show()
             }
     }
 
     // =========================================================
-    // PERFIL GOOGLE
+    // PERFIL DE GOOGLE
     // =========================================================
 
     private fun crearPerfilGoogleSiNoExiste() {
+        val usuario = auth.currentUser ?: run {
+            btnGoogle.isEnabled = true
+            return
+        }
 
-        val usuario =
-            auth.currentUser
-                ?: run {
-
-                    btnGoogle.isEnabled =
-                        true
-
-                    return
-                }
-
-        val referencia =
-            db.collection("usuarios")
-                .document(usuario.uid)
+        val referencia = db.collection("usuarios")
+            .document(usuario.uid)
 
         referencia.get()
             .addOnSuccessListener { documento ->
-
                 if (documento.exists()) {
-
                     abrirMenuUsuario(
-                        getString(
-                            R.string.login_inicio_correcto
-                        )
+                        getString(R.string.login_inicio_correcto)
                     )
 
                     return@addOnSuccessListener
                 }
 
-                val datos =
-                    hashMapOf(
-                        "uid" to usuario.uid,
+                val datos = hashMapOf(
+                    "uid" to usuario.uid,
+                    "nombre" to (
+                            usuario.displayName
+                                ?: getString(R.string.login_nombre_cliente)
+                            ),
+                    "correo" to (usuario.email ?: ""),
 
-                        "nombre" to (
-                                usuario.displayName
-                                    ?: getString(
-                                        R.string.login_nombre_cliente
-                                    )
-                                ),
-
-                        "correo" to (
-                                usuario.email
-                                    ?: ""
-                                ),
-
-                        /*
-                         * Importante para que coincida con
-                         * las reglas actuales de usuarios.
-                         */
-                        "esInvitado" to false
-                    )
+                    /*
+                     * Importante para que coincida con
+                     * las reglas actuales de usuarios.
+                     */
+                    "esInvitado" to false
+                )
 
                 referencia.set(datos)
                     .addOnSuccessListener {
-
                         abrirMenuUsuario(
-                            getString(
-                                R.string.login_inicio_correcto
-                            )
+                            getString(R.string.login_inicio_correcto)
                         )
                     }
                     .addOnFailureListener { error ->
-
-                        btnGoogle.isEnabled =
-                            true
+                        btnGoogle.isEnabled = true
 
                         Log.e(
                             TAG,
@@ -660,17 +529,13 @@ class LoginActivity : AppCompatActivity() {
 
                         Toast.makeText(
                             this,
-                            getString(
-                                R.string.login_error_crear_perfil
-                            ),
+                            getString(R.string.login_error_crear_perfil),
                             Toast.LENGTH_LONG
                         ).show()
                     }
             }
             .addOnFailureListener { error ->
-
-                btnGoogle.isEnabled =
-                    true
+                btnGoogle.isEnabled = true
 
                 Log.e(
                     TAG,
@@ -689,32 +554,27 @@ class LoginActivity : AppCompatActivity() {
     }
 
     // =========================================================
-    // ABRIR APP
+    // ABRIR LA APLICACIÓN
     // =========================================================
 
     private fun abrirMenuUsuario(
         mensaje: String
     ) {
-
         Toast.makeText(
             this,
             mensaje,
             Toast.LENGTH_SHORT
         ).show()
 
-        val intent =
-            Intent(
-                this,
-                SplashActivity::class.java
-            ).apply {
-
-                flags =
-                    Intent.FLAG_ACTIVITY_NEW_TASK or
-                            Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
+        val intent = Intent(
+            this,
+            SplashActivity::class.java
+        ).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
 
         startActivity(intent)
-
         finish()
     }
 }

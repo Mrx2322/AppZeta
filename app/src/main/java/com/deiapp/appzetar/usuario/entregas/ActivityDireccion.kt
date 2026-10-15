@@ -68,6 +68,7 @@ class ActivityDireccion : AppCompatActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
         ) { view, insets ->
+
             val systemBars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
             )
@@ -86,29 +87,25 @@ class ActivityDireccion : AppCompatActivity() {
         configurarEventos()
     }
 
+    // =========================================================
+    // INICIALIZAR VISTAS
+    // =========================================================
+
     private fun inicializarVistas() {
+        etDireccion = findViewById(R.id.etDireccion)
+        etReferencia = findViewById(R.id.etReferencia)
+        etTelefono = findViewById(R.id.etTelefono)
 
-        etDireccion =
-            findViewById(R.id.etDireccion)
-
-        etReferencia =
-            findViewById(R.id.etReferencia)
-
-        etTelefono =
-            findViewById(R.id.etTelefono)
-
-        btnUsarUbicacion =
-            findViewById(R.id.btnUsarUbicacion)
-
-        tvEstadoUbicacion =
-            findViewById(R.id.tvEstadoUbicacion)
-
-        btnContinuar =
-            findViewById(R.id.btnContinuarDireccion)
+        btnUsarUbicacion = findViewById(R.id.btnUsarUbicacion)
+        tvEstadoUbicacion = findViewById(R.id.tvEstadoUbicacion)
+        btnContinuar = findViewById(R.id.btnContinuarDireccion)
     }
 
-    private fun configurarEventos() {
+    // =========================================================
+    // CONFIGURAR EVENTOS
+    // =========================================================
 
+    private fun configurarEventos() {
         btnUsarUbicacion.setOnClickListener {
             comprobarPermisosUbicacion()
         }
@@ -118,19 +115,20 @@ class ActivityDireccion : AppCompatActivity() {
         }
     }
 
+    // =========================================================
+    // PERMISOS DE UBICACIÓN
+    // =========================================================
+
     private fun comprobarPermisosUbicacion() {
+        val permisoPreciso = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
 
-        val permisoPreciso =
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-
-        val permisoAproximado =
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
+        val permisoAproximado = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
 
         if (permisoPreciso || permisoAproximado) {
             obtenerUbicacionActual()
@@ -145,9 +143,12 @@ class ActivityDireccion : AppCompatActivity() {
         )
     }
 
+    // =========================================================
+    // OBTENER UBICACIÓN ACTUAL
+    // =========================================================
+
     @SuppressLint("MissingPermission")
     private fun obtenerUbicacionActual() {
-
         btnUsarUbicacion.isEnabled = false
 
         tvEstadoUbicacion.text =
@@ -159,7 +160,6 @@ class ActivityDireccion : AppCompatActivity() {
                 null
             )
             .addOnSuccessListener { location ->
-
                 btnUsarUbicacion.isEnabled = true
 
                 if (location == null) {
@@ -170,18 +170,15 @@ class ActivityDireccion : AppCompatActivity() {
                 latitud = location.latitude
                 longitud = location.longitude
 
-                ubicacionMaps =
-                    crearEnlaceGoogleMaps(
-                        latitud = location.latitude,
-                        longitud = location.longitude
-                    )
+                ubicacionMaps = crearEnlaceGoogleMaps(
+                    latitud = location.latitude,
+                    longitud = location.longitude
+                )
 
                 mostrarUbicacionGuardada()
             }
             .addOnFailureListener {
-
                 btnUsarUbicacion.isEnabled = true
-
                 mostrarErrorUbicacion()
             }
     }
@@ -190,12 +187,10 @@ class ActivityDireccion : AppCompatActivity() {
         latitud: Double,
         longitud: Double
     ): String {
-
         return "https://www.google.com/maps/search/?api=1&query=$latitud,$longitud"
     }
 
     private fun mostrarUbicacionGuardada() {
-
         tvEstadoUbicacion.text =
             getString(R.string.ubicacion_agregada)
 
@@ -204,7 +199,6 @@ class ActivityDireccion : AppCompatActivity() {
     }
 
     private fun mostrarUbicacionNoAutorizada() {
-
         tvEstadoUbicacion.text =
             getString(R.string.ubicacion_permiso_denegado)
 
@@ -216,7 +210,6 @@ class ActivityDireccion : AppCompatActivity() {
     }
 
     private fun mostrarErrorUbicacion() {
-
         tvEstadoUbicacion.text =
             getString(R.string.ubicacion_no_disponible)
 
@@ -227,25 +220,25 @@ class ActivityDireccion : AppCompatActivity() {
         ).show()
     }
 
+    // =========================================================
+    // CONTINUAR A CONFIRMACIÓN
+    // =========================================================
+
     private fun continuarAConfirmacion() {
+        val direccion = etDireccion.text
+            ?.toString()
+            ?.trim()
+            .orEmpty()
 
-        val direccion =
-            etDireccion.text
-                ?.toString()
-                ?.trim()
-                .orEmpty()
+        val referencia = etReferencia.text
+            ?.toString()
+            ?.trim()
+            .orEmpty()
 
-        val referencia =
-            etReferencia.text
-                ?.toString()
-                ?.trim()
-                .orEmpty()
-
-        val telefono =
-            etTelefono.text
-                ?.toString()
-                ?.trim()
-                .orEmpty()
+        val telefono = etTelefono.text
+            ?.toString()
+            ?.trim()
+            .orEmpty()
 
         if (!validarDireccion(direccion)) {
             return
@@ -262,44 +255,44 @@ class ActivityDireccion : AppCompatActivity() {
         )
     }
 
+    // =========================================================
+    // VALIDAR DIRECCIÓN
+    // =========================================================
+
     private fun validarDireccion(
         direccion: String
     ): Boolean {
-
         if (direccion.isBlank()) {
-
             etDireccion.error =
                 getString(R.string.error_direccion_vacia)
 
             etDireccion.requestFocus()
-
             return false
         }
 
         return true
     }
 
+    // =========================================================
+    // VALIDAR TELÉFONO
+    // =========================================================
+
     private fun validarTelefono(
         telefono: String
     ): Boolean {
-
         if (telefono.isBlank()) {
-
             etTelefono.error =
                 getString(R.string.error_telefono_vacio)
 
             etTelefono.requestFocus()
-
             return false
         }
 
         if (telefono.length != TELEFONO_LONGITUD) {
-
             etTelefono.error =
                 getString(R.string.error_telefono_longitud)
 
             etTelefono.requestFocus()
-
             return false
         }
 
@@ -307,17 +300,19 @@ class ActivityDireccion : AppCompatActivity() {
                 caracter.isDigit()
             }
         ) {
-
             etTelefono.error =
                 getString(R.string.error_telefono_solo_numeros)
 
             etTelefono.requestFocus()
-
             return false
         }
 
         return true
     }
+
+    // =========================================================
+    // ABRIR CONFIRMACIÓN DEL PEDIDO
+    // =========================================================
 
     private fun abrirConfirmacion(
         direccion: String,
@@ -326,95 +321,82 @@ class ActivityDireccion : AppCompatActivity() {
     ) {
         btnContinuar.isEnabled = false
 
-        val intentConfirmacion =
-            Intent(
-                this,
-                ActivityConfirmarPedido::class.java
-            ).apply {
+        val intentConfirmacion = Intent(
+            this,
+            ActivityConfirmarPedido::class.java
+        ).apply {
+            putExtra(
+                EXTRA_TIPO_ENTREGA,
+                getString(R.string.tipo_entrega_delivery)
+            )
 
+            putExtra(
+                EXTRA_METODO_PAGO,
+                getString(R.string.metodo_pago_contra_entrega)
+            )
+
+            putExtra(
+                EXTRA_DIRECCION,
+                direccion
+            )
+
+            putExtra(
+                EXTRA_REFERENCIA,
+                referencia
+            )
+
+            putExtra(
+                EXTRA_TELEFONO,
+                telefono
+            )
+
+            latitud?.let { valor ->
                 putExtra(
-                    EXTRA_TIPO_ENTREGA,
-                    getString(R.string.tipo_entrega_delivery)
+                    EXTRA_LATITUD,
+                    valor
                 )
-
-                putExtra(
-                    EXTRA_METODO_PAGO,
-                    getString(R.string.metodo_pago_contra_entrega)
-                )
-
-                putExtra(
-                    EXTRA_DIRECCION,
-                    direccion
-                )
-
-                putExtra(
-                    EXTRA_REFERENCIA,
-                    referencia
-                )
-
-                putExtra(
-                    EXTRA_TELEFONO,
-                    telefono
-                )
-
-                latitud?.let { valor ->
-                    putExtra(
-                        EXTRA_LATITUD,
-                        valor
-                    )
-                }
-
-                longitud?.let { valor ->
-                    putExtra(
-                        EXTRA_LONGITUD,
-                        valor
-                    )
-                }
-
-                ubicacionMaps?.let { enlace ->
-                    putExtra(
-                        EXTRA_UBICACION_MAPS,
-                        enlace
-                    )
-                }
             }
+
+            longitud?.let { valor ->
+                putExtra(
+                    EXTRA_LONGITUD,
+                    valor
+                )
+            }
+
+            ubicacionMaps?.let { enlace ->
+                putExtra(
+                    EXTRA_UBICACION_MAPS,
+                    enlace
+                )
+            }
+        }
 
         startActivity(intentConfirmacion)
     }
 
     override fun onResume() {
         super.onResume()
+
         if (::btnContinuar.isInitialized) {
             btnContinuar.isEnabled = true
         }
     }
 
-    companion object {
+    // =========================================================
+    // CONSTANTES
+    // =========================================================
 
+    companion object {
         private const val TELEFONO_LONGITUD = 9
 
-        const val EXTRA_TIPO_ENTREGA =
-            "tipoEntrega"
-
-        const val EXTRA_METODO_PAGO =
-            "metodoPago"
-
-        const val EXTRA_DIRECCION =
-            "direccion"
-
-        const val EXTRA_REFERENCIA =
-            "referencia"
-
-        const val EXTRA_TELEFONO =
-            "telefono"
-
-        const val EXTRA_LATITUD =
-            "latitud"
-
-        const val EXTRA_LONGITUD =
-            "longitud"
-
-        const val EXTRA_UBICACION_MAPS =
-            "ubicacionMaps"
+        const val EXTRA_TIPO_ENTREGA = "tipoEntrega"
+        const val EXTRA_METODO_PAGO = "metodoPago"
+        const val EXTRA_DIRECCION = "dirección"
+        const val EXTRA_REFERENCIA = "referencia"
+        const val EXTRA_TELEFONO = "teléfono"
+        const val EXTRA_LATITUD = "latitud"
+        const val EXTRA_LONGITUD = "longitud"
+        const val EXTRA_UBICACION_MAPS = "ubicacionMaps"
     }
 }

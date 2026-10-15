@@ -23,7 +23,6 @@ class ActivityPagoYape : AppCompatActivity() {
     private lateinit var etOperacion: TextInputEditText
     private lateinit var btnYaPague: MaterialButton
 
-
     // =========================================================
     // ON CREATE
     // =========================================================
@@ -32,13 +31,18 @@ class ActivityPagoYape : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        WindowCompat.setDecorFitsSystemWindows(
+            window,
+            false
+        )
 
         setContentView(R.layout.activity_pago_yape)
 
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
         ) { view, insets ->
+
             val systemBars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
             )
@@ -54,85 +58,57 @@ class ActivityPagoYape : AppCompatActivity() {
         }
 
         initComponent()
-
         mostrarTotal()
-
         configurarBoton()
     }
-
 
     // =========================================================
     // INICIALIZAR COMPONENTES
     // =========================================================
 
     private fun initComponent() {
-
-        tvTotal =
-            findViewById(R.id.tvTotal)
-
-        etOperacion =
-            findViewById(R.id.etOperacion)
-
-        btnYaPague =
-            findViewById(R.id.btnYaPague)
+        tvTotal = findViewById(R.id.tvTotal)
+        etOperacion = findViewById(R.id.etOperacion)
+        btnYaPague = findViewById(R.id.btnYaPague)
     }
-
 
     // =========================================================
     // MOSTRAR TOTAL
     // =========================================================
 
     private fun mostrarTotal() {
+        val total = PedidoManager.totalPedido()
 
-        val total =
-            PedidoManager.pedido.sumOf {
-                it.precio * it.cantidad
-            }
-
-        tvTotal.text =
-            getString(
-                R.string.pago_yape_total_formato,
-                total
-            )
+        tvTotal.text = getString(
+            R.string.pago_yape_total_formato,
+            total
+        )
     }
-
 
     // =========================================================
     // BOTÓN YA PAGUÉ
     // =========================================================
 
     private fun configurarBoton() {
-
         btnYaPague.setOnClickListener {
 
-            val operacion =
-                etOperacion.text
-                    ?.toString()
-                    ?.trim()
-                    ?: ""
+            val operacion = etOperacion.text
+                ?.toString()
+                ?.trim()
+                .orEmpty()
 
-
-            // -------------------------------------------------
-            // VALIDAR OPERACIÓN
-            // -------------------------------------------------
-
+            // Validar número de operación.
             if (operacion.isEmpty()) {
-
                 etOperacion.error =
                     getString(
                         R.string.pago_yape_error_operacion
                     )
 
                 etOperacion.requestFocus()
-
                 return@setOnClickListener
             }
 
-
-            // -------------------------------------------------
-            // POR AHORA
-            // -------------------------------------------------
-
+            // Funcionalidad pendiente de implementación.
             Toast.makeText(
                 this,
                 getString(

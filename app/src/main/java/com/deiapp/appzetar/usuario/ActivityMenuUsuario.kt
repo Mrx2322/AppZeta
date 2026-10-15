@@ -80,20 +80,20 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
     private lateinit var rvCategorias: RecyclerView
     private lateinit var categoriaAdapter: CategoriaAdapter
-    private val categorias = mutableListOf<CategoriaItem>()
+    private val categorias: MutableList<CategoriaItem> = mutableListOf()
     private var categoriaSeleccionadaId = 0
 
     private lateinit var rvExtras: RecyclerView
     private lateinit var extraAdapter: ExtraAdapter
-    private val todosLosExtras = mutableListOf<ExtraItem>()
-    private val listaExtras = mutableListOf<ExtraItem>()
+    private val todosLosExtras: MutableList<ExtraItem> = mutableListOf()
+    private val listaExtras: MutableList<ExtraItem> = mutableListOf()
 
 
     // =========================================================
     // ENTRADAS
     // =========================================================
 
-    private val entradas = mutableListOf<TaskEntradas>()
+    private val entradas: MutableList<TaskEntradas> = mutableListOf()
     private lateinit var rvEntradas: RecyclerView
     private lateinit var entradasAdapter: EntradasUsuarioAdapter
 
@@ -102,8 +102,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
     // MENÚ
     // =========================================================
 
-    private val listaMenu = mutableListOf<TaskMenu>()
-    private val listaMenuCarrusel = mutableListOf<TaskMenu>()
+    private val listaMenu: MutableList<TaskMenu> = mutableListOf()
+    private val listaMenuCarrusel: MutableList<TaskMenu> = mutableListOf()
 
     private lateinit var rvMenu: RecyclerView
     private lateinit var menuAdapter: MenuUsuarioAdapter
@@ -113,7 +113,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
     // CENAS
     // =========================================================
 
-    private val listaCenas = mutableListOf<TaskCenas>()
+    private val listaCenas: MutableList<TaskCenas> = mutableListOf()
 
     private lateinit var rvCenas: RecyclerView
     private lateinit var tvTituloCenas: TextView
@@ -135,7 +135,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
     private lateinit var tvTituloEntradas: TextView
     private lateinit var layoutTituloMenu: LinearLayout
     private lateinit var bottomNavigation: View
-    private lateinit var contenedorCarrito: View
 
     private var animacionInicialEjecutada = false
 
@@ -257,7 +256,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
         tvTituloEntradas = findViewById(R.id.tvTituloEntradas)
         layoutTituloMenu = findViewById(R.id.layoutTituloMenu)
         bottomNavigation = findViewById(R.id.bottomNavigation)
-        contenedorCarrito = findViewById(R.id.contenedorCarrito)
 
         navInicio = findViewById(R.id.navInicio)
         navExtras = findViewById(R.id.navExtras)
@@ -1990,8 +1988,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
                         return@addSnapshotListener
                     }
 
-                    val nuevasCenas =
-                        mutableListOf<TaskCenas>()
+                    val nuevasCenas: MutableList<TaskCenas> =
+                        mutableListOf()
 
                     for (documento in resultado) {
                         val id =

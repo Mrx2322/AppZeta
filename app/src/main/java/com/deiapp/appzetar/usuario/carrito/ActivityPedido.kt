@@ -132,7 +132,6 @@ class ActivityPedido : AppCompatActivity() {
     }
 
     private fun configurarNavegacion() {
-
         navInicio.setOnClickListener {
             NavegacionUsuario.abrir(
                 this,
@@ -261,7 +260,6 @@ class ActivityPedido : AppCompatActivity() {
     // =========================================================
 
     private fun aumentarProducto(item: PedidoItem) {
-
         val clave = "${item.tipo.name}_${item.id}"
 
         // Evita consultas simultáneas por pulsaciones rápidas.
@@ -282,7 +280,7 @@ class ActivityPedido : AppCompatActivity() {
                     cantidadAdicional = 1,
 
                     alValidar = {
-                        // Válida las entradas asociadas al menú
+                        // Valída las entradas asociadas al menú
                         // antes de aumentar su cantidad.
                         validarEntradasDelMenu(
                             item = item,
@@ -378,13 +376,11 @@ class ActivityPedido : AppCompatActivity() {
         alValidar: () -> Unit,
         alFinalizar: () -> Unit
     ) {
-
         db.collection(coleccion)
             .whereEqualTo("id", id)
             .limit(1)
             .get()
             .addOnSuccessListener { resultado ->
-
                 val documento = resultado.documents.firstOrNull()
 
                 if (documento == null) {
@@ -458,7 +454,6 @@ class ActivityPedido : AppCompatActivity() {
         alValidar: () -> Unit,
         alFinalizar: () -> Unit
     ) {
-
         if (indice >= item.entradas.size) {
             alValidar()
             return
@@ -495,7 +490,6 @@ class ActivityPedido : AppCompatActivity() {
     private fun agregarCantidadVerificada(
         item: PedidoItem
     ) {
-
         val posicion = PedidoManager.pedido.indexOf(item)
 
         // El producto pudo eliminarse mientras se consultaba
@@ -515,7 +509,6 @@ class ActivityPedido : AppCompatActivity() {
     // =========================================================
 
     private fun disminuirProducto(item: PedidoItem) {
-
         val posicion = PedidoManager.pedido.indexOf(item)
         val cantidadItemsAnterior = PedidoManager.pedido.size
 
@@ -537,7 +530,6 @@ class ActivityPedido : AppCompatActivity() {
     // =========================================================
 
     private fun eliminarProducto(item: PedidoItem) {
-
         val posicion = PedidoManager.pedido.indexOf(item)
 
         PedidoManager.eliminarProducto(item)
@@ -554,7 +546,6 @@ class ActivityPedido : AppCompatActivity() {
     // =========================================================
 
     private fun continuarCompra() {
-
         if (PedidoManager.pedido.isEmpty()) {
             Toast.makeText(
                 this,
@@ -578,7 +569,6 @@ class ActivityPedido : AppCompatActivity() {
     // =========================================================
 
     private fun actualizarResumenPedido() {
-
         val cantidad = PedidoManager.cantidadTotal()
 
         tvTotalProductos.text = resources.getQuantityString(

@@ -1,3 +1,4 @@
+
 package com.deiapp.appzetar
 
 import android.content.Intent
@@ -16,9 +17,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
-
         setContentView(R.layout.activity_main)
 
+        configurarInsets()
+        configurarBotonUsuario()
+    }
+
+    private fun configurarInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
         ) { view, insets ->
@@ -36,10 +41,11 @@ class MainActivity : AppCompatActivity() {
 
             insets
         }
+    }
 
+    private fun configurarBotonUsuario() {
         findViewById<Button>(R.id.btnUsuario)
             .setOnClickListener {
-
                 startActivity(
                     Intent(
                         this,

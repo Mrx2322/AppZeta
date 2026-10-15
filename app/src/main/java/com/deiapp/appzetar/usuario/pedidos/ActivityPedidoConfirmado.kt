@@ -1,4 +1,3 @@
-
 package com.deiapp.appzetar.usuario.pedidos
 
 import android.content.Intent
@@ -59,7 +58,7 @@ class ActivityPedidoConfirmado : AppCompatActivity() {
             R.id.btnVolverMenu
         )
 
-        // Número del pedido
+        // Mostrar número del pedido.
         tvNumeroPedido.text = if (numeroPedido > 0L) {
             getString(
                 R.string.pedido_confirmado_numero,
@@ -71,13 +70,13 @@ class ActivityPedidoConfirmado : AppCompatActivity() {
             )
         }
 
-        // Total del pedido en soles
+        // Mostrar total del pedido en soles.
         tvTotalPedido.text = getString(
             R.string.pedido_confirmado_total,
             totalPedido
         )
 
-        // Animación del icono de confirmación
+        // Animación del icono de confirmación.
         ivIcono.alpha = 0f
         ivIcono.scaleX = 0.55f
         ivIcono.scaleY = 0.55f
@@ -89,19 +88,18 @@ class ActivityPedidoConfirmado : AppCompatActivity() {
             .setDuration(450L)
             .start()
 
-        // Reproducir sonido al mostrar la confirmación
+        // Reproducir sonido al mostrar la confirmación.
         reproducirSonidoConfirmacion()
 
-        // Botón para volver al menú
+        // Volver al menú de Usuario.
         btnVolverMenu.setOnClickListener {
             val intentMenu = Intent(
                 this,
                 ActivityMenuUsuario::class.java
-            )
-
-            intentMenu.flags =
-                Intent.FLAG_ACTIVITY_NEW_TASK or
+            ).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or
                         Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
 
             startActivity(intentMenu)
             finish()
@@ -169,7 +167,6 @@ class ActivityPedidoConfirmado : AppCompatActivity() {
     // =========================================================
 
     private companion object {
-
         const val EXTRA_NUMERO_PEDIDO =
             "extra_numero_pedido_confirmado"
 

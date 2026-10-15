@@ -39,7 +39,6 @@ class EntradasUsuarioViewHolder(
     private val btnSumarEntrada: MaterialButton =
         view.findViewById(R.id.btnSumarEntrada)
 
-
     fun render(
         taskEntradas: TaskEntradas,
         cantidadSeleccionada: Int,
@@ -47,101 +46,62 @@ class EntradasUsuarioViewHolder(
         onSumarClick: () -> Unit,
         onRestarClick: () -> Unit
     ) {
+        tvEntradasName.text = taskEntradas.nombre
 
-        tvEntradasName.text =
-            taskEntradas.nombre
+        // Estado de selección.
+        mostrarEstadoSeleccion(cantidadSeleccionada)
 
-
-        // =========================================================
-        // ESTADO DE SELECCIÓN
-        // =========================================================
-
-        mostrarEstadoSeleccion(
-            cantidadSeleccionada
-        )
-
-
-        // =========================================================
-        // STOCK
-        // =========================================================
-
-        val agotada =
-            !taskEntradas.disponible ||
-                    taskEntradas.stock <= 0
+        // Estado del stock.
+        val agotada = !taskEntradas.disponible ||
+                taskEntradas.stock <= 0
 
         mostrarEstadoStock(
             taskEntradas = taskEntradas,
             agotada = agotada
         )
 
+        // Control para sumar.
+        val puedeSumar = !agotada &&
+                cantidadSeleccionada < maximoSeleccionable
 
-        // =========================================================
-        // CONTROL PARA SUMAR
-        // =========================================================
+        btnAgregarEntrada.isEnabled = puedeSumar
+        btnAgregarEntrada.alpha = if (puedeSumar) {
+            ALPHA_HABILITADO
+        } else {
+            ALPHA_DESHABILITADO
+        }
 
-        val puedeSumar =
-            !agotada &&
-                    cantidadSeleccionada < maximoSeleccionable
+        btnSumarEntrada.isEnabled = puedeSumar
+        btnSumarEntrada.alpha = if (puedeSumar) {
+            ALPHA_HABILITADO
+        } else {
+            ALPHA_DESHABILITADO
+        }
 
-        btnAgregarEntrada.isEnabled =
-            puedeSumar
+        // Control para restar.
+        val puedeRestar = cantidadSeleccionada > 0
 
-        btnAgregarEntrada.alpha =
-            if (puedeSumar) {
-                1f
-            } else {
-                0.45f
-            }
+        btnRestarEntrada.isEnabled = puedeRestar
+        btnRestarEntrada.alpha = if (puedeRestar) {
+            ALPHA_HABILITADO
+        } else {
+            ALPHA_DESHABILITADO
+        }
 
-        btnSumarEntrada.isEnabled =
-            puedeSumar
-
-        btnSumarEntrada.alpha =
-            if (puedeSumar) {
-                1f
-            } else {
-                0.45f
-            }
-
-
-        // =========================================================
-        // CONTROL PARA RESTAR
-        // =========================================================
-
-        val puedeRestar =
-            cantidadSeleccionada > 0
-
-        btnRestarEntrada.isEnabled =
-            puedeRestar
-
-        btnRestarEntrada.alpha =
-            if (puedeRestar) {
-                1f
-            } else {
-                0.45f
-            }
-
-
-        // =========================================================
-        // CLICS
-        // =========================================================
-
+        // Eventos de los botones.
         btnAgregarEntrada.setOnClickListener {
-
             if (puedeSumar) {
                 onSumarClick()
             }
         }
 
         btnSumarEntrada.setOnClickListener {
-
             if (puedeSumar) {
                 onSumarClick()
             }
         }
 
         btnRestarEntrada.setOnClickListener {
-
             if (puedeRestar) {
                 onRestarClick()
             }
@@ -149,7 +109,6 @@ class EntradasUsuarioViewHolder(
 
         itemView.setOnClickListener(null)
     }
-
 
     // =============================================================
     // ESTADO DEL STOCK
@@ -159,41 +118,30 @@ class EntradasUsuarioViewHolder(
         taskEntradas: TaskEntradas,
         agotada: Boolean
     ) {
-
         when {
-
             agotada -> {
-
                 tvStockEntrada.text =
                     itemView.context.getString(
                         R.string.entrada_estado_agotado
                     )
 
                 tvStockEntrada.setTextColor(
-                    color(
-                        R.color.entrada_stock_agotado
-                    )
+                    color(R.color.entrada_stock_agotado)
                 )
             }
 
-
             taskEntradas.stock == 1 -> {
-
                 tvStockEntrada.text =
                     itemView.context.getString(
                         R.string.entrada_ultima_unidad
                     )
 
                 tvStockEntrada.setTextColor(
-                    color(
-                        R.color.entrada_stock_bajo
-                    )
+                    color(R.color.entrada_stock_bajo)
                 )
             }
 
-
             taskEntradas.stock in 2..3 -> {
-
                 tvStockEntrada.text =
                     itemView.context.getString(
                         R.string.entrada_ultimas_unidades,
@@ -201,29 +149,22 @@ class EntradasUsuarioViewHolder(
                     )
 
                 tvStockEntrada.setTextColor(
-                    color(
-                        R.color.entrada_stock_bajo
-                    )
+                    color(R.color.entrada_stock_bajo)
                 )
             }
 
-
             else -> {
-
                 tvStockEntrada.text =
                     itemView.context.getString(
                         R.string.entrada_estado_disponible
                     )
 
                 tvStockEntrada.setTextColor(
-                    color(
-                        R.color.entrada_stock_disponible
-                    )
+                    color(R.color.entrada_stock_disponible)
                 )
             }
         }
     }
-
 
     // =============================================================
     // ESTADO VISUAL DE LA SELECCIÓN
@@ -232,19 +173,14 @@ class EntradasUsuarioViewHolder(
     private fun mostrarEstadoSeleccion(
         cantidadSeleccionada: Int
     ) {
-
-        val seleccionada =
-            cantidadSeleccionada > 0
+        val seleccionada = cantidadSeleccionada > 0
 
         if (seleccionada) {
+            // Oculta "Agregar".
+            btnAgregarEntrada.visibility = View.GONE
 
-            // Oculta completamente "Agregar"
-            btnAgregarEntrada.visibility =
-                View.GONE
-
-            // Muestra solamente - 1 +
-            layoutCantidadEntrada.visibility =
-                View.VISIBLE
+            // Muestra los controles - 1 +.
+            layoutCantidadEntrada.visibility = View.VISIBLE
 
             tvCantidadEntrada.text =
                 cantidadSeleccionada.toString()
@@ -256,18 +192,14 @@ class EntradasUsuarioViewHolder(
             cardEntrada.strokeColor =
                 color(R.color.entrada_borde_seleccionado)
 
-            cardEntrada.strokeWidth =
-                dpToPx(2)
+            cardEntrada.strokeWidth = dpToPx(2)
 
         } else {
+            // Muestra "Agregar".
+            btnAgregarEntrada.visibility = View.VISIBLE
 
-            // Muestra solamente "Agregar"
-            btnAgregarEntrada.visibility =
-                View.VISIBLE
-
-            // Oculta completamente - 1 +
-            layoutCantidadEntrada.visibility =
-                View.GONE
+            // Oculta los controles - 1 +.
+            layoutCantidadEntrada.visibility = View.GONE
 
             cardEntrada.setCardBackgroundColor(
                 color(R.color.entrada_card_normal)
@@ -276,8 +208,7 @@ class EntradasUsuarioViewHolder(
             cardEntrada.strokeColor =
                 color(R.color.entrada_borde_normal)
 
-            cardEntrada.strokeWidth =
-                dpToPx(1)
+            cardEntrada.strokeWidth = dpToPx(1)
 
             btnAgregarEntrada.text =
                 itemView.context.getString(
@@ -295,7 +226,6 @@ class EntradasUsuarioViewHolder(
         }
     }
 
-
     // =============================================================
     // COLOR
     // =============================================================
@@ -303,27 +233,26 @@ class EntradasUsuarioViewHolder(
     private fun color(
         colorRes: Int
     ): Int {
-
         return ContextCompat.getColor(
             itemView.context,
             colorRes
         )
     }
 
-
     // =============================================================
-    // DP → PX
+    // DP A PX
     // =============================================================
 
     private fun dpToPx(
         dp: Int
     ): Int {
-
         return (
-                dp *
-                        itemView.resources
-                            .displayMetrics
-                            .density
+                dp * itemView.resources.displayMetrics.density
                 ).toInt()
+    }
+
+    companion object {
+        private const val ALPHA_HABILITADO = 1f
+        private const val ALPHA_DESHABILITADO = 0.45f
     }
 }

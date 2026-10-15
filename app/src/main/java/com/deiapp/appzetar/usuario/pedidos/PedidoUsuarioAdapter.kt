@@ -60,8 +60,8 @@ class PedidoUsuarioAdapter :
     // LISTA
     // =========================================================
 
-    private val pedidos =
-        mutableListOf<PedidoUsuarioItem>()
+    private val pedidos: MutableList<PedidoUsuarioItem> =
+        mutableListOf()
 
     // =========================================================
     // VIEW HOLDER
@@ -97,8 +97,8 @@ class PedidoUsuarioAdapter :
                 R.id.layoutEtiquetasSeguimiento
             )
 
-        val indicadores =
-            listOf<MaterialCardView>(
+        val indicadores: List<MaterialCardView> =
+            listOf(
                 itemView.findViewById(R.id.indicadorRecibido),
                 itemView.findViewById(R.id.indicadorConfirmado),
                 itemView.findViewById(R.id.indicadorPreparacion),
@@ -106,8 +106,8 @@ class PedidoUsuarioAdapter :
                 itemView.findViewById(R.id.indicadorEntregado)
             )
 
-        val textosIndicadores =
-            listOf<TextView>(
+        val textosIndicadores: List<TextView> =
+            listOf(
                 itemView.findViewById(R.id.tvIndicadorRecibido),
                 itemView.findViewById(R.id.tvIndicadorConfirmado),
                 itemView.findViewById(R.id.tvIndicadorPreparacion),
@@ -115,16 +115,16 @@ class PedidoUsuarioAdapter :
                 itemView.findViewById(R.id.tvIndicadorEntregado)
             )
 
-        val lineas =
-            listOf<View>(
+        val lineas: List<View> =
+            listOf(
                 itemView.findViewById(R.id.lineaConfirmado),
                 itemView.findViewById(R.id.lineaPreparacion),
                 itemView.findViewById(R.id.lineaDespacho),
                 itemView.findViewById(R.id.lineaEntregado)
             )
 
-        val etiquetas =
-            listOf<TextView>(
+        val etiquetas: List<TextView> =
+            listOf(
                 itemView.findViewById(R.id.tvEtiquetaRecibido),
                 itemView.findViewById(R.id.tvEtiquetaConfirmado),
                 itemView.findViewById(R.id.tvEtiquetaPreparacion),
@@ -524,8 +524,8 @@ class PedidoUsuarioAdapter :
         entregado: Boolean
     ) {
 
-        val animaciones =
-            mutableListOf<Animator>()
+        val animaciones: MutableList<Animator> =
+            mutableListOf()
 
         holder.lineas.forEachIndexed {
                 indice,
@@ -806,7 +806,7 @@ class PedidoUsuarioAdapter :
     }
 
     // =========================================================
-    // DETENER ANIMACION
+    // DETENER ANIMACIÓN
     // =========================================================
 
     private fun detenerAnimaciones(

@@ -33,14 +33,13 @@ class ActivityDatosPedido : AppCompatActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
-        ) { v, insets ->
+        ) { view, insets ->
 
-            val systemBars =
-                insets.getInsets(
-                    WindowInsetsCompat.Type.systemBars()
-                )
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+            )
 
-            v.setPadding(
+            view.setPadding(
                 systemBars.left,
                 systemBars.top,
                 systemBars.right,
@@ -54,113 +53,69 @@ class ActivityDatosPedido : AppCompatActivity() {
         initUI()
     }
 
-    // ---------------------------------------------------------
+    // =========================================================
     // COMPONENTES
-    // ---------------------------------------------------------
+    // =========================================================
 
     private fun initComponent() {
-
-        etNombre =
-            findViewById(R.id.etNombre)
-
-        etTelefono =
-            findViewById(R.id.etTelefono)
-
-        etDireccion =
-            findViewById(R.id.etDireccion)
-
-        etObservacion =
-            findViewById(R.id.etObservacion)
-
-        btnConfirmar =
-            findViewById(R.id.btnConfirmar)
+        etNombre = findViewById(R.id.etNombre)
+        etTelefono = findViewById(R.id.etTelefono)
+        etDireccion = findViewById(R.id.etDireccion)
+        etObservacion = findViewById(R.id.etObservacion)
+        btnConfirmar = findViewById(R.id.btnConfirmar)
     }
 
-    // ---------------------------------------------------------
-    // UI
-    // ---------------------------------------------------------
+    // =========================================================
+    // INTERFAZ Y CONFIRMACIÓN
+    // =========================================================
 
     private fun initUI() {
-
         btnConfirmar.setOnClickListener {
 
-            val nombre =
-                etNombre.text.toString().trim()
+            val nombre = etNombre.text.toString().trim()
+            val telefono = etTelefono.text.toString().trim()
+            val direccion = etDireccion.text.toString().trim()
+            val observacion = etObservacion.text.toString().trim()
 
-            val telefono =
-                etTelefono.text.toString().trim()
-
-            val direccion =
-                etDireccion.text.toString().trim()
-
-            val observacion =
-                etObservacion.text.toString().trim()
-
-            // ---------------------------------------------
-            // VALIDACIONES
-            // ---------------------------------------------
-
+            // Validar nombre.
             if (nombre.isEmpty()) {
-
                 etNombre.error =
                     getString(R.string.error_nombre_invitado)
 
                 etNombre.requestFocus()
-
                 return@setOnClickListener
             }
 
+            // Validar teléfono.
             if (telefono.isEmpty()) {
-
                 etTelefono.error =
                     getString(R.string.error_telefono_vacio)
 
                 etTelefono.requestFocus()
-
                 return@setOnClickListener
             }
 
+            // Validar dirección.
             if (direccion.isEmpty()) {
-
                 etDireccion.error =
                     getString(R.string.error_direccion_vacia)
 
                 etDireccion.requestFocus()
-
                 return@setOnClickListener
             }
 
-            // ---------------------------------------------
-            // IR AL RESUMEN DEL PEDIDO
-            // ---------------------------------------------
-
+            // Ir al resumen del pedido.
             btnConfirmar.isEnabled = false
 
-            val intent =
-                Intent(
-                    this,
-                    ActivityResumenPedido::class.java
-                )
-
-            intent.putExtra(
-                "nombre",
-                nombre
+            val intent = Intent(
+                this,
+                ActivityResumenPedido::class.java
             )
 
-            intent.putExtra(
-                "telefono",
-                telefono
-            )
-
-            intent.putExtra(
-                "direccion",
-                direccion
-            )
-
-            intent.putExtra(
-                "observacion",
-                observacion
-            )
+            intent.putExtra("nombre", nombre)
+            intent.putExtra("teléfono", telefono)
+            intent.putExtra("dirección", direccion)
+            intent.putExtra("observación", observacion)
 
             startActivity(intent)
         }
@@ -168,6 +123,7 @@ class ActivityDatosPedido : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
         if (::btnConfirmar.isInitialized) {
             btnConfirmar.isEnabled = true
         }

@@ -34,7 +34,9 @@ class PedidoResumenAdapter(
 
     override fun getItemCount(): Int = listaPedido.size
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(
+        view: View
+    ) : RecyclerView.ViewHolder(view) {
 
         private val resources = view.resources
 

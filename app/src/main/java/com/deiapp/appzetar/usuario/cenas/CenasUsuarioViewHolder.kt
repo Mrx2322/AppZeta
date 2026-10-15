@@ -1,3 +1,4 @@
+
 package com.deiapp.appzetar.usuario.cenas
 
 import android.view.View
@@ -44,17 +45,23 @@ class CenasUsuarioViewHolder(
             .replace("ú", "u")
 
         val imagenCena = when {
-            "chaufa" in nombreCena ->
+            "chaufa" in nombreCena -> {
                 R.drawable.cena_chaufa_pollo
+            }
 
-            "broaster" in nombreCena || "broasther" in nombreCena ->
+            "broaster" in nombreCena ||
+                    "broasther" in nombreCena -> {
                 R.drawable.cena_pollo_broasther
+            }
 
-            "caldo" in nombreCena && "gallina" in nombreCena ->
+            "caldo" in nombreCena &&
+                    "gallina" in nombreCena -> {
                 R.drawable.cena_caldo_gallina
+            }
 
-            else ->
+            else -> {
                 R.drawable.fondo_menu
+            }
         }
 
         imgCena.setImageResource(imagenCena)
@@ -87,14 +94,10 @@ class CenasUsuarioViewHolder(
                     )
 
                 tvStockCena.setTextColor(
-                    obtenerColor(
-                        R.color.menu_stock_agotado
-                    )
+                    obtenerColor(R.color.menu_stock_agotado)
                 )
 
-                configurarBoton(
-                    habilitado = false
-                )
+                configurarBoton(habilitado = false)
             }
 
             cena.stock == 1 -> {
@@ -104,9 +107,7 @@ class CenasUsuarioViewHolder(
                     )
 
                 tvStockCena.setTextColor(
-                    obtenerColor(
-                        R.color.menu_stock_bajo
-                    )
+                    obtenerColor(R.color.menu_stock_bajo)
                 )
 
                 configurarBoton(
@@ -124,9 +125,7 @@ class CenasUsuarioViewHolder(
                     )
 
                 tvStockCena.setTextColor(
-                    obtenerColor(
-                        R.color.menu_stock_bajo
-                    )
+                    obtenerColor(R.color.menu_stock_bajo)
                 )
 
                 configurarBoton(
@@ -143,9 +142,7 @@ class CenasUsuarioViewHolder(
                     )
 
                 tvStockCena.setTextColor(
-                    obtenerColor(
-                        R.color.menu_stock_disponible
-                    )
+                    obtenerColor(R.color.menu_stock_disponible)
                 )
 
                 configurarBoton(
@@ -164,12 +161,11 @@ class CenasUsuarioViewHolder(
     ) {
         btnAgregar.isEnabled = habilitado
 
-        btnAgregar.alpha =
-            if (habilitado) {
-                ALPHA_HABILITADO
-            } else {
-                ALPHA_DESHABILITADO
-            }
+        btnAgregar.alpha = if (habilitado) {
+            ALPHA_HABILITADO
+        } else {
+            ALPHA_DESHABILITADO
+        }
 
         if (
             habilitado &&
@@ -184,9 +180,7 @@ class CenasUsuarioViewHolder(
         }
     }
 
-    private fun obtenerColor(
-        colorRes: Int
-    ): Int {
+    private fun obtenerColor(colorRes: Int): Int {
         return ContextCompat.getColor(
             itemView.context,
             colorRes
