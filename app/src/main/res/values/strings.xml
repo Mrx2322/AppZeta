@@ -39,7 +39,8 @@
     <string name="Description_extra">Eliminar extra</string>
 
 
-    <string name="menu_usuario_sin_entradas">Aún no hay entradas disponibles</string>
+    <string name="menu_usuario_entradas_vacias_titulo">Hoy no hay entradas disponibles</string>
+    <string name="menu_usuario_entradas_vacias_mensaje">Vuelve más tarde para ver las opciones del día.</string>
     <string name="entrada_restar_simbolo">−</string>
     <string name="entrada_sumar_simbolo">+</string>
     <string name="entrada_restar_descripcion">Quitar una entrada</string>
@@ -594,6 +595,8 @@
 
     <string name="menu_usuario_nuestro_menu">Nuestro menú</string>
     <string name="menu_usuario_ver_todo">Ver todo</string>
+    <string name="menu_usuario_menu_vacio_titulo">Estamos preparando el menú</string>
+    <string name="menu_usuario_menu_vacio_mensaje">Pronto encontrarás nuevas opciones para disfrutar.</string>
 
     <string name="menu_usuario_extras">Extras</string>
 
@@ -654,6 +657,8 @@
     <string name="pedidos_error_cargar_pedidos">No se pudieron cargar los pedidos</string>
 
     <string name="menu_usuario_cenas">Nuestras cenas</string>
+    <string name="menu_usuario_cenas_vacias_titulo">Aún no hay cenas disponibles</string>
+    <string name="menu_usuario_cenas_vacias_mensaje">Vuelve más tarde para ver las opciones de hoy.</string>
 
     <string name="cena_precio_formato">S/ %1$.2f</string>
     <string name="cena_estado_agotado">Agotado</string>
@@ -693,6 +698,22 @@
     <string name="pedido_confirmado_mensaje">Estamos preparando tu pedido. Puedes regresar al menú para seguir explorando.</string>
 
     <string name="pedido_confirmado_volver_menu">Volver al menú</string>
+    <string name="solicitud_error_datos">Revisa los datos y las cantidades del pedido.</string>
+    <string name="solicitud_error_demasiados_productos">La solicitud supera el límite de productos.</string>
+    <string name="solicitud_enviada_titulo">¡Solicitud enviada!</string>
+    <string name="solicitud_enviada_subtitulo">Tu solicitud está pendiente de revisión.</string>
+    <string name="solicitud_titulo_pedidos">Solicitud</string>
+    <string name="solicitud_total_label">Total estimado</string>
+    <string name="solicitud_total_estimado">S/ %1$.2f (por confirmar)</string>
+    <string name="solicitud_pago_aviso">Precio y disponibilidad por confirmar. Aún no se descuenta stock.</string>
+    <string name="solicitud_enviada_mensaje">Podrás ver el estado en la sección Pedidos. No pagues hasta recibir la confirmación.</string>
+    <string name="solicitud_enviada_volver_menu">Volver al menú</string>
+    <string name="solicitud_estado_pendiente">Revisaremos disponibilidad y precio antes de confirmar.</string>
+    <string name="solicitud_estado_rechazada">La solicitud fue rechazada. Comunícate con el local si necesitas más información.</string>
+    <string name="solicitud_boton_enviar">Enviar solicitud</string>
+    <string name="solicitud_enviando">Enviando solicitud…</string>
+    <string name="solicitud_error_envio">No se pudo enviar la solicitud. Inténtalo nuevamente.</string>
+
     <string name="todo">TODO</string>
 
 

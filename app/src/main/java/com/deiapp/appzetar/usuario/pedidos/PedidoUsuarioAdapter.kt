@@ -178,10 +178,14 @@ class PedidoUsuarioAdapter :
 
         val contexto = holder.itemView.context
 
-        holder.tvNumeroPedido.text = contexto.getString(
-            R.string.pedido_numero_formato,
-            pedido.numeroPedidoFormateado()
-        )
+        holder.tvNumeroPedido.text = if (pedido.esSolicitud) {
+            contexto.getString(R.string.solicitud_titulo_pedidos)
+        } else {
+            contexto.getString(
+                R.string.pedido_numero_formato,
+                pedido.numeroPedidoFormateado()
+            )
+        }
 
         holder.tvFechaPedido.text =
             formatearFecha(
@@ -189,13 +193,17 @@ class PedidoUsuarioAdapter :
                 context = contexto
             )
 
-        holder.tvTotalPedido.text = contexto.getString(
-            R.string.pedido_total_formato,
-            pedido.total
-        )
+        val estado = pedido.estadoNormalizado()
 
-        val estado =
-            pedido.estadoNormalizado()
+        holder.tvTotalPedido.text = if (pedido.esSolicitud) {
+            if (estado == "Rechazada") {
+                contexto.getString(R.string.pedido_total_formato, pedido.total)
+            } else {
+                contexto.getString(R.string.solicitud_total_estimado, pedido.total)
+            }
+        } else {
+            contexto.getString(R.string.pedido_total_formato, pedido.total)
+        }
 
         holder.tvEstadoPedido.text =
             estado
@@ -245,6 +253,13 @@ class PedidoUsuarioAdapter :
 
                 holder.tvMensajeEstado.text =
                     holder.itemView.context.getString(R.string.pedido_mensaje_recibido)
+            }
+
+            "Pendiente de aprobación" -> {
+                configurarBadge(holder, colorNaranjaClaro, colorNaranja)
+                holder.tvMensajeEstado.text = holder.itemView.context.getString(
+                    R.string.solicitud_estado_pendiente
+                )
             }
 
             "Confirmado" -> {
@@ -323,6 +338,13 @@ class PedidoUsuarioAdapter :
                     holder.itemView.context.getString(R.string.pedido_mensaje_cancelado)
             }
 
+            "Rechazada" -> {
+                configurarBadge(holder, colorRojoClaro, colorRojo)
+                holder.tvMensajeEstado.text = holder.itemView.context.getString(
+                    R.string.solicitud_estado_rechazada
+                )
+            }
+
             else -> {
 
                 configurarBadge(
@@ -363,6 +385,12 @@ class PedidoUsuarioAdapter :
 
         val estadoActual =
             pedido.posicionEstado()
+
+        if (estadoActual == -2) {
+            holder.layoutSeguimiento.visibility = View.GONE
+            holder.layoutEtiquetasSeguimiento.visibility = View.GONE
+            return
+        }
 
         if (estadoActual == -1) {
 

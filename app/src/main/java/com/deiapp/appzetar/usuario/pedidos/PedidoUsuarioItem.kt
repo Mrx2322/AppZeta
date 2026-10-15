@@ -8,7 +8,8 @@ data class PedidoUsuarioItem(
     val total: Double = 0.0,
     val fecha: Long = 0L,
     val fechaEntrega: Long = 0L,
-    val fechaActualizacion: Long = 0L
+    val fechaActualizacion: Long = 0L,
+    val esSolicitud: Boolean = false
 ) {
 
     companion object {
@@ -33,6 +34,11 @@ data class PedidoUsuarioItem(
     /** Normaliza los estados conocidos y conserva los desconocidos no vacíos. */
     fun estadoNormalizado(): String =
         when (estado.trim().lowercase()) {
+            "pendiente de aprobacion",
+            "pendiente de aprobación" -> "Pendiente de aprobación"
+
+            "rechazada" -> "Rechazada"
+
             "pendiente",
             "pedido recibido" -> "Pendiente"
 
@@ -56,6 +62,8 @@ data class PedidoUsuarioItem(
     /** Devuelve la posición del estado en el seguimiento del pedido. */
     fun posicionEstado(): Int =
         when (estadoNormalizado()) {
+            "Pendiente de aprobación" -> -2
+
             "Pendiente" -> 0
             "Confirmado" -> 1
             "En preparación" -> 2
@@ -63,13 +71,16 @@ data class PedidoUsuarioItem(
             "Listo para recoger" -> 3
 
             "Entregado" -> 4
-            "Cancelado" -> -1
+            "Cancelado",
+            "Rechazada" -> -1
             else -> 0
         }
 
     /** Determina si el pedido debe seguir visible en la pantalla del cliente. */
     fun debeMostrarse(ahora: Long = System.currentTimeMillis()): Boolean =
         when (estadoNormalizado()) {
+            "Pendiente de aprobación" -> true
+
             "Entregado" -> {
                 // Los pedidos antiguos sin fechaEntrega no se muestran.
                 if (fechaEntrega <= 0L) {

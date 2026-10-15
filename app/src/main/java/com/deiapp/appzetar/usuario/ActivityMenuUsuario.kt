@@ -96,6 +96,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
     private val entradas: MutableList<TaskEntradas> = mutableListOf()
     private lateinit var rvEntradas: RecyclerView
     private lateinit var entradasAdapter: EntradasUsuarioAdapter
+    private lateinit var tvEntradasVacias: View
+    private var entradasCargadas = false
 
 
     // =========================================================
@@ -107,6 +109,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
 
     private lateinit var rvMenu: RecyclerView
     private lateinit var menuAdapter: MenuUsuarioAdapter
+    private lateinit var tvMenuVacio: View
 
 
     // =========================================================
@@ -118,6 +121,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
     private lateinit var rvCenas: RecyclerView
     private lateinit var tvTituloCenas: TextView
     private lateinit var cenasAdapter: CenasUsuarioAdapter
+    private lateinit var tvCenasVacias: View
+    private var menuCargado = false
+    private var cenasCargadas = false
 
 
     // =========================================================
@@ -129,7 +135,6 @@ class ActivityMenuUsuario : AppCompatActivity() {
     private lateinit var btnCarrito: FloatingActionButton
     private lateinit var tvSaludo: TextView
     private lateinit var tvVerTodo: TextView
-    private lateinit var tvEstadoVacio: TextView
 
     private lateinit var tvSubtituloMenu: TextView
     private lateinit var tvTituloEntradas: TextView
@@ -239,18 +244,20 @@ class ActivityMenuUsuario : AppCompatActivity() {
     private fun initComponent() {
         rvCategorias = findViewById(R.id.rvCategorias)
         rvEntradas = findViewById(R.id.rvEntradas)
+        tvEntradasVacias = findViewById(R.id.tvEntradasVacias)
         rvExtras = findViewById(R.id.rvExtras)
         rvMenu = findViewById(R.id.rvMenu)
+        tvMenuVacio = findViewById(R.id.tvMenuVacio)
 
         rvCenas = findViewById(R.id.rvCenas)
         tvTituloCenas = findViewById(R.id.tvTituloCenas)
+        tvCenasVacias = findViewById(R.id.tvCenasVacias)
 
         progressBarMenu = findViewById(R.id.progressBarMenu)
         tvCantidadCarrito = findViewById(R.id.tvCantidadCarrito)
         btnCarrito = findViewById(R.id.btnCarrito)
         tvSaludo = findViewById(R.id.tvSaludo)
         tvVerTodo = findViewById(R.id.tvVerTodo)
-        tvEstadoVacio = findViewById(R.id.tvEstadoVacio)
 
         tvSubtituloMenu = findViewById(R.id.tvSubtituloMenu)
         tvTituloEntradas = findViewById(R.id.tvTituloEntradas)
@@ -1683,14 +1690,18 @@ class ActivityMenuUsuario : AppCompatActivity() {
         progressBarMenu.isVisible = true
 
         rvEntradas.isVisible = false
+        tvEntradasVacias.isVisible = false
         rvMenu.isVisible = false
         rvExtras.isVisible = false
 
-        // La sección Cenas se mostrará cuando se carguen sus datos.
         rvCenas.isVisible = false
-        tvTituloCenas.isVisible = false
+        tvTituloCenas.isVisible = true
+        tvCenasVacias.isVisible = false
+        tvMenuVacio.isVisible = false
+        menuCargado = false
+        cenasCargadas = false
 
-        tvEstadoVacio.isVisible = false
+        entradasCargadas = false
 
         cargarEntradas()
         cargarMenu()
@@ -1793,12 +1804,16 @@ class ActivityMenuUsuario : AppCompatActivity() {
                         error
                     )
 
+                    entradasCargadas = true
+                    mostrarContenido()
                     return@addSnapshotListener
                 }
 
                 if (resultado == null) {
                     return@addSnapshotListener
                 }
+
+                entradasCargadas = true
 
                 val cantidadAnterior =
                     entradas.size
@@ -1889,6 +1904,7 @@ class ActivityMenuUsuario : AppCompatActivity() {
                         error
                     )
 
+                    menuCargado = true
                     mostrarContenido()
                     return@addSnapshotListener
                 }
@@ -1896,6 +1912,8 @@ class ActivityMenuUsuario : AppCompatActivity() {
                 if (resultado == null) {
                     return@addSnapshotListener
                 }
+
+                menuCargado = true
 
                 listaMenu.clear()
 
@@ -1981,12 +1999,16 @@ class ActivityMenuUsuario : AppCompatActivity() {
                             error
                         )
 
+                        cenasCargadas = true
+                        mostrarContenido()
                         return@addSnapshotListener
                     }
 
                     if (resultado == null) {
                         return@addSnapshotListener
                     }
+
+                    cenasCargadas = true
 
                     val nuevasCenas: MutableList<TaskCenas> =
                         mutableListOf()
@@ -2049,15 +2071,9 @@ class ActivityMenuUsuario : AppCompatActivity() {
                         )
                     }
 
-                    val hayCenas =
-                        listaCenas.isNotEmpty()
-
-                    tvTituloCenas.isVisible = hayCenas
-                    rvCenas.isVisible = hayCenas
-
                     mostrarContenido()
 
-                    if (hayCenas) {
+                    if (listaCenas.isNotEmpty()) {
                         rvCenas.post {
                             animarTarjetasCarrusel(rvCenas)
                         }
@@ -2078,21 +2094,15 @@ class ActivityMenuUsuario : AppCompatActivity() {
     private fun mostrarContenido() {
         progressBarMenu.isVisible = false
 
-        val noHayEntradas = entradas.isEmpty()
-        val noHayMenu = listaMenu.isEmpty()
-        val noHayCenas = listaCenas.isEmpty()
-
-        val contenidoVacio =
-            noHayEntradas && noHayMenu && noHayCenas
-
-        tvEstadoVacio.isVisible = contenidoVacio
-
         rvEntradas.isVisible = entradas.isNotEmpty()
+        tvEntradasVacias.isVisible = entradasCargadas && entradas.isEmpty()
         rvMenu.isVisible = listaMenuCarrusel.isNotEmpty()
+        tvMenuVacio.isVisible = menuCargado && listaMenuCarrusel.isEmpty()
         tvVerTodo.isVisible = listaMenu.isNotEmpty()
 
-        tvTituloCenas.isVisible = listaCenas.isNotEmpty()
+        tvTituloCenas.isVisible = true
         rvCenas.isVisible = listaCenas.isNotEmpty()
+        tvCenasVacias.isVisible = cenasCargadas && listaCenas.isEmpty()
 
         ejecutarAnimacionInicial()
 

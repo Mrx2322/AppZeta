@@ -41,6 +41,7 @@ class ActivityPedidosUsuario : AppCompatActivity() {
     private val auth = FirebaseAuth.getInstance()
 
     private var pedidosListener: ListenerRegistration? = null
+    private var solicitudesListener: ListenerRegistration? = null
 
     // =========================================================
     // COMPONENTES
@@ -68,6 +69,8 @@ class ActivityPedidosUsuario : AppCompatActivity() {
     private lateinit var pedidoAdapter: PedidoUsuarioAdapter
 
     private val listaPedidos = mutableListOf<PedidoUsuarioItem>()
+    private val pedidosConfirmados = linkedMapOf<String, PedidoUsuarioItem>()
+    private val solicitudesPendientes = linkedMapOf<String, PedidoUsuarioItem>()
 
     // =========================================================
     // CONTROL DE TIEMPO
@@ -381,26 +384,77 @@ class ActivityPedidosUsuario : AppCompatActivity() {
                     return@addSnapshotListener
                 }
 
-                listaPedidos.clear()
-
-                val ahora = System.currentTimeMillis()
-
+                pedidosConfirmados.clear()
                 for (documento in resultado.documents) {
                     val pedido = convertirDocumentoEnPedido(
                         documento
                     )
+                    pedidosConfirmados[documento.id] = pedido
+                }
+                actualizarListaCombinada()
+            }
+    }
 
-                    if (pedido.debeMostrarse(ahora)) {
-                        listaPedidos.add(pedido)
+    private fun escucharSolicitudes() {
+        val usuarioActual = auth.currentUser ?: return
+        solicitudesListener?.remove()
+        solicitudesListener = db.collection(COLECCION_SOLICITUDES)
+            .whereEqualTo(CAMPO_USUARIO_ID, usuarioActual.uid)
+            .addSnapshotListener { resultado, error ->
+                if (error != null) {
+                    Log.e(TAG_PEDIDOS, MENSAJE_ERROR_SOLICITUDES, error)
+                    Toast.makeText(
+                        this,
+                        R.string.pedidos_error_cargar_pedidos,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@addSnapshotListener
+                }
+                if (resultado == null) return@addSnapshotListener
+
+                solicitudesPendientes.clear()
+                for (documento in resultado.documents) {
+                    val solicitud = convertirDocumentoEnSolicitud(documento)
+                    if (solicitud.estado != ESTADO_SOLICITUD_APROBADA) {
+                        solicitudesPendientes[documento.id] = solicitud
                     }
                 }
-
-                listaPedidos.sortByDescending { pedido ->
-                    pedido.fecha
-                }
-
-                actualizarLista()
+                actualizarListaCombinada()
             }
+    }
+
+    private fun actualizarListaCombinada() {
+        val ahora = System.currentTimeMillis()
+        listaPedidos.clear()
+        listaPedidos.addAll(
+            pedidosConfirmados.values.filter { it.debeMostrarse(ahora) }
+        )
+        listaPedidos.addAll(solicitudesPendientes.values)
+        listaPedidos.sortByDescending { it.fecha }
+        actualizarLista()
+    }
+
+    private fun convertirDocumentoEnSolicitud(
+        documento: DocumentSnapshot
+    ): PedidoUsuarioItem {
+        val totalEstimado = documento.getDouble(CAMPO_TOTAL_ESTIMADO)
+            ?: documento.getLong(CAMPO_TOTAL_ESTIMADO)?.toDouble()
+            ?: 0.0
+        val tipoEntrega = documento.getString(CAMPO_TIPO_ENTREGA)
+            ?.trim()
+            .orEmpty()
+            .ifBlank { TIPO_ENTREGA_DELIVERY }
+
+        return PedidoUsuarioItem(
+            id = documento.id,
+            estado = documento.getString(CAMPO_ESTADO_SOLICITUD)
+                .orEmpty()
+                .ifBlank { ESTADO_SOLICITUD_PENDIENTE },
+            tipoEntrega = tipoEntrega,
+            total = totalEstimado,
+            fecha = obtenerTimestamp(documento, CAMPO_FECHA),
+            esSolicitud = true
+        )
     }
 
     // =========================================================
@@ -568,6 +622,7 @@ class ActivityPedidosUsuario : AppCompatActivity() {
         super.onStart()
 
         escucharPedidos()
+        escucharSolicitudes()
 
         handler.removeCallbacks(revisarPedidosRunnable)
         handler.post(revisarPedidosRunnable)
@@ -580,6 +635,8 @@ class ActivityPedidosUsuario : AppCompatActivity() {
     override fun onStop() {
         pedidosListener?.remove()
         pedidosListener = null
+        solicitudesListener?.remove()
+        solicitudesListener = null
 
         handler.removeCallbacks(revisarPedidosRunnable)
 
@@ -605,6 +662,7 @@ class ActivityPedidosUsuario : AppCompatActivity() {
 
         const val TAG_PEDIDOS = "PEDIDOS_USUARIO"
         const val MENSAJE_ERROR_PEDIDOS = "Error escuchando pedidos"
+        const val MENSAJE_ERROR_SOLICITUDES = "Error escuchando solicitudes de pedido"
         const val MENSAJE_PEDIDOS_VENCIDOS =
             "Se ocultaron pedidos vencidos"
 
@@ -612,11 +670,17 @@ class ActivityPedidosUsuario : AppCompatActivity() {
         const val CAMPO_ESTADO_PEDIDO = "estadoPedido"
         const val CAMPO_TIPO_ENTREGA = "tipoEntrega"
         const val CAMPO_TOTAL = "total"
+        const val CAMPO_TOTAL_ESTIMADO = "totalEstimado"
+        const val CAMPO_ESTADO_SOLICITUD = "estado"
+        const val CAMPO_USUARIO_ID = "usuarioId"
+        const val COLECCION_SOLICITUDES = "solicitudesPedidos"
         const val CAMPO_FECHA = "fecha"
         const val CAMPO_FECHA_ENTREGA = "fechaEntrega"
         const val CAMPO_FECHA_ACTUALIZACION = "fechaActualización"
 
         const val ESTADO_PENDIENTE = "Pendiente"
+        const val ESTADO_SOLICITUD_PENDIENTE = "Pendiente de aprobacion"
+        const val ESTADO_SOLICITUD_APROBADA = "Aprobada"
         const val TIPO_ENTREGA_DELIVERY = "Delivery"
     }
 }

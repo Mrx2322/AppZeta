@@ -428,7 +428,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/total"
+                    android:text="@string/solicitud_total_label"
                     android:textColor="#202020"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -451,7 +451,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="18dp"
                 android:layout_marginEnd="24dp"
-                android:text="@string/confirmar_pedido"
+                android:text="@string/solicitud_boton_enviar"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp"
                 android:textStyle="bold"

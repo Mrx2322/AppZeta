@@ -45,6 +45,14 @@ class CenasUsuarioViewHolder(
             .replace("ú", "u")
 
         val imagenCena = when {
+            "mostrito" in nombreCena -> {
+                R.drawable.ic_mostrito
+            }
+
+            "cecina" in nombreCena -> {
+                R.drawable.ic_cecina
+            }
+
             "chaufa" in nombreCena -> {
                 R.drawable.cena_chaufa_pollo
             }

@@ -10,6 +10,7 @@
     tools:context="com.deiapp.appzetar.usuario.pedidos.ActivityPedidoConfirmado">
 
     <ScrollView
+        android:id="@+id/scrollConfirmacion"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
@@ -54,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="26dp"
                 android:gravity="center"
-                android:text="@string/pedido_confirmado_titulo"
+                android:text="@string/solicitud_enviada_titulo"
                 android:textColor="#202020"
                 android:textSize="28sp"
                 android:textStyle="bold" />
@@ -65,7 +66,7 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:lineSpacingExtra="4dp"
-                android:text="@string/pedido_confirmado_subtitulo"
+                android:text="@string/solicitud_enviada_subtitulo"
                 android:textColor="#666666"
                 android:textSize="16sp" />
 
@@ -105,31 +106,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/pedido_confirmado_numero_label"
-                        android:textColor="#777777"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/tvNumeroPedidoConfirmado"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:textColor="#202020"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        tools:text="Pedido #123456789" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="18dp"
-                        android:layout_marginBottom="18dp"
-                        android:background="#EEEEEE" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/pedido_confirmado_total_label"
+                        android:text="@string/solicitud_total_label"
                         android:textColor="#777777"
                         android:textSize="14sp" />
 
@@ -141,7 +118,7 @@
                         android:textColor="#E87520"
                         android:textSize="30sp"
                         android:textStyle="bold"
-                        tools:text="S/ 25.00" />
+                        tools:text="Estimado: S/ 25.00" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -149,7 +126,7 @@
                         android:layout_marginTop="16dp"
                         android:background="#FFF3E8"
                         android:padding="12dp"
-                        android:text="@string/pedido_confirmado_pago"
+                        android:text="@string/solicitud_pago_aviso"
                         android:textColor="#8A4B16"
                         android:textSize="14sp" />
 
@@ -165,7 +142,7 @@
                 android:layout_marginTop="22dp"
                 android:gravity="center"
                 android:lineSpacingExtra="3dp"
-                android:text="@string/pedido_confirmado_mensaje"
+                android:text="@string/solicitud_enviada_mensaje"
                 android:textColor="#666666"
                 android:textSize="14sp" />
 
@@ -176,7 +153,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="58dp"
                 android:layout_marginTop="28dp"
-                android:text="@string/pedido_confirmado_volver_menu"
+                android:text="@string/solicitud_enviada_volver_menu"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
